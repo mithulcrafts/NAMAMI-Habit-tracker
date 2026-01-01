@@ -1,0 +1,40 @@
+.badge-glow {
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, 0.25);
+}
+
+.fade-in {
+  animation: fade-in 0.35s ease;
+}
+
+.react-calendar-heatmap rect {
+  rx: 3;
+  stroke: #1f2937;
+  stroke-width: 1;
+}
+
+.react-calendar-heatmap .color-empty {
+  fill: #132035;
+}
+
+.react-calendar-heatmap .color-github-1 {
+  fill: rgba(56, 189, 248, 0.35);
+}
+
+.react-calendar-heatmap .color-github-2 {
+  fill: rgba(56, 189, 248, 0.6);
+}
+
+.react-calendar-heatmap .color-github-4 {
+  fill: #38bdf8;
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

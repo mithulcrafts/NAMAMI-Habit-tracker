@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="NAMAMI icon">
+  <defs>
+    <linearGradient id="g" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0%" stop-color="#0ea5e9"/>
+      <stop offset="100%" stop-color="#c084fc"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="96" fill="#0b1220"/>
+  <rect x="48" y="48" width="416" height="416" rx="80" fill="url(#g)" opacity="0.12"/>
+  <path d="M152 360V168h48l56 88 56-88h48v192h-52V268l-52 82h-4l-52-82v92z" fill="#fff"/>
+  <circle cx="256" cy="140" r="28" fill="#0ea5e9"/>
+  <circle cx="206" cy="112" r="16" fill="#c084fc"/>
+  <circle cx="306" cy="112" r="16" fill="#c084fc"/>
+</svg>
