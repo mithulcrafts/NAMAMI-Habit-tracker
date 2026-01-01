@@ -56,6 +56,7 @@ const Shell = () => {
           bonusDays={bonusDays}
           quoteOfDay={quoteOfDay}
           settings={settings}
+          rewards={rewards}
           onCategoryChange={(category) => updateSettings({ quoteCategory: category })}
           onAddCustomQuote={addCustomQuote}
           onAddHabit={addHabit}
@@ -63,17 +64,16 @@ const Shell = () => {
           onOpenHabit={setOpenHabitId}
           onEditHabit={updateHabit}
           onDeleteHabit={deleteHabit}
+          onAddReward={addReward}
+          onClaimReward={claimReward}
+          onUpdateReward={updateReward}
+          onDeleteReward={deleteReward}
         />
 
         {selectedHabit && (
           <HabitDetail
             habit={selectedHabit}
             points={points}
-            rewards={rewards}
-            onAddReward={addReward}
-            onClaimReward={claimReward}
-            onUpdateReward={updateReward}
-            onDeleteReward={deleteReward}
             globalSettings={settings}
             onUpdateHabitGamification={updateHabitGamification}
             onClose={() => setOpenHabitId(null)}

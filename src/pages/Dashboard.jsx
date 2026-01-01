@@ -6,6 +6,7 @@ import { QuoteCard } from '../components/QuoteCard'
 import { WidgetCard } from '../components/WidgetCard'
 import { GlobalHeatmap } from '../components/GlobalHeatmap'
 import { Heatmap } from '../components/Heatmap'
+import { Rewards } from '../components/Rewards'
 import { todayKey } from '../utils/date'
 
 export const Dashboard = ({
@@ -14,6 +15,7 @@ export const Dashboard = ({
   bonusDays,
   quoteOfDay,
   settings,
+  rewards,
   onCategoryChange,
   onAddCustomQuote,
   onAddHabit,
@@ -21,6 +23,10 @@ export const Dashboard = ({
   onOpenHabit,
   onEditHabit,
   onDeleteHabit,
+  onAddReward,
+  onClaimReward,
+  onUpdateReward,
+  onDeleteReward,
 }) => {
   const [editing, setEditing] = useState(null)
   const today = todayKey()
@@ -106,6 +112,17 @@ export const Dashboard = ({
             onCancel={() => setEditing(null)}
           />
         </div>
+      </div>
+
+      <div className="glass rounded-xl p-4">
+        <Rewards
+          rewards={rewards}
+          points={points}
+          onAdd={onAddReward}
+          onClaim={onClaimReward}
+          onUpdate={onUpdateReward}
+          onDelete={onDeleteReward}
+        />
       </div>
 
       <div className="grid gap-4 lg:grid-cols-2">

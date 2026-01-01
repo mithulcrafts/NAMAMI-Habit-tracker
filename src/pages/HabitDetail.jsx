@@ -1,7 +1,6 @@
 import { Heatmap } from '../components/Heatmap'
 import { ProgressCharts } from '../components/ProgressCharts'
 import { Badges } from '../components/Badges'
-import { Rewards } from '../components/Rewards'
 import { HabitGamificationPanel } from '../components/HabitGamificationPanel'
 import { formatDate, todayKey } from '../utils/date'
 
@@ -9,11 +8,6 @@ export const HabitDetail = ({
   habit,
   points,
   onClose,
-  rewards,
-  onAddReward,
-  onClaimReward,
-  onUpdateReward,
-  onDeleteReward,
   globalSettings,
   onUpdateHabitGamification,
 }) => {
@@ -111,16 +105,8 @@ export const HabitDetail = ({
         />
       </div>
 
-      <div className="mt-4 grid gap-4 lg:grid-cols-2">
+      <div className="mt-4">
         <Badges maxStreak={habit.streak} points={points} />
-        <Rewards
-          rewards={rewards}
-          points={points}
-          onAdd={onAddReward}
-          onClaim={onClaimReward}
-          onUpdate={onUpdateReward}
-          onDelete={onDeleteReward}
-        />
       </div>
 
       <div id="widget" className="mt-4 rounded-xl border border-white/5 bg-slate-900/70 p-3">

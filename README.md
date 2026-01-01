@@ -2,7 +2,7 @@
 
 A production-ready PWA habit tracker with streaks, MITHURA points, gamification, rewards, daily quotes, and Android home-screen widget support. Built with React + Vite, fully offline-capable, no backend required.
 
-**NEW:** Binary, count-based, and duration-based goal types. Track habits with flexible, measurable targets (read 10 pages, meditate 20 minutes, or simple done/missed). Heatmap system (global + per-habit), optional target days, fully customizable gamification per habit, and complete reward management.
+**NEW:** Binary, count-based, and duration-based goal types. Track habits with flexible, measurable targets (read 10 pages, meditate 20 minutes, or simple done/missed). Heatmap system (global + per-habit), optional target days, fully customizable gamification per habit, and global reward management on Dashboard.
 
 ---
 
@@ -168,6 +168,7 @@ Override global defaults for specific habits:
 - When custom is enabled:
   - Set custom MITHURA per completion
   - Set custom streak bonuses (3/7/30 days)
+- Note: Rewards are global (managed on Dashboard, not in Habit Detail)
 - Per-habit values override global when enabled
 
 **Scoring pipeline**:
@@ -184,7 +185,9 @@ Override global defaults for specific habits:
 
 Badges persist and display with visual styling (glow effect when unlocked).
 
-### 5. Rewards System (Full CRUD)
+### 5. Rewards System (Full CRUD - Global)
+
+**Location**: Global rewards panel on Dashboard (not per-habit)
 
 **Create rewards**:
 - Enter reward name
@@ -269,8 +272,8 @@ src/
 ├── context/
 │   └── AppContext.jsx              # Global state, storage, gamification logic, migration
 ├── pages/
-│   ├── Dashboard.jsx               # Main view: habits, global heatmap, per-habit heatmaps, stats, quotes
-│   ├── HabitDetail.jsx             # Habit detail: individual heatmap, charts, badges, gamification, rewards
+│   ├── Dashboard.jsx               # Main view: habits, global heatmap, per-habit heatmaps, stats, quotes, global rewards
+│   ├── HabitDetail.jsx             # Habit detail: individual heatmap, charts, badges, gamification settings
 │   └── Settings.jsx                # Global configuration, feature toggles
 ├── components/
 │   ├── HabitForm.jsx               # Habit creation/edit with color picker, daily/target-based toggle, goal type selector
@@ -281,7 +284,7 @@ src/
 │   ├── ProgressCharts.jsx          # Weekly + monthly completion charts
 │   ├── Badges.jsx                  # Badge cards (3/7/30 day streaks, 100+ points)
 │   ├── HabitGamificationPanel.jsx  # Per-habit MITHURA customization UI
-│   ├── Rewards.jsx                 # Reward management (add/edit/remove/claim)
+│   ├── Rewards.jsx                 # Global reward management (add/edit/remove/claim) - displayed on Dashboard
 │   ├── QuoteCard.jsx               # Daily quote + category toggle + notify button
 │   └── WidgetCard.jsx              # Widget preview (quote + streak + MITHURA)
 ├── utils/
@@ -702,9 +705,11 @@ Users can add app shortcuts to home screen:
   - [ ] Logging 20 min earns points + continues streak
 - [ ] **Streak Bonuses**: Unlock at 3/7/30 days visible in badges
 - [ ] **Per-Habit Overrides**:
-  - [ ] Toggle "Use custom MITHURA" on Habit Detail
+  - [ ] Toggle "Use custom MITHURA" on Habit Detail page (click "View detail" on habit card)
   - [ ] Custom points override global defaults
   - [ ] Custom streak bonuses override global defaults
+  - [ ] Habit Detail shows: heatmap, charts, badges, gamification settings (rewards are on Dashboard)
+  - [ ] Habit Detail page shows: heatmap, charts, badges, gamification panel (no rewards)
 
 ### Progress Bars & Stats
 - [ ] **Daily Habits (Binary)**: Shows streak × 10 % (e.g., 5 days = 50%)
@@ -712,12 +717,14 @@ Users can add app shortcuts to home screen:
 - [ ] **Target-based Habits**: Shows % progress toward target days (e.g., 12/20 days = 60%)
 - [ ] **DashboardStats**: Habits today, best streak, total MITHURA all accurate
 
-### Rewards System
+### Rewards System (Global - Dashboard)
+- [ ] **Location**: Rewards panel visible on Dashboard (not in Habit Detail)
 - [ ] **Create**: Add reward name + MITHURA cost
 - [ ] **Edit**: Click edit on unclaimed reward, change name/cost, save
 - [ ] **Delete**: Click remove on unclaimed reward, confirm deletion
 - [ ] **Claim**: When MITHURA ≥ required, claim button appears and works
 - [ ] **History**: Claimed rewards persist even after deletion (in history, not active list)
+- [ ] **Global Access**: All rewards shared across all habits, not per-habit
 
 ### Quotes & Notifications
 - [ ] **Daily Rotation**: Different quote each day (deterministic seed based on date)
