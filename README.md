@@ -25,7 +25,13 @@ Visit the local URL printed in terminal. Use Chrome/Edge > **Install app** to in
 
 #### Habit Types
 - **Daily habits**: Ongoing with no target date (streak-based progress)
+  - UI: Target days field is hidden in the form
+  - Storage: `targetDays` is removed from saved data (not stored)
+  - Badge: "Target: X days" badge is hidden on habit cards
 - **Target-based habits**: Limited duration with a target number of completion days
+  - UI: Shows "Target days" input field in form (default 30)
+  - Storage: `targetDays` number is saved with habit data
+  - Badge: "Target: X days" badge displays on habit cards
 
 #### Goal Types (FLEXIBLE TRACKING)
 Choose how you want to measure progress:
@@ -118,10 +124,11 @@ Choose how you want to measure progress:
 - Monthly completions area chart (last 6 months) — counts completed days
 
 **Progress bars**:
-- **Daily habits** (binary): Streak-based (days accumulated)
-- **Daily habits** (count/duration): Percentage of daily target achieved
+- **Daily habits** (binary): Streak × 10% (e.g., 5-day streak = 50%)
+- **Daily habits** (count/duration): Percentage of daily target achieved (e.g., 7/10 pages = 70%)
 - **Target-based habits**: Percentage progress toward target completion days
-  - Example: "Read 10 pages every other week for 20 days" → shows (days completed / 20) × 100%
+  - Example: "Read 10 pages for 20 days" → shows (days completed / 20) × 100%
+  - Note: Daily habits have no target days, so progress bar works differently
 
 **Streak summary**: Best streak across all habits (only counts days where daily targets were met)
 
@@ -320,7 +327,7 @@ habit = {
   frequency: 'daily' | 'weekly' | 'custom',  // Frequency type
   customDays: number[],               // Days of week (0-6) for custom frequency
   isDailyHabit: boolean,              // Daily vs Target-based toggle
-  targetDays: number | null,          // For target-based: total days to complete
+  targetDays: number | undefined,     // Only exists for target-based habits; removed from daily habits before save
   habitColor: string,                 // Hex color for heatmap (e.g., '#38bdf8')
   useGlobalGamification: boolean,     // Toggle for per-habit point customization
   customPoints: number | null,        // Custom MITHURA per completion (if not global)

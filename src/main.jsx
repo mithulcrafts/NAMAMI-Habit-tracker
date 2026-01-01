@@ -4,13 +4,21 @@ import './index.css'
 import App from './App.jsx'
 
 const enableServiceWorker = () => {
-  // Only register SW in production; avoids dev caching that hides new UI
-  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker
-        .register('/service-worker.js')
-        .catch((err) => console.error('SW registration failed', err))
-    })
+  if ('serviceWorker' in navigator) {
+    // In dev: unregister old SWs to prevent caching issues
+    if (!import.meta.env.PROD) {
+      navigator.serviceWorker.getRegistrations().then((registrations) => {
+        registrations.forEach((reg) => reg.unregister())
+      })
+    }
+    // In prod: register new SW
+    else {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker
+          .register('/service-worker.js')
+          .catch((err) => console.error('SW registration failed', err))
+      })
+    }
   }
 }
 

@@ -29,6 +29,15 @@ const Shell = () => {
 
   const [openHabitId, setOpenHabitId] = useState(null)
   const selectedHabit = openHabitId ? habits.find((h) => h.id === openHabitId) : null
+  
+  console.log('DEBUG App:', { openHabitId, habitsCount: habits.length, selectedHabitExists: !!selectedHabit, selectedHabitName: selectedHabit?.name })
+  
+  if (selectedHabit) {
+    console.log('selectedHabit is TRUTHY:', selectedHabit)
+  } else {
+    console.log('selectedHabit is FALSY, even though openHabitId =', openHabitId)
+    console.log('Habits array:', habits)
+  }
 
   if (loading) {
     return (

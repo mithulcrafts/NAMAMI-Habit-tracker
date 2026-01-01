@@ -46,7 +46,9 @@ export const HabitCard = ({ habit, onToggle, onOpen, onEdit, onDelete }) => {
       <div className="mt-3 flex flex-wrap items-center gap-3 text-sm text-slate-300">
         <span className="rounded-full bg-brand-500/15 px-3 py-1 text-brand-100">Streak: {habit.streak}d</span>
         <span className="rounded-full bg-slate-800 px-3 py-1">Done: {habit.totalCompleted}</span>
-        <span className="rounded-full bg-slate-800 px-3 py-1">Target: {habit.targetDays} days</span>
+        {!habit.isDailyHabit && (
+          <span className="rounded-full bg-slate-800 px-3 py-1">Target: {habit.targetDays} days</span>
+        )}
         {habit.goalType !== 'binary' && (
           <span className="rounded-full bg-slate-800 px-3 py-1">
             {habit.goalType === 'count' ? 'Count' : 'Duration'}: {habit.goalTarget}
@@ -102,7 +104,7 @@ export const HabitCard = ({ habit, onToggle, onOpen, onEdit, onDelete }) => {
 
       <div className="mt-3 flex items-center justify-end">
         <button
-          onClick={() => onOpen(habit)}
+          onClick={() => onOpen(habit.id)}
           className="text-sm font-semibold text-brand-200 hover:text-brand-100"
         >
           View detail →

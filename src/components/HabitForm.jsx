@@ -34,7 +34,11 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    onSave(form)
+    const dataToSave = { ...form }
+    if (dataToSave.isDailyHabit) {
+      delete dataToSave.targetDays
+    }
+    onSave(dataToSave)
     if (!initial) setForm(defaultData)
   }
 
@@ -121,7 +125,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
         </div>
       </div>
 
-      {form.goalType !== 'binary' && (
+      {form.goalType !== 'binary' && form.isDailyHabit === false && (
         <div>
           <label className="text-sm font-semibold text-slate-200">
             {form.goalType === 'count' ? 'Target count' : 'Target minutes'}
