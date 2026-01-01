@@ -1,11 +1,20 @@
 import CalendarHeatmap from 'react-calendar-heatmap'
 import 'react-calendar-heatmap/dist/styles.css'
-import { getPastDate } from '../utils/date'
 
 export const Heatmap = ({ history, habitColor, habitName, goalType, goalTarget, dailyValueHistory }) => {
   const endDate = new Date()
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - 120)
+
+  const formatDateString = (d) => {
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const endDateStr = formatDateString(endDate)
+  const startDateStr = formatDateString(startDate)
 
   const values = Object.entries(history || {}).map(([date, done]) => {
     if (goalType === 'binary') {
@@ -35,8 +44,8 @@ export const Heatmap = ({ history, habitColor, habitName, goalType, goalTarget, 
         `}</style>
         <div className={`heatmap-${habitColor?.slice(1)}`}>
           <CalendarHeatmap
-            startDate={startDate}
-            endDate={endDate}
+            startDate={startDateStr}
+            endDate={endDateStr}
             values={values}
             classForValue={(val) => {
               if (!val || !val.count) return 'color-empty'

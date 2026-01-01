@@ -9,9 +9,11 @@ const defaultData = {
   targetDays: 30,
   goalType: 'binary',
   goalTarget: null,
+  habitColor: '#38bdf8',
 }
 
 const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
+const colorOptions = ['#38bdf8', '#c084fc', '#34d399', '#fbbf24', '#f87171', '#818cf8', '#ec4899', '#14b8a6']
 
 export const HabitForm = ({ onSave, onCancel, initial }) => {
   const [form, setForm] = useState(initial || defaultData)
@@ -186,6 +188,25 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
           </div>
         </div>
       )}
+      <div>
+        <label className="text-sm font-semibold text-slate-200">Heatmap color</label>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {colorOptions.map((color) => (
+            <button
+              key={color}
+              type="button"
+              onClick={() => setForm((p) => ({ ...p, habitColor: color }))}
+              className={`h-10 w-10 rounded-lg border-2 transition ${
+                form.habitColor === color
+                  ? 'border-white ring-2 ring-offset-2 ring-offset-slate-950'
+                  : 'border-white/20 hover:border-white/40'
+              }`}
+              style={{ backgroundColor: color }}
+              title={color}
+            />
+          ))}
+        </div>
+      </div>
       <div className="flex items-center justify-end gap-2">
         {onCancel && (
           <button

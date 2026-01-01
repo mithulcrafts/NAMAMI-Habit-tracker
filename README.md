@@ -21,7 +21,7 @@ Visit the local URL printed in terminal. Use Chrome/Edge > **Install app** to in
 
 ### 1. Habit Management
 
-**Create habits** with name, description, and frequency (daily/weekly/custom):
+**Create habits** with name, description, frequency, and **custom color**:
 
 #### Habit Types
 - **Daily habits**: Ongoing with no target date (streak-based progress)
@@ -50,40 +50,58 @@ Choose how you want to measure progress:
    - Example habits: "Meditate 20 minutes", "Exercise 45 minutes", "Read 30 minutes"
 
 **Daily check-ins**:
-- **Binary**: Simple "Mark done" button
+- **Binary**: Simple "Mark done" button (marks today as complete/incomplete)
 - **Count/Duration**: Input field to log today's count or minutes, "Log" button
   - Shows visual feedback: "7 / 10 completed" with ✓ indicator when target met
+  - Partial progress shown (e.g., "7 / 10" even if 7 < 10)
+
+**Color Customization**:
+- Choose from 8 preset colors when creating/editing a habit
+- Color used in per-habit heatmap on Dashboard
+- Color persists with habit; can be changed anytime
+- Available colors: Cyan, Purple, Green, Amber, Red, Indigo, Pink, Teal
 
 **Other features**:
 - **Streak counter**: Auto-resets only when daily target NOT met
-- **Edit anytime**: Change habit details, goal type, or targets without losing history
-- **Delete**: Remove habits with confirmation
-- **Habit colors**: Each habit has a unique color for visual distinction in heatmaps
+- **Edit anytime**: Change habit details, goal type, color, or targets without losing history
+- **Delete**: Remove habits (history is deleted but heatmap data remains for past displays)
+- **Progress bars**: Visual progress indicators with different logic per habit type
 
 ### 2. Heatmap System (DUAL VIEW)
 
 **Global Heatmap** (Dashboard):
 - Aggregates all habits' completions per date
-- Shows overall consistency across all habits
-- Color intensity indicates how many habits were completed that day
-  - Light blue: 1-2 habits completed
-  - Medium blue: 3-4 habits completed
-  - Bright cyan: 5+ habits completed (or all habits)
-- Updated in real-time from IndexedDB
+- Shows overall consistency across all habits at a glance
+- **Color intensity levels**:
+  - Dark gray: Days with 0 habits completed
+  - Light cyan (rgba 35%): 1-2 habits completed
+  - Medium cyan (rgba 60%): 3-4 habits completed
+  - Bright cyan (#38bdf8): 5+ habits completed (or all habits)
 - 120-day historical view
+- Updated in real-time as you log habits
 
-**Individual Heatmaps** (Habit Detail page):
-- Shows ONE habit's completion history per page
-- Uses that habit's unique color for distinction
-- 120-day historical view
-- Easy to track individual habit patterns
+**Per-Habit Heatmaps** (Dashboard grid):
+- Individual 120-day calendar for each habit
+- Uses that habit's **unique color** for visual distinction
+- Color is customizable when creating or editing the habit
+- 8 preset colors available: cyan, purple, green, amber, red, indigo, pink, teal
+- Shows exactly which days the habit target was met
+- Easy to spot patterns per habit at a glance
 
-**Heatmap Logic**:
-- **Date formatting**: Uses ISO format (YYYY-MM-DD) for consistency
-- **Start/End dates**: Automatically calculated as Date objects (not strings)
-- **Empty cells**: Dark gray (#132035) for days with no completions
-- **Filled cells**: Habit color (cyan/purple/green/etc.) for completed days
-- Both work offline and sync from local storage automatically.
+**Heatmap Rendering**:
+- **Library**: React Calendar Heatmap
+- **Date format**: ISO format (YYYY-MM-DD) for accuracy
+- **Computation**: Automatic Date object calculation for 120-day range
+- **Empty cells**: Dark gray (#132035) indicates no completion
+- **Filled cells**: Habit color shows target was met that day
+- **Responsive**: Scrollable on mobile, full view on desktop
+- **Offline**: Rendered entirely client-side, fully works offline
+
+**Completion Logic**:
+- **Binary**: Heatmap shows green on days marked "done"
+- **Count-based**: Heatmap shows color only when logged count ≥ target
+- **Duration-based**: Heatmap shows color only when logged minutes ≥ target
+- Partial progress NOT shown in heatmap (but tracked in dailyValueHistory)
 
 ### 3. Tracking & Visualization
 
@@ -242,43 +260,44 @@ Badges persist and display with visual styling (glow effect when unlocked).
 ```
 src/
 ├── context/
-│   └── AppContext.jsx        # Global state, storage, gamification logic, migration
+│   └── AppContext.jsx              # Global state, storage, gamification logic, migration
 ├── pages/
-│   ├── Dashboard.jsx          # Main view: habits, global heatmap, stats, quotes
-│   ├── HabitDetail.jsx        # Habit detail: individual heatmap, charts, badges, gamification, rewards
-│   └── Settings.jsx           # Global configuration, feature toggles
+│   ├── Dashboard.jsx               # Main view: habits, global heatmap, per-habit heatmaps, stats, quotes
+│   ├── HabitDetail.jsx             # Habit detail: individual heatmap, charts, badges, gamification, rewards
+│   └── Settings.jsx                # Global configuration, feature toggles
 ├── components/
-│   ├── HabitForm.jsx          # Habit creation/edit with daily/target-based toggle
-│   ├── HabitCard.jsx          # Habit quick-view card with toggle
-│   ├── DashboardStats.jsx     # Summary stats (today, streak, MITHURA)
-│   ├── GlobalHeatmap.jsx      # Aggregated completion heatmap (all habits)
-│   ├── Heatmap.jsx            # Individual habit heatmap with unique color
-│   ├── ProgressCharts.jsx     # Weekly + monthly completion charts
-│   ├── Badges.jsx             # Badge cards (3/7/30 day, 100+ points)
+│   ├── HabitForm.jsx               # Habit creation/edit with color picker, daily/target-based toggle, goal type selector
+│   ├── HabitCard.jsx               # Habit quick-view card with daily toggle
+│   ├── DashboardStats.jsx          # Summary stats (today, best streak, MITHURA)
+│   ├── GlobalHeatmap.jsx           # Aggregated completion heatmap (all habits, color intensity)
+│   ├── Heatmap.jsx                 # Individual habit heatmap with unique color per habit
+│   ├── ProgressCharts.jsx          # Weekly + monthly completion charts
+│   ├── Badges.jsx                  # Badge cards (3/7/30 day streaks, 100+ points)
 │   ├── HabitGamificationPanel.jsx  # Per-habit MITHURA customization UI
-│   ├── Rewards.jsx            # Reward management (add/edit/remove/claim)
-│   ├── QuoteCard.jsx          # Daily quote + category toggle + notify button
-│   └── WidgetCard.jsx         # Widget preview (quote + streak + MITHURA)
+│   ├── Rewards.jsx                 # Reward management (add/edit/remove/claim)
+│   ├── QuoteCard.jsx               # Daily quote + category toggle + notify button
+│   └── WidgetCard.jsx              # Widget preview (quote + streak + MITHURA)
 ├── utils/
-│   ├── date.js                # Date helpers: streak, history buckets, formatting
-│   └── notifications.js       # Web Notifications API wrapper
+│   ├── date.js                     # Date helpers: streak, history buckets, formatting, past dates
+│   └── notifications.js            # Web Notifications API wrapper
 ├── data/
-│   └── quotes.js              # Quote pools (General + Gita)
-├── App.jsx                    # App shell: route to pages, state binding
-├── main.jsx                   # Service worker registration
-├── index.css                  # Tailwind imports + custom utilities
-└── App.css                    # Animations, badge glow, heatmap colors
+│   └── quotes.js                   # Quote pools (General + Bhagavad Gita)
+├── App.jsx                         # App shell: route to pages, context binding
+├── main.jsx                        # Service worker registration (dev/prod aware)
+├── index.css                       # Tailwind imports + custom utilities
+└── App.css                         # Animations, badge glow, heatmap cell colors
 
 public/
-├── manifest.webmanifest       # PWA manifest (name, icons, theme, shortcuts)
-├── service-worker.js          # Offline caching + precache strategy
-├── icons/
-│   └── namami-icon.svg        # App icon (192/512 px)
+├── manifest.webmanifest            # PWA manifest (name, icons, theme, shortcuts)
+├── service-worker.js               # Offline caching + precache strategy
+└── icons/
+    └── namami-icon.svg             # App icon (192/512 px)
 
-index.html                      # Root HTML (PWA meta tags)
-tailwind.config.js              # Tailwind theme: colors, spacing, fonts
-postcss.config.js               # PostCSS plugins
-vite.config.js                  # Vite config
+index.html                          # Root HTML (PWA meta tags, root div)
+tailwind.config.js                  # Tailwind theme: colors, spacing, fonts
+postcss.config.js                   # PostCSS plugins (autoprefixer)
+vite.config.js                      # Vite config (React plugin)
+package.json                        # Dependencies (React, Vite, Recharts, Calendar Heatmap, localforage)
 ```
 
 ---
@@ -286,69 +305,158 @@ vite.config.js                  # Vite config
 ## 🔄 Data Flow & Architecture
 
 ### State Management
-- **AppContext**: Single source of truth in React Context
-- **Auto-persist**: Any state change synced to IndexedDB via localforage
+- **AppContext**: Single source of truth in React Context API (no Redux needed)
+- **Auto-persist**: Any state change automatically synced to IndexedDB via localforage
 - **Hydration**: On app load, IndexedDB state restored; defaults used if empty
-- **Schema versioning**: Built-in migration system for data upgrades
+- **Schema versioning**: Built-in safe migration system for data schema upgrades (v1 → v2 → v3)
+- **Real-time updates**: Heatmaps, charts, badges, and stats update immediately on habit log
 
-### Habit Schema (Extended v3)
+### Habit Schema (Current: v3)
 ```javascript
 habit = {
-  id: string,
-  name: string,
-  description: string,
-  frequency: 'daily' | 'weekly' | 'custom',
-  customDays: number[],
-  isDailyHabit: boolean,              // Daily vs Target-based
-  targetDays: number | null,          // Optional for daily habits
-  habitColor: string,                 // Unique color per habit
-  useGlobalGamification: boolean,     // Toggle for custom overrides
-  customPoints: number | null,        // Custom MITHURA per completion
-  customStreakBonuses: {3,7,30},      // Per-habit streak bonuses
-  goalType: 'binary' | 'count' | 'duration',  // NEW: Goal type
-  goalTarget: number | null,          // NEW: Target count/minutes (null for binary)
-  history: { [dateKey]: boolean },    // Completion status (true if target met)
-  dailyValueHistory: { [dateKey]: number },  // NEW: Actual values logged (for count/duration)
-  createdAt: dateKey,
+  id: string,                         // UUID
+  name: string,                       // Habit title
+  description: string,                // User description
+  frequency: 'daily' | 'weekly' | 'custom',  // Frequency type
+  customDays: number[],               // Days of week (0-6) for custom frequency
+  isDailyHabit: boolean,              // Daily vs Target-based toggle
+  targetDays: number | null,          // For target-based: total days to complete
+  habitColor: string,                 // Hex color for heatmap (e.g., '#38bdf8')
+  useGlobalGamification: boolean,     // Toggle for per-habit point customization
+  customPoints: number | null,        // Custom MITHURA per completion (if not global)
+  customStreakBonuses: {3,7,30},      // Custom streak bonus values (if not global)
+  goalType: 'binary' | 'count' | 'duration',  // How to measure: done/missed, count, or time
+  goalTarget: number | null,          // Target count or minutes (null for binary)
+  history: { [dateKey]: boolean },    // Completion status; true if target met that day
+  dailyValueHistory: { [dateKey]: number },  // Actual logged values (for count/duration)
+  createdAt: dateKey,                 // Creation date
 }
 ```
 
 **Goal Type Details**:
-- `goalType: 'binary'`: Daily done/missed toggle (original behavior)
-- `goalType: 'count'`: User logs a count (e.g., "10 pages read")
-  - `goalTarget`: 10 (the daily target)
-  - `dailyValueHistory['2026-01-15']: 7` (logged 7 pages, target not met)
-  - `history['2026-01-15']: false` (derived: 7 < 10)
-- `goalType: 'duration'`: User logs minutes (e.g., "20 minute meditation")
-  - `goalTarget`: 20 (the daily target in minutes)
-  - `dailyValueHistory['2026-01-15']: 15` (logged 15 minutes, target not met)
-  - `history['2026-01-15']: false` (derived: 15 < 20)
+- `goalType: 'binary'`: 
+  - User marks day as done (true) or missed (false)
+  - `goalTarget: null`
+  - `history['2026-01-15']: true` → day complete
+  - **Streak continues**: Only if true on consecutive days
+  - **Points awarded**: On completion (true)
 
-### Reward Schema (Extended)
+- `goalType: 'count'`: 
+  - User logs a numeric count (e.g., "10 pages read")
+  - `goalTarget: 10` (the daily target)
+  - `dailyValueHistory['2026-01-15']: 7` (logged 7, target not met)
+  - `history['2026-01-15']: false` (derived: 7 < 10, day incomplete)
+  - **Streak continues**: Only if dailyValueHistory[date] ≥ goalTarget
+  - **Points awarded**: Only when target IS met (count ≥ goalTarget)
+
+- `goalType: 'duration'`: 
+  - User logs minutes (e.g., "20 minute meditation")
+  - `goalTarget: 20` (the daily target in minutes)
+  - `dailyValueHistory['2026-01-15']: 15` (logged 15 min, target not met)
+  - `history['2026-01-15']: false` (derived: 15 < 20, day incomplete)
+  - **Streak continues**: Only if dailyValueHistory[date] ≥ goalTarget
+  - **Points awarded**: Only when target IS met (minutes ≥ goalTarget)
+
+### Settings Schema
 ```javascript
-reward = {
-  id: string,
-  name: string,
-  requiredPoints: number,
-  claimed: boolean,
-  deleted: boolean,  // NEW: Soft delete (doesn't affect history)
+settings = {
+  pointsPerHabit: number,             // Default MITHURA per completion (default: 10)
+  dailyBonus: number,                 // MITHURA for all habits done (default: 20)
+  gamificationEnabled: boolean,       // Master gamification toggle (default: true)
+  notificationsEnabled: boolean,      // Web notifications toggle (default: false)
+  quoteCategory: 'general' | 'gita',  // Daily quote source (default: 'general')
+  streakBonuses: {3: 2, 7: 5, 30: 10},// Bonuses at milestone streaks (customizable)
 }
 ```
 
-### Gamification Pipeline
-1. **Daily completion status** determined by goal type:
-   - **Binary**: `history[dateKey] === true` (user marked done)
-   - **Count-based**: `dailyValueHistory[dateKey] >= goalTarget` (logged amount ≥ target)
-   - **Duration-based**: `dailyValueHistory[dateKey] >= goalTarget` (logged minutes ≥ target)
-2. **Streaks** computed backward from today (only count days where target was met)
-3. **MITHURA calculation**:
-   - Check per-habit overrides first (if useGlobalGamification = false)
-   - Fall back to global settings otherwise
-   - Only award points when daily target IS met (no partial points)
-   - Daily bonus awarded only if ALL habits meet their daily targets
-4. **Badges** unlocked when streak ≥ threshold or points ≥ threshold
-5. **Rewards** unlocked when points ≥ required; can be edited or deleted
-6. **Heatmaps** show completion (green) only when target was met; partial progress tracked but not displayed in heatmap
+### Reward Schema
+```javascript
+reward = {
+  id: string,                         // UUID
+  name: string,                       // Reward title
+  requiredPoints: number,             // MITHURA threshold to unlock
+  claimed: boolean,                   // If user has claimed this reward
+  deleted: boolean,                   // Soft delete (doesn't appear in active list but persists in history)
+}
+```
+
+### Gamification Pipeline (Complete Flow)
+
+1. **Daily Completion Status** determined by goal type:
+   ```javascript
+   // Binary: User marked done?
+   const binaryDone = history[dateKey] === true
+   
+   // Count-based: Logged amount ≥ target?
+   const countMet = dailyValueHistory[dateKey] >= goalTarget
+   
+   // Duration-based: Logged minutes ≥ target?
+   const durationMet = dailyValueHistory[dateKey] >= goalTarget
+   
+   // All three: Combined check
+   const dayComplete = (goalType === 'binary') ? binaryDone : (dailyValueHistory[dateKey] >= goalTarget)
+   ```
+
+2. **Streaks** computed backward from today:
+   ```javascript
+   // Count consecutive days where target was met
+   let streak = 0
+   for (let i = 0; i < 365; i++) {
+     const date = yesterday(i)
+     if (isDayComplete(date)) streak++
+     else break  // Streak ends on first incomplete day
+   }
+   ```
+
+3. **MITHURA Calculation**:
+   ```javascript
+   // For each habit, determine points per completion
+   const pointsPerCompletion = habit.useGlobalGamification
+     ? settings.pointsPerHabit
+     : (habit.customPoints ?? settings.pointsPerHabit)
+   
+   // Only award points if target WAS met
+   if (dayComplete) {
+     totalMITHURA += pointsPerCompletion
+   }
+   // No partial points for count/duration below target
+   ```
+
+4. **Daily Bonus** (all habits completed):
+   ```javascript
+   const completedToday = habits.filter(h => isDayComplete(h, today))
+   if (completedToday.length === habits.length) {
+     totalMITHURA += settings.dailyBonus  // +20
+   }
+   ```
+
+5. **Streak Bonuses** (per milestone):
+   ```javascript
+   const bonuses = habit.useGlobalGamification
+     ? settings.streakBonuses
+     : (habit.customStreakBonuses ?? settings.streakBonuses)
+   
+   if (habit.streak >= 30) totalMITHURA += bonuses[30]  // +10
+   else if (habit.streak >= 7) totalMITHURA += bonuses[7]   // +5
+   else if (habit.streak >= 3) totalMITHURA += bonuses[3]   // +2
+   ```
+
+6. **Final Total**: Base points + daily bonus + streak bonus
+   ```javascript
+   totalPoints = basePoints + dailyBonusPoints + streakBonus
+   ```
+
+7. **Badges** unlocked when:
+   - 3-day streak: `habit.streak >= 3`
+   - 7-day streak: `habit.streak >= 7`
+   - 30-day streak: `habit.streak >= 30`
+   - 100+ points: `totalPoints >= 100`
+
+8. **Heatmaps** show completion (colored cell) only when target met:
+   - **Binary**: Green on days where `history[date] === true`
+   - **Count-based**: Green only when `dailyValueHistory[date] >= goalTarget`
+   - **Duration-based**: Green only when `dailyValueHistory[date] >= goalTarget`
+   - Partial progress NOT shown (but tracked for future reference)
 
 ### Offline Strategy
 - **Service Worker**: Precaches index.html, manifest, icons, service worker itself
@@ -499,53 +607,147 @@ Users can add app shortcuts to home screen:
 
 ---
 
-## 🧪 Testing Checklist
+## 🎨 Habit Colors & Heatmap Visualization
 
+### Available Colors (8 preset options)
+- **Cyan** (#38bdf8): Cool, calming; default for first habit
+- **Purple** (#c084fc): Creative, reflective habits
+- **Green** (#34d399): Growth, health, nature habits
+- **Amber** (#fbbf24): Energetic, active habits
+- **Red** (#f87171): Intense, challenging habits
+- **Indigo** (#818cf8): Meditative, mental habits
+- **Pink** (#ec4899): Personal, self-care habits
+- **Teal** (#14b8a6): Balance, grounding habits
+
+### How Colors Work in Heatmaps
+1. **Pick color** when creating/editing habit
+2. **Color persists** with that habit forever (unless changed)
+3. **Per-habit heatmap** on Dashboard displays in that color
+4. **Individual heatmaps** on HabitDetail also use that color
+5. **CSS injection** dynamically applies color to calendar cells:
+   ```css
+   .heatmap-38bdf8 .color-github-4 { fill: #38bdf8 !important; }
+   ```
+6. **Global heatmap** uses fixed blue spectrum (color intensity = number of habits)
+
+### Color Examples
+- "Morning Meditation" = Purple heatmap
+- "Exercise" = Green heatmap
+- "Read" = Amber heatmap
+- All visible at once on Dashboard in their unique colors
+
+---
+
+### Habit & Goal Type Testing
 - [ ] **Habit Creation**: Create daily + target-based habits with all three goal types
-  - [ ] Binary: Simple done/missed toggle
-  - [ ] Count-based: Set target count (e.g., 10), log values, check "X / 10" display
-  - [ ] Duration-based: Set target minutes (e.g., 20), log minutes, check "X / 20 min" display
+  - [ ] Binary: Simple done/missed toggle works
+  - [ ] Count-based: Set target count (e.g., 10), log values, check "X / 10" display and goal met indicator
+  - [ ] Duration-based: Set target minutes (e.g., 20), log minutes, check "X / 20 min" display and goal met indicator
+- [ ] **Color Picker**: Test all 8 preset colors, verify selection persists on edit
+- [ ] **Partial Progress**: Log count/duration below target, verify display shows value but "Goal met" doesn't appear
 
-- [ ] **Daily Check-ins**:
-  - [ ] Binary: "Mark done" button works
-  - [ ] Count-based: Input field accepts numbers, "Log" button updates display
-  - [ ] Duration-based: Input field accepts minutes, "Log" button updates display
-  - [ ] Partial progress shows but doesn't mark as "complete" until target met
+### Daily Check-ins & Streaks
+- [ ] **Binary Tracking**:
+  - [ ] "Mark done" button toggles state
+  - [ ] Streak increments on done, resets on missed
+  - [ ] Progress bar shows streak × 10 %
+- [ ] **Count-based Tracking**:
+  - [ ] Input accepts numbers, "Log" button updates display
+  - [ ] Shows "7 / 10 completed" format
+  - [ ] Streak increments only when count ≥ target
+  - [ ] Partial progress (7 < 10) does NOT increment streak
+- [ ] **Duration-based Tracking**:
+  - [ ] Input accepts minutes, "Log" button updates display
+  - [ ] Shows "15 / 20 min" format
+  - [ ] Streak increments only when minutes ≥ target
+  - [ ] Partial progress (15 < 20) does NOT increment streak
 
-- [ ] **Streaks**:
-  - [ ] Binary: Auto-reset on missed day
-  - [ ] Count-based: Auto-reset when logged count < target
-  - [ ] Duration-based: Auto-reset when logged minutes < target
-  - [ ] Partial progress does NOT continue streak
+### Heatmap Testing
+- [ ] **Global Heatmap**:
+  - [ ] Displays on Dashboard below DashboardStats
+  - [ ] Shows 120-day calendar grid
+  - [ ] Color intensity matches: gray (0) → light cyan (1-2) → medium cyan (3-4) → bright cyan (5+)
+  - [ ] Updates in real-time when habits are logged
+- [ ] **Per-Habit Heatmaps**:
+  - [ ] Display in 2-column grid between global heatmap and habit cards
+  - [ ] Each shows the habit's unique color
+  - [ ] Binary: Green on days marked done
+  - [ ] Count-based: Green only when logged count ≥ target
+  - [ ] Duration-based: Green only when logged minutes ≥ target
+  - [ ] Do NOT show green for partial progress (e.g., 5 when target is 10)
+- [ ] **Heatmap Responsiveness**:
+  - [ ] Scrollable on mobile
+  - [ ] Full view on desktop
+  - [ ] Date labels visible (weekdays + dates)
 
-- [ ] **Heatmaps**:
-  - [ ] Global heatmap shows aggregated (all habits) with color intensity
-  - [ ] Per-habit heatmaps show with unique color per habit
-  - [ ] Binary: Green on done days
-  - [ ] Count-based: Green only when count >= target
-  - [ ] Duration-based: Green only when minutes >= target
+### Gamification & Points
+- [ ] **Binary Points**:
+  - [ ] Marking done awards MITHURA
+  - [ ] Marking missed removes MITHURA
+  - [ ] Daily bonus appears only when ALL habits done
+- [ ] **Count-based Points**:
+  - [ ] Points awarded ONLY when count ≥ target (no partial)
+  - [ ] Logging 7 (target 10) earns 0 points
+  - [ ] Logging 10 earns points + continues streak
+- [ ] **Duration-based Points**:
+  - [ ] Points awarded ONLY when minutes ≥ target (no partial)
+  - [ ] Logging 15 min (target 20) earns 0 points
+  - [ ] Logging 20 min earns points + continues streak
+- [ ] **Streak Bonuses**: Unlock at 3/7/30 days visible in badges
+- [ ] **Per-Habit Overrides**:
+  - [ ] Toggle "Use custom MITHURA" on Habit Detail
+  - [ ] Custom points override global defaults
+  - [ ] Custom streak bonuses override global defaults
 
-- [ ] **Gamification**:
-  - [ ] Binary: Points awarded on completion
-  - [ ] Count-based: Points awarded ONLY when count >= target (no partial)
-  - [ ] Duration-based: Points awarded ONLY when minutes >= target (no partial)
-  - [ ] Daily bonus appears only when ALL habits meet targets
-  - [ ] Streak bonuses unlock at 3/7/30 days
-  - [ ] Per-habit custom MITHURA overrides work
-  - [ ] Badges unlock visually
+### Progress Bars & Stats
+- [ ] **Daily Habits (Binary)**: Shows streak × 10 % (e.g., 5 days = 50%)
+- [ ] **Daily Habits (Count/Duration)**: Shows % of today's target achieved (e.g., 7/10 = 70%)
+- [ ] **Target-based Habits**: Shows % progress toward target days (e.g., 12/20 days = 60%)
+- [ ] **DashboardStats**: Habits today, best streak, total MITHURA all accurate
 
-- [ ] **Progress Bars**:
-  - [ ] Daily binary habits: Show streak-based % (streak × 10)
-  - [ ] Daily count/duration: Show % of today's target achieved
-  - [ ] Target-based habits: Show % of target days completed
+### Rewards System
+- [ ] **Create**: Add reward name + MITHURA cost
+- [ ] **Edit**: Click edit on unclaimed reward, change name/cost, save
+- [ ] **Delete**: Click remove on unclaimed reward, confirm deletion
+- [ ] **Claim**: When MITHURA ≥ required, claim button appears and works
+- [ ] **History**: Claimed rewards persist even after deletion (in history, not active list)
 
-- [ ] **Rewards**: Create, edit, delete (unclaimed only), claim, history persists
-- [ ] **Quotes**: Daily rotation, custom quotes save, category toggle works, notification sends
-- [ ] **Offline**: Close network, app still loads, data persists, count/duration values persist
-- [ ] **PWA**: Install on desktop/Android, widget shows data, shortcuts work
-- [ ] **Charts**: Heatmaps display correctly; weekly/monthly charts render
-- [ ] **Settings**: All toggles and inputs save and persist after refresh
-- [ ] **Data migration**: Old app data (if any) upgrades cleanly: v1 → v2 → v3, binary goals work unchanged
+### Quotes & Notifications
+- [ ] **Daily Rotation**: Different quote each day (deterministic seed based on date)
+- [ ] **Category Toggle**: Switch between General and Bhagavad Gita quotes
+- [ ] **Custom Quotes**: Add custom quote, verify it appears in rotation
+- [ ] **Notifications**: Grant permission, send quote notification, verify display
+
+### Offline & Persistence
+- [ ] **Offline Loading**: Close network, reload app, data loads correctly
+- [ ] **Offline Logging**: Close network, log a binary habit, count, and duration values
+- [ ] **Persistence**: Reload app with network off, all logged data persists
+- [ ] **Count/Duration Values**: Log count/duration offline, sync on reconnect
+
+### PWA & Installation
+- [ ] **Install**: Chrome > "Install app" works, opens in window
+- [ ] **Widget**: Home screen widget shows daily quote + streak + MITHURA
+- [ ] **Shortcuts**: Quick check-ins shortcut works
+- [ ] **Service Worker**: App loads offline with service worker active
+- [ ] **Cache**: Hard refresh clears cache, SW re-registers
+
+### Data Migration
+- [ ] **Schema v1 → v2**: Old binary habits still work
+- [ ] **Schema v2 → v3**: Goal types added, all habits default to binary (backward compatible)
+- [ ] **New Data**: Count/duration habits created with proper goalType, dailyValueHistory
+- [ ] **No Data Loss**: All existing history, streaks, rewards preserved
+
+### Charts & Visualization
+- [ ] **Weekly Bar Chart**: Shows last 8 weeks, counts days where targets met
+- [ ] **Monthly Area Chart**: Shows last 6 months, counts days where targets met
+- [ ] **Charts Responsive**: Adapt to screen size, readable on mobile
+
+### Settings
+- [ ] **Global MITHURA**: Change per-completion points, daily bonus, streak bonuses
+- [ ] **Gamification Toggle**: Disable/enable, points recalculate correctly
+- [ ] **Notifications Toggle**: Enable/disable web notifications
+- [ ] **Quote Category**: Switch between General and Gita categories
+- [ ] **Persistence**: All settings persist after refresh
 
 ---
 

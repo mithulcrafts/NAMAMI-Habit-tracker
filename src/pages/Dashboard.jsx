@@ -5,6 +5,7 @@ import { DashboardStats } from '../components/DashboardStats'
 import { QuoteCard } from '../components/QuoteCard'
 import { WidgetCard } from '../components/WidgetCard'
 import { GlobalHeatmap } from '../components/GlobalHeatmap'
+import { Heatmap } from '../components/Heatmap'
 import { todayKey } from '../utils/date'
 
 export const Dashboard = ({
@@ -55,6 +56,22 @@ export const Dashboard = ({
       <DashboardStats habits={habits} points={points} bonusDays={bonusDays} />
 
       <GlobalHeatmap habits={habits} />
+
+      {habits.length > 0 && (
+        <div className="grid gap-4 lg:grid-cols-2">
+          {habits.map((habit) => (
+            <Heatmap
+              key={`heatmap-${habit.id}`}
+              history={habit.history}
+              habitColor={habit.habitColor}
+              habitName={habit.name}
+              goalType={habit.goalType}
+              goalTarget={habit.goalTarget}
+              dailyValueHistory={habit.dailyValueHistory}
+            />
+          ))}
+        </div>
+      )}
 
       <div id="checkins" className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-3">
