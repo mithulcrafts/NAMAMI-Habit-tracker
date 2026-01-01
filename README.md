@@ -1,19 +1,99 @@
 # NAMAMI – Offline-First Habit Tracker
 
-A production-ready PWA habit tracker with streaks, MITHURA points, gamification, rewards, daily quotes, and Android home-screen widget support. Built with React + Vite, fully offline-capable, no backend required.
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Built with React](https://img.shields.io/badge/Built%20with-React%2019-61dafb)](https://react.dev) [![Vite](https://img.shields.io/badge/Vite-7.3-646cff)](https://vitejs.dev)
 
-**NEW:** Binary, count-based, and duration-based goal types. Track habits with flexible, measurable targets (read 10 pages, meditate 20 minutes, or simple done/missed). Heatmap system (global + per-habit), optional target days, fully customizable gamification per habit, and global reward management on Dashboard.
+A **production-ready, offline-first PWA** habit tracker that works completely without internet. Features streaks, MITHURA gamification points, flexible goal types, global rewards, daily quotes, heatmap visualization, and Android home-screen widget support. No backend, no accounts, no servers—just pure client-side habit tracking.
+
+### Key Features at a Glance
+- ✅ **Three flexible goal types**: Binary (done/missed), Count-based (10 pages), Duration-based (20 minutes)
+- 🔥 **Dual heatmap system**: Global completion overview + per-habit color-coded calendars
+- 🏆 **MITHURA gamification**: Points, streaks, badges, daily bonus, rewards system
+- 🎨 **8 custom colors**: Choose unique color for each habit's heatmap
+- 💾 **100% offline**: Works completely offline, syncs when reconnected
+- 📱 **PWA + Widget**: Install on any device, add home screen widget
+- 🎯 **Two habit types**: Daily (ongoing) or Target-based (30-day challenges)
+- 📊 **Charts & analytics**: Weekly/monthly completion trends
+
+---
+
+## 📥 Installation & Quick Start
+
+### Prerequisites
+- **Node.js** 18+ 
+- **npm** 9+ or **yarn**
+- Modern browser (Chrome 90+, Edge 90+, Safari 15+, Firefox 88+)
+
+### Setup (Local Development)
+
+```bash
+# Clone repository
+git clone https://github.com/yourusername/namami.git
+cd namami
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+The app will be available at:
+- **Local**: `http://localhost:5173`
+- **Network**: `http://YOUR_IP:5173` (for mobile testing on same WiFi)
+
+### Deployment Options
+
+#### GitHub Pages (Recommended for Free Hosting)
+```bash
+npm run build
+# Push to GitHub, enable Pages in repo settings
+```
+See [Deployment Guide](#deployment) below.
+
+#### Vercel (Fastest, Automatic HTTPS)
+```bash
+npm install -g vercel
+vercel
+```
+
+#### Netlify
+```bash
+npm run build
+# Drag `dist` folder to netlify.com/drop
+```
+
+#### Self-Hosted
+```bash
+npm run build
+# Deploy `dist` folder to any static host
+```
 
 ---
 
 ## 🚀 Quick Start
 
+### First Time Setup
 ```bash
 npm install
 npm run dev
 ```
 
-Visit the local URL printed in terminal. Use Chrome/Edge > **Install app** to install as PWA.
+### Mobile Testing (Same Network)
+1. Get your laptop IP: `ipconfig` (Windows) or `ifconfig` (Mac/Linux)
+2. On mobile browser: `http://YOUR_IP:5173`
+3. Tap menu → "Add to Home Screen" for PWA experience
+
+### Install as PWA
+
+**Desktop (Chrome/Edge)**:
+1. Open app in browser
+2. Click "Install app" prompt (or menu > Install)
+3. App opens in window
+
+**Mobile**:
+- **Android (Chrome)**: Menu → "Install app"
+- **iOS (Safari)**: Share → "Add to Home Screen"
+- **Note**: Requires HTTPS (works on deployed apps, not local)
 
 ---
 
@@ -842,5 +922,343 @@ To extend NAMAMI:
 
 ---
 
-**Built with ❤️ for habit builders everywhere.**
-**Last updated:** January 2026 – Binary, count-based, and duration-based goal types with flexible tracking. Full schema v3 migration with backward compatibility.
+## 📤 Deployment Guide
+
+### GitHub Pages (Recommended - Free, Automatic HTTPS)
+
+1. **Update `vite.config.js`**:
+```js
+export default defineConfig({
+  base: '/your-repo-name/',
+  plugins: [react()],
+})
+```
+
+2. **Build and deploy**:
+```bash
+npm run build
+git add -A
+git commit -m "Deploy to GitHub Pages"
+git push origin main
+```
+
+3. **Enable Pages in GitHub**:
+   - Go to Repo Settings → Pages
+   - Source: "Deploy from a branch"
+   - Branch: `main` (or `gh-pages`)
+   - Save
+
+Your app will be live at: `https://yourusername.github.io/your-repo-name/`
+
+**Auto-deploy with GitHub Actions**:
+
+Create `.github/workflows/deploy.yml`:
+```yaml
+name: Deploy to GitHub Pages
+on:
+  push:
+    branches: [main]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+      - run: npm ci && npm run build
+      - uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./dist
+```
+
+Every push to main will automatically deploy!
+
+### Vercel (Zero Config, Fastest)
+
+```bash
+npm install -g vercel
+vercel
+```
+
+Follow prompts. Auto HTTPS, edge caching, analytics included.
+
+### Netlify (Drag & Drop)
+
+```bash
+npm run build
+```
+
+Visit [netlify.com/drop](https://netlify.com/drop) and drag the `dist` folder.
+
+Or connect your GitHub repo for auto-deploys on each push.
+
+### Self-Hosted (VPS/Cloud)
+
+```bash
+npm run build
+# Deploy dist/ folder to any static web host
+```
+
+Example nginx config:
+```nginx
+server {
+    listen 80;
+    server_name your-domain.com;
+    root /var/www/namami/dist;
+    
+    location / {
+        try_files $uri /index.html;
+    }
+}
+```
+
+---
+
+## 💻 Development
+
+### Setup
+
+```bash
+npm install
+npm run dev
+```
+
+Dev server runs at `http://localhost:5173` with HMR (hot reload).
+
+### Build for Production
+
+```bash
+npm run build           # Creates optimized dist/ folder
+npm run preview        # Preview production build locally
+npm run lint           # Check for linting errors (ESLint)
+```
+
+### Project Structure
+
+```
+src/
+├── context/AppContext.jsx      # Global state + storage
+├── pages/                       # Full page components
+├── components/                  # Reusable UI components
+├── utils/                       # Helpers (dates, notifications)
+├── data/                        # Static data (quotes)
+├── App.jsx                      # App shell
+├── main.jsx                     # Entry + SW registration
+└── index.css                    # Tailwind + custom utilities
+
+public/
+├── manifest.webmanifest         # PWA metadata
+├── service-worker.js            # Offline caching
+└── icons/                       # App icons
+
+vite.config.js                  # Vite configuration
+tailwind.config.js              # Tailwind theme
+```
+
+### Key Dependencies
+
+- **React 19**: UI framework
+- **Vite 7**: Build tool with lightning-fast HMR
+- **Recharts**: Weekly/monthly charts
+- **react-calendar-heatmap**: Heatmap visualization
+- **localforage**: IndexedDB abstraction for offline storage
+- **Tailwind CSS 3.4**: Utility-first CSS
+- **ESLint**: Code quality checking
+
+---
+
+## 🐛 Troubleshooting
+
+| Problem | Solution |
+|---------|----------|
+| Heatmap not rendering | Hard refresh (Ctrl+Shift+R), check dates in ISO format (YYYY-MM-DD) |
+| Service Worker cached old code | Clear browser cache, hard refresh, DevTools > Application > Delete SW |
+| Data not persisting | Check IndexedDB in DevTools, verify localforage working |
+| Mobile can't reach localhost | Use Network IP (e.g., http://192.168.1.5:5173), ensure same WiFi |
+| PWA install unavailable | Requires HTTPS (works on deployed apps, not local IPs) |
+| Progress bar at 0% | Verify habit type and goal target; check history has completions |
+| Custom MITHURA not applying | Enable "Use custom MITHURA" toggle on Habit Detail page |
+| Streak not incrementing | Check that target was met; streaks only increment on completion |
+| Count/Duration not saving | Verify input is a number; click Log button (Enter key doesn't work) |
+| Notifications not working | Grant permission when prompted; enable in app Settings |
+| Quote not changing daily | Clear cache if you changed system date |
+| Theme colors not applying | Verify `habitColor` is valid hex code (#RRGGBB); hard refresh |
+
+---
+
+## ✅ Testing Checklist
+
+### Habit Management
+- [ ] **Create**: All three types (binary, count, duration) with color picker
+- [ ] **Edit**: Change all fields without losing history
+- [ ] **Delete**: Habit removed; heatmap history retained
+- [ ] **Daily log**: Toggle binary, input count/duration, verify feedback
+
+### Streaks & Progress
+- [ ] **Streak increments**: Only when target met
+- [ ] **Streak resets**: When target missed (not partial progress)
+- [ ] **Progress bars**: Show correct % for all habit types
+
+### Heatmaps
+- [ ] **Global heatmap**: Color intensity matches completion count
+- [ ] **Per-habit heatmaps**: Show in correct colors, 120-day view
+- [ ] **Real-time update**: Refresh on habit log
+
+### Gamification
+- [ ] **MITHURA awards**: Added on completion
+- [ ] **Streak bonuses**: Unlock at 3/7/30 days
+- [ ] **Daily bonus**: +20 when all habits complete
+- [ ] **Custom per-habit**: Override global values
+- [ ] **Badges**: Display with glow effect when earned
+
+### Rewards
+- [ ] **Create/Edit/Delete**: Full CRUD operations
+- [ ] **Claim**: Button appears at threshold
+- [ ] **History**: Persists after deletion
+
+### Settings
+- [ ] **Global MITHURA**: Adjustments apply to all habits
+- [ ] **Quote category**: Switch General ↔ Gita
+- [ ] **Gamification toggle**: Disable/enable works
+- [ ] **Notifications**: Toggle on/off
+
+### Offline & PWA
+- [ ] **Offline mode**: Disconnect network, app still works
+- [ ] **Data persists**: Reload while offline, data remains
+- [ ] **Service Worker**: Active in DevTools
+- [ ] **"Add to Home Screen"**: Creates home screen icon
+- [ ] **Widget**: Shows quote + streak + MITHURA
+
+### Cross-Browser
+- [ ] Chrome/Edge: All features
+- [ ] Safari: All features (desktop + mobile)
+- [ ] Firefox: All features
+- [ ] Mobile browsers: Touch interactions, installation
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions! Here's how:
+
+1. **Fork** the repository
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Make your changes** with clear commit messages
+4. **Test thoroughly** (desktop, mobile, offline)
+5. **Push your branch**: `git push origin feature/amazing-feature`
+6. **Open a Pull Request** with description of changes
+
+### Code Guidelines
+
+- Use ES6+ syntax
+- Keep components under 400 lines
+- Add comments for complex logic
+- Follow existing code style
+- Test on multiple devices/browsers
+
+### Reporting Issues
+
+Open an [Issue](https://github.com/yourusername/namami/issues) with:
+- Clear description
+- Steps to reproduce
+- Screenshots if applicable
+- Browser/device info
+
+---
+
+## 📄 License
+
+MIT License – Use freely in commercial and personal projects.
+
+See [LICENSE](LICENSE) file for full text.
+
+---
+
+## 🎉 Acknowledgments
+
+Built with incredible open-source tools:
+- **React 19** – UI library
+- **Vite 7** – Build tool
+- **Tailwind CSS** – Styling
+- **Recharts** – Charts
+- **react-calendar-heatmap** – Heatmaps
+- **localforage** – Storage abstraction
+
+---
+
+## 📞 Get in Touch
+
+Questions, suggestions, or just want to say hi?
+
+- **GitHub Issues**: [Report bugs or request features](https://github.com/yourusername/namami/issues)
+- **GitHub Discussions**: [Chat and ideas](https://github.com/yourusername/namami/discussions)
+- **Email**: your-email@example.com
+
+---
+
+## 🚀 Habit Tracking Best Practices
+
+### Getting Started
+1. Start with 1-3 habits
+2. Make them specific: "30-minute run" not "exercise"
+3. Track daily
+4. Review streaks weekly in Habit Detail
+
+### Building Momentum
+- Use heatmaps to spot patterns
+- Celebrate badges
+- Claim rewards regularly
+- Customize MITHURA rewards for motivation
+
+### Advanced Usage
+- Mix all three goal types
+- Use target-based for challenges
+- Create color-coded habit groups
+- Export data (coming soon)
+
+---
+
+## Quick Reference Tables
+
+### Habit Types Comparison
+| Feature | Daily | Target-Based |
+|---------|-------|--------------|
+| Duration | ∞ | Fixed (e.g., 30 days) |
+| Form UI | No target input | Shows target days |
+| Badge | Hidden | "Target: 30 days" |
+| Use Case | Routines | Challenges |
+| Example | "Meditate" | "30-day fitness challenge" |
+
+### Goal Types Comparison
+| Type | Input | Streak Logic | Points | Example |
+|------|-------|--------------|--------|---------|
+| Binary | Done/Missed | Done → +1 day | On completion | "Wake at 6am" |
+| Count | Number | If ≥ target | Only if met | "Read 10 pages" |
+| Duration | Minutes | If ≥ target | Only if met | "Exercise 30 min" |
+
+### MITHURA Scoring
+| Event | Points (Default) | Customizable |
+|-------|------------------|--------------|
+| Completion | +10 | Per habit |
+| All done (daily) | +20 | Global |
+| 3-day streak | +2 | Global |
+| 7-day streak | +5 | Global |
+| 30-day streak | +10 | Global |
+
+---
+
+**Made with 🔥 for habit builders everywhere.**
+
+**Last updated**: January 2026 – Complete with binary, count-based, and duration-based goal types. Full schema v3 with backward compatibility. Global rewards system. Comprehensive deployment and development documentation.
+
+---
+
+### 🌟 Star us on GitHub!
+
+If NAMAMI helps you build better habits, please consider [starring the repo](https://github.com/yourusername/namami) ⭐
+
+Your support helps us reach more habit builders!
+
+
