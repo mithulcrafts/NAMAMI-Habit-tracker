@@ -1,11 +1,21 @@
 import CalendarHeatmap from 'react-calendar-heatmap'
 import 'react-calendar-heatmap/dist/styles.css'
-import { getPastDate } from '../utils/date'
 
 export const GlobalHeatmap = ({ habits }) => {
   const endDate = new Date()
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - 120)
+
+  // Convert dates to YYYY-MM-DD string format
+  const formatDateString = (d) => {
+    const year = d.getFullYear()
+    const month = String(d.getMonth() + 1).padStart(2, '0')
+    const day = String(d.getDate()).padStart(2, '0')
+    return `${year}-${month}-${day}`
+  }
+
+  const endDateStr = formatDateString(endDate)
+  const startDateStr = formatDateString(startDate)
 
   // Aggregate all habits per date
   const aggregated = {}
@@ -18,7 +28,6 @@ export const GlobalHeatmap = ({ habits }) => {
         const value = habit.dailyValueHistory?.[date] ?? 0
         isMet = value >= (habit.goalTarget || 1)
       }
-      
       if (isMet) aggregated[date] = (aggregated[date] || 0) + 1
     })
   })
@@ -36,8 +45,8 @@ export const GlobalHeatmap = ({ habits }) => {
       </div>
       <div className="mt-2 overflow-x-auto">
         <CalendarHeatmap
-          startDate={startDate}
-          endDate={endDate}
+          startDate={startDateStr}
+          endDate={endDateStr}
           values={values}
           classForValue={(val) => {
             if (!val || !val.count) return 'color-empty'
