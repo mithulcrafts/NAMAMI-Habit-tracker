@@ -7,7 +7,7 @@ import { WidgetCard } from '../components/WidgetCard'
 import { GlobalHeatmap } from '../components/GlobalHeatmap'
 import { Heatmap } from '../components/Heatmap'
 import { Rewards } from '../components/Rewards'
-import { todayKey } from '../utils/date'
+import { todayKey, formatDate } from '../utils/date'
 
 export const Dashboard = ({
   habits,
@@ -29,7 +29,51 @@ export const Dashboard = ({
   onDeleteReward,
 }) => {
   const [editing, setEditing] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const today = todayKey()
+  const selectedDateKey = formatDate(selectedDate)
+  const isToday = selectedDateKey === today
+  const selectedDateDisplay = selectedDate.toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+  const relativeLabel = (() => {
+    const todayDate = new Date(today)
+    const diffDays = Math.round((todayDate - new Date(selectedDateKey)) / 86400000)
+    if (diffDays === 0) return 'Today'
+    if (diffDays === 1) return 'Yesterday'
+    if (diffDays > 1) return `${diffDays} days ago`
+    return 'Upcoming'
+  })()
+
+  const handlePreviousDay = () => {
+    setSelectedDate(prev => {
+      const newDate = new Date(prev)
+      newDate.setDate(newDate.getDate() - 1)
+      return newDate
+    })
+  }
+
+  const handleNextDay = () => {
+    setSelectedDate(prev => {
+      const newDate = new Date(prev)
+      newDate.setDate(newDate.getDate() + 1)
+      return newDate
+    })
+  }
+
+  const handleToday = () => {
+    setSelectedDate(new Date())
+  }
+
+  const handleDateChange = (value) => {
+    if (!value) return
+    const parsed = new Date(value)
+    if (Number.isNaN(parsed.getTime())) return
+    setSelectedDate(parsed)
+  }
 
   const sortedHabits = useMemo(
     () =>
@@ -59,6 +103,48 @@ export const Dashboard = ({
         </div>
       </div>
 
+      <div className="glass rounded-xl p-4">
+        <div className="flex w-full items-center gap-3">
+          <button
+            onClick={handlePreviousDay}
+            className="h-10 shrink-0 rounded-lg border border-white/10 px-4 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5"
+          >
+            ←
+          </button>
+
+          <div className="flex flex-1 items-center justify-center gap-3 text-center">
+            <div className="flex flex-col">
+              <span className="text-[11px] uppercase tracking-[0.18em] text-brand-100">Date</span>
+              <span className="text-base font-semibold text-white leading-tight">{selectedDateDisplay}</span>
+            </div>
+            <label className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-900/70 text-white shadow-soft cursor-pointer hover:border-white/30">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-4 w-4 pointer-events-none">
+                <rect x="3" y="5" width="18" height="16" rx="2" ry="2" />
+                <line x1="16" y1="3" x2="16" y2="7" />
+                <line x1="8" y1="3" x2="8" y2="7" />
+                <line x1="3" y1="11" x2="21" y2="11" />
+              </svg>
+              <input
+                aria-label="Select date"
+                type="date"
+                max={today}
+                value={selectedDateKey}
+                onChange={(e) => handleDateChange(e.target.value)}
+                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+              />
+            </label>
+          </div>
+
+          <button
+            onClick={handleNextDay}
+            disabled={isToday}
+            className="h-10 shrink-0 rounded-lg border border-white/10 px-4 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            →
+          </button>
+        </div>
+      </div>
+
       <DashboardStats habits={habits} points={points} bonusDays={bonusDays} />
 
       <GlobalHeatmap habits={habits} />
@@ -85,6 +171,10 @@ export const Dashboard = ({
             <HabitCard
               key={habit.id}
               habit={habit}
+              selectedDateKey={selectedDateKey}
+              isToday={isToday}
+              selectedDateLabel={selectedDateDisplay}
+              relativeLabel={relativeLabel}
               onToggle={onToggle}
               onOpen={onOpenHabit}
               onEdit={(h) => setEditing(h)}

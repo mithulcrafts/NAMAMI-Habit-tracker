@@ -1,21 +1,25 @@
 import { useState } from 'react'
 import { todayKey } from '../utils/date'
 
-export const HabitCard = ({ habit, onToggle, onOpen, onEdit, onDelete }) => {
+export const HabitCard = ({ habit, selectedDateKey, isToday, selectedDateLabel, relativeLabel, onToggle, onOpen, onEdit, onDelete }) => {
   const today = todayKey()
   const [valueInput, setValueInput] = useState('')
   
-  const doneToday = habit.history?.[today]
+  // Use selectedDateKey instead of today
+  const dateKey = selectedDateKey || today
+  const friendlyLabel = selectedDateLabel || dateKey
+  const relative = relativeLabel || (isToday ? 'Today' : 'Selected date')
+  const doneToday = habit.history?.[dateKey]
   const completion = Math.min(100, Math.round((habit.totalCompleted / habit.targetDays) * 100)) || 0
   
-  // For count/duration, get today's value
-  const todayValue = habit.dailyValueHistory?.[today] ?? null
+  // For count/duration, get the selected date's value
+  const todayValue = habit.dailyValueHistory?.[dateKey] ?? null
   const goalMet = habit.goalType === 'binary' ? doneToday : (todayValue ?? 0) >= (habit.goalTarget || 1)
 
   const handleSubmitValue = () => {
     if (valueInput === '' || isNaN(valueInput)) return
     const value = Number(valueInput)
-    onToggle(habit.id, today, value >= (habit.goalTarget || 1), value)
+    onToggle(habit.id, dateKey, value >= (habit.goalTarget || 1), value)
     setValueInput('')
   }
 
@@ -26,6 +30,15 @@ export const HabitCard = ({ habit, onToggle, onOpen, onEdit, onDelete }) => {
           <p className="text-xs uppercase tracking-widest text-brand-200">{habit.frequency}</p>
           <h3 className="text-lg font-semibold text-white">{habit.name}</h3>
           <p className="text-sm text-slate-300">{habit.description}</p>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-300">
+            <span className="rounded-full border border-white/10 bg-slate-900/60 px-2.5 py-1 font-semibold text-white">
+              {friendlyLabel}
+            </span>
+            <span className="rounded-full bg-brand-500/20 px-2.5 py-1 font-semibold text-brand-50">{relative}</span>
+            {!isToday && (
+              <span className="rounded-full bg-amber-500/15 px-2 py-1 font-semibold text-amber-100">Editing past day</span>
+            )}
+          </div>
         </div>
         <div className="flex gap-2">
           <button
@@ -66,12 +79,12 @@ export const HabitCard = ({ habit, onToggle, onOpen, onEdit, onDelete }) => {
       <div className="mt-3 flex flex-col gap-2">
         {habit.goalType === 'binary' ? (
           <button
-            onClick={() => onToggle(habit.id, today, !doneToday)}
+            onClick={() => onToggle(habit.id, dateKey, !doneToday)}
             className={`rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-soft transition ${
               doneToday ? 'bg-emerald-500 hover:bg-emerald-400' : 'bg-slate-800 hover:bg-slate-700'
             }`}
           >
-            {doneToday ? 'Completed today' : 'Mark done today'}
+            {doneToday ? (isToday ? 'Completed today' : 'Completed') : (isToday ? 'Mark done today' : 'Mark done')}
           </button>
         ) : (
           <div className="flex gap-2">

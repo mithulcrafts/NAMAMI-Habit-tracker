@@ -141,6 +141,11 @@ Choose how you want to measure progress:
   - Shows visual feedback: "7 / 10 completed" with ✓ indicator when target met
   - Partial progress shown (e.g., "7 / 10" even if 7 < 10)
 
+**Date navigation & backfill**:
+- Single top bar with left/right arrows flanking a centered date; calendar icon opens a date picker (future dates blocked)
+- Quickly jump to any past day, then mark or log values for that specific date; changes stay scoped to the selected date
+- Habit cards mirror the selected date context so it is clear which day you are editing
+
 **Color Customization**:
 - Choose from 8 preset colors when creating/editing a habit
 - Color used in per-habit heatmap on Dashboard
