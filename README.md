@@ -554,10 +554,11 @@ reward = {
    - Partial progress NOT shown (but tracked for future reference)
 
 ### Offline Strategy
-- **Service Worker**: Precaches index.html, manifest, icons, service worker itself
-- **Network-first with fallback**: Fetch assets, fall back to cache
-- **IndexedDB**: All app state stored locally; no server calls needed
-- **Notifications**: Queued locally if no internet
+- **Service Worker (auto-refresh)**: Versioned caches; precaches shell assets (`/`, manifest, icons); installs with `skipWaiting` + `clientsClaim` and triggers a one-time client refresh so new deploys show without manual hard reloads.
+- **Navigation = network-first**: HTML/navigation requests fetched with `cache: 'no-store'`, cached as fallback; offline returns the cached shell.
+- **Assets = stale-while-revalidate**: Cached assets served instantly while the service worker refreshes them in the background.
+- **IndexedDB**: All app state stored locally; no server calls needed.
+- **Notifications**: Queued locally if no internet.
 
 ### Data Migration (Built-in)
 - Schema version tracked in IndexedDB (currently v3)
@@ -656,7 +657,8 @@ const getHabitColor = (id) => {
 ## 🔐 Storage Details
 
 **IndexedDB via localforage**
-- **Single store key**: `namami-state-v1`
+- **Canonical key**: `namami-state-v1` (with legacy fallbacks auto-read and re-saved to the canonical key to preserve old installs)
+- **Config**: Stable database name `namami`, storeName `state` for consistent persistence across releases
 - **Schema version**: Tracked for safe migrations (currently v3)
 - **Stored object**:
   ```javascript
@@ -670,13 +672,14 @@ const getHabitColor = (id) => {
   }
   ```
 - **Sync**: Auto-saved after every state change
-- **Init**: App checks IndexedDB on mount; uses defaults if empty
-- **Migration**: Automatic data upgrade if schema version changes
+- **Init**: Attempts legacy keys first, migrates if needed, and re-saves to canonical key; defaults used if empty
+- **Migration**: Automatic data upgrade if schema version changes; data is retained across deployments
 
 **Service Worker Cache**
-- **Cache name**: `namami-cache-v1`
-- **Precache**: `index.html`, `/`, manifest, icons, SW itself
-- **On fetch**: Match cache → fetch → update cache → fallback to offline URL
+- **Versioned caches per deploy**: Names are generated per build to avoid stale assets
+- **Navigation strategy**: Network-first `no-store` for HTML with cached fallback for offline use
+- **Asset strategy**: Stale-while-revalidate; cached response first, background refresh
+- **Client refresh**: New service worker claims clients and triggers a one-time reload so the latest bundle is shown automatically
 
 ---
 
@@ -988,6 +991,10 @@ vercel
 ```
 
 Follow prompts. Auto HTTPS, edge caching, analytics included.
+
+**Fresh HTML on every deploy (no manual hard refresh):**
+- The repo includes `vercel.json` that sets `Cache-Control: no-cache, no-store, must-revalidate` for `/` and `/index.html` so the service worker sees the latest shell on each release.
+- After deploy, the service worker auto-updates clients and triggers a one-time reload so mobile users get new code without clearing cache.
 
 ### Netlify (Drag & Drop)
 

@@ -11,6 +11,7 @@ import {
 } from '../utils/date'
 
 const STORAGE_KEY = 'namami-state-v1'
+const STORAGE_FALLBACK_KEYS = ['namami-state-v1', 'namami-state']
 const SCHEMA_VERSION = 3
 
 // Helper to generate deterministic color from habit ID
@@ -177,6 +178,8 @@ const pickQuote = (category, customQuotes, daySeed) => {
 }
 
 export const AppProvider = ({ children }) => {
+  localforage.config({ name: 'namami', storeName: 'state' }) // Keep storage location stable across releases
+
   const [state, setState] = useState({
     habits: defaultHabits,
     rewards: defaultRewards,
@@ -221,15 +224,25 @@ export const AppProvider = ({ children }) => {
   }
 
   useEffect(() => {
-    localforage
-      .getItem(STORAGE_KEY)
-      .then((saved) => {
-        if (saved) {
-          const migrated = migrateData(saved)
-          setState(migrated || state)
+    const load = async () => {
+      try {
+        for (const key of STORAGE_FALLBACK_KEYS) {
+          const saved = await localforage.getItem(key)
+          if (saved) {
+            const migrated = migrateData(saved)
+            setState(migrated || saved)
+            if (key !== STORAGE_KEY) {
+              await localforage.setItem(STORAGE_KEY, migrated || saved)
+            }
+            break
+          }
         }
-      })
-      .finally(() => setLoading(false))
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    load()
   }, [])
 
   useEffect(() => {
