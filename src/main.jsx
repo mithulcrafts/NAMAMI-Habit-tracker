@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
 
+// Global state for install prompt
+let installPrompt = null
+
 const enableServiceWorker = () => {
   if ('serviceWorker' in navigator) {
     // In dev: unregister old SWs to prevent caching issues
@@ -22,7 +25,35 @@ const enableServiceWorker = () => {
   }
 }
 
+const enableInstallPrompt = () => {
+  // Capture the install prompt
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault()
+    installPrompt = e
+    console.log('Install prompt captured')
+    // Dispatch custom event so React can listen
+    window.dispatchEvent(new CustomEvent('installPromptReady', { detail: { prompt: e } }))
+  })
+
+  // Clear the prompt if app is installed
+  window.addEventListener('appinstalled', () => {
+    console.log('App was installed')
+    installPrompt = null
+  })
+}
+
 enableServiceWorker()
+enableInstallPrompt()
+
+// Make install prompt available globally
+window.triggerInstall = async () => {
+  if (installPrompt) {
+    installPrompt.prompt()
+    const { outcome } = await installPrompt.userChoice
+    console.log(`User response to install prompt: ${outcome}`)
+    installPrompt = null
+  }
+}
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

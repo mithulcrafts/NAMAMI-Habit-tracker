@@ -10,7 +10,7 @@ A **production-ready, offline-first PWA** habit tracker that works completely wi
 - 🏆 **MITHURA gamification**: Points, streaks, badges, daily bonus, rewards system
 - 🎨 **8 custom colors**: Choose unique color for each habit's heatmap
 - 💾 **100% offline**: Works completely offline, syncs when reconnected
-- 📱 **PWA + Widget**: Install on any device, add home screen widget
+- 📱 **PWA with home screen widget**: Install on any device, add live widget showing quotes and stats
 - 🎯 **Two habit types**: Daily (ongoing) or Target-based (30-day challenges)
 - 📊 **Charts & analytics**: Weekly/monthly completion trends
 
@@ -91,13 +91,44 @@ npm run dev
 3. App opens in window
 
 **Mobile**:
-- **Android (Chrome)**: Menu → "Install app"
+- **Android (Chrome)**: Menu → "Install app" or click "Add to Home Screen" button in Widget section
 - **iOS (Safari)**: Share → "Add to Home Screen"
 - **Note**: Requires HTTPS (works on deployed apps, not local)
+
+### Add Home Screen Widget (Android PWA)
+
+After installing the app as a PWA, you can add a widget to your home screen:
+
+1. **Install the app first** (see PWA installation above)
+2. Once installed, **long-press your home screen**
+3. Tap **"Widgets"**
+4. Find and select **"NAMAMI Widget"** or **"Habit Tracker"**
+5. Drag it to your home screen
+6. The widget displays:
+   - 📌 Your daily quote
+   - 🔥 Current streak
+   - 🏆 MITHURA points
+   - 📊 Works completely offline
+
+**Widget Features**:
+- ✅ Multiple sizes supported (1x1, 1x2, 2x1, 2x2)
+- ✅ Updates with your latest data
+- ✅ Works offline with cached data
+- ✅ Tap to open the full app
 
 ---
 
 ## ✨ Features
+
+### PWA & Home Screen Widget
+- 📱 **Progressive Web App**: Install on desktop, tablet, and mobile
+- 🏡 **Home Screen Widget**: Add a live widget to your Android home screen showing:
+  - Daily motivational quote
+  - Current habit streak
+  - MITHURA points balance
+- 📴 **Works offline**: All data cached, widget updates when reconnected
+- ⚡ **Multiple widget sizes**: Adaptive 1x1, 1x2, 2x1, and 2x2 layouts
+- 🔄 **Auto-sync**: Data syncs across devices when online
 
 ### 1. Habit Management
 
@@ -307,13 +338,48 @@ Badges persist and display with visual styling (glow effect when unlocked).
 - **Settings**: Switch quote category in dashboard
 
 ### 7. PWA Installation & Widget
-- **Install on laptop/mobile**: *Install app* prompt in Chrome/Chromium
-- **Home screen widget**: Shows:
-  - Quote of the day
-  - Current longest streak
-  - Total MITHURA points
-- **App shortcuts**: Quick links to check-ins and widget via manifest
+
+#### Progressive Web App Installation
+- **Install on laptop/mobile**: Click *Install app* prompt in Chrome/Chromium/Edge or Menu → Install
+- **Home screen icon**: App launches in standalone mode (no browser UI)
+- **App shortcuts**: Quick links via manifest to:
+  - Quick check-ins page
+  - Widget page
+  - Add new habit
 - **Offline-first**: Service worker precaches shell; works without internet
+- **iOS support**: Share → "Add to Home Screen" on Safari
+- **Android support**: Menu → "Install app" or dedicated button in Widget section
+
+#### Home Screen Widget (Android)
+After installing the app, add a live widget to your home screen:
+
+**Widget Display**:
+- 📌 Daily motivational quote (refreshed daily)
+- 🔥 Your current longest habit streak (in days)
+- 🏆 Total MITHURA points earned
+- Responsive with multiple size options
+
+**Widget Sizes**:
+- 1×1 (compact, landscape or portrait)
+- 1×2 (tall, shows all stats vertically)
+- 2×1 (wide, shows all stats horizontally)
+- 2×2 (large, full layout with padding)
+
+**Technical Implementation**:
+- Defined in `manifest.webmanifest` with `"widgets"` array
+- Each size configuration specified with `"sizes"` property
+- Widget tag: `"namami-widget"`
+- Can be launched with `?widget=true` parameter
+- Data persisted in IndexedDB (works offline)
+- Updates automatically when app data changes
+
+**How to Add on Android**:
+1. Install app as PWA (see above)
+2. Long-press home screen
+3. Tap "Widgets"
+4. Find "NAMAMI Widget" or "Habit Tracker"
+5. Drag desired size to home screen
+6. Widget appears with your current stats
 
 ### 8. Settings Page
 
