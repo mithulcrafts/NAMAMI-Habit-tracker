@@ -1,8 +1,14 @@
 import { useState } from 'react'
 
-export const Rewards = ({ rewards, points, onAdd, onClaim, onUpdate, onDelete }) => {
+export const Rewards = ({ rewards, claimedRewards, points, onAdd, onClaim, onUpdate, onDelete }) => {
   const [form, setForm] = useState({ name: '', requiredPoints: 50 })
   const [editing, setEditing] = useState(null)
+  const [confirmingId, setConfirmingId] = useState(null)
+
+  const claimCounts = {}
+  ;(claimedRewards || []).forEach((entry) => {
+    claimCounts[entry.rewardId] = (claimCounts[entry.rewardId] || 0) + 1
+  })
 
   const handleSubmit = (e) => {
     e.preventDefault()
@@ -28,44 +34,71 @@ export const Rewards = ({ rewards, points, onAdd, onClaim, onUpdate, onDelete })
       <h3 className="text-sm font-semibold text-white">Rewards</h3>
       <div className="grid gap-3 sm:grid-cols-2">
         {rewards.map((reward) => {
-          const available = points >= reward.requiredPoints && !reward.claimed
+          const available = points >= reward.requiredPoints
+          const claimCount = claimCounts[reward.id] || 0
           return (
             <div key={reward.id} className="rounded-lg border border-white/5 bg-slate-900/70 p-3">
               <div className="flex items-start justify-between gap-2">
                 <div>
                   <p className="text-base font-semibold text-white">{reward.name}</p>
                   <p className="text-sm text-slate-300">{reward.requiredPoints} MITHURA</p>
-                </div>
-                <div className="flex gap-1">
-                  {!reward.claimed && (
-                    <>
-                      <button
-                        onClick={() => handleEdit(reward)}
-                        className="rounded-md border border-white/10 px-2 py-1 text-xs text-slate-300 hover:border-white/30"
-                      >
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => onDelete(reward.id)}
-                        className="rounded-md border border-white/10 px-2 py-1 text-xs text-red-400 hover:border-red-500/30"
-                      >
-                        Remove
-                      </button>
-                    </>
+                  {claimCount > 0 && (
+                    <p className="text-xs text-emerald-300">Claimed {claimCount}x</p>
                   )}
                 </div>
+                <div className="flex gap-1">
+                  <button
+                    onClick={() => handleEdit(reward)}
+                    className="rounded-md border border-white/10 px-2 py-1 text-xs text-slate-300 hover:border-white/30"
+                  >
+                    Edit
+                  </button>
+                  <button
+                    onClick={() => onDelete(reward.id)}
+                    className="rounded-md border border-white/10 px-2 py-1 text-xs text-red-400 hover:border-red-500/30"
+                  >
+                    Remove
+                  </button>
+                </div>
               </div>
-              <button
-                disabled={!available}
-                onClick={() => onClaim(reward.id)}
-                className={`mt-2 w-full rounded-md px-3 py-1 text-xs font-semibold text-white ${
-                  available
-                    ? 'bg-emerald-500 hover:bg-emerald-400'
-                    : 'bg-slate-800 text-slate-400'
-                }`}
-              >
-                {reward.claimed ? 'Claimed' : available ? 'Claim now' : `${reward.requiredPoints - points} left`}
-              </button>
+              <div className="mt-2">
+                {confirmingId === reward.id ? (
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-md border border-emerald-500/30 bg-emerald-500/10 p-2">
+                    <p className="text-xs text-emerald-200">
+                      Confirm spend {reward.requiredPoints} MITHURA for "{reward.name}"?
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          onClaim(reward.id)
+                          setConfirmingId(null)
+                        }}
+                        className="rounded-md bg-emerald-500 px-3 py-1 text-xs font-semibold text-white hover:bg-emerald-400"
+                      >
+                        Confirm
+                      </button>
+                      <button
+                        onClick={() => setConfirmingId(null)}
+                        className="rounded-md border border-white/10 px-3 py-1 text-xs text-slate-200 hover:border-white/30"
+                      >
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <button
+                    disabled={!available}
+                    onClick={() => setConfirmingId(reward.id)}
+                    className={`w-full rounded-md px-3 py-1 text-xs font-semibold text-white ${
+                      available
+                        ? 'bg-emerald-500 hover:bg-emerald-400'
+                        : 'bg-slate-800 text-slate-400'
+                    }`}
+                  >
+                    {available ? 'Claim now' : `${Math.max(reward.requiredPoints - points, 0)} left`}
+                  </button>
+                )}
+              </div>
             </div>
           )
         })}

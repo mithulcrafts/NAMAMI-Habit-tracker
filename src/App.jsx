@@ -10,8 +10,11 @@ const Shell = () => {
     loading,
     habits,
     points,
+    lifetimePoints,
+    pointsSpent,
     bonusDays,
     rewards,
+    claimedRewards,
     quoteOfDay,
     settings,
     addHabit,
@@ -57,6 +60,9 @@ const Shell = () => {
           quoteOfDay={quoteOfDay}
           settings={settings}
           rewards={rewards}
+          claimedRewards={claimedRewards}
+          lifetimePoints={lifetimePoints}
+          pointsSpent={pointsSpent}
           onCategoryChange={(category) => updateSettings({ quoteCategory: category })}
           onAddCustomQuote={addCustomQuote}
           onAddHabit={addHabit}
@@ -73,7 +79,7 @@ const Shell = () => {
         {selectedHabit && (
           <HabitDetail
             habit={selectedHabit}
-            points={points}
+            points={lifetimePoints}
             globalSettings={settings}
             onUpdateHabitGamification={updateHabitGamification}
             onClose={() => setOpenHabitId(null)}

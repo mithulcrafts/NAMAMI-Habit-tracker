@@ -273,7 +273,14 @@ Override global defaults for specific habits:
 1. Base points: (days where target met × points-per-habit)
 2. Daily bonus: +20 MITHURA if ALL habits meet daily targets (global only)
 3. Streak bonus: +bonus amount based on longest streak
-4. **Total MITHURA** = base + daily bonus + streak bonus
+4. **Lifetime MITHURA** = base + daily bonus + streak bonus
+5. **Available balance** = lifetime MITHURA − total spent on rewards
+
+**Points display**:
+- Dashboard stats show "MITHURA balance" (available to spend)
+- Tooltip shows: "Earned X · Spent Y · Bonuses on Z days"
+- Badges unlock based on lifetime MITHURA (unaffected by spending)
+- Rewards check available balance (not lifetime) to determine if claimable
 
 **Badge system** (auto-unlocked):
 - 🏅 3-day Streak (3+ days of meeting all daily targets)
@@ -295,7 +302,7 @@ Badges persist and display with visual styling (glow effect when unlocked).
 **Edit rewards**:
 - Click "Edit" on any reward
 - Change name or MITHURA cost
-- Only available for unclaimed rewards
+- Available at any time, even after claiming
 
 **Delete/Remove rewards**:
 - Click "Remove" to delete from available rewards
@@ -303,10 +310,13 @@ Badges persist and display with visual styling (glow effect when unlocked).
 - Removed rewards no longer appear in the active list
 
 **Claim rewards**:
-- Auto-unlock when MITHURA threshold reached
-- One-click claim button appears
-- Claimed rewards tracked in history
-- Can only be claimed once
+- Auto-unlock when MITHURA balance ≥ threshold
+- Click "Claim now" → inline confirmation panel appears in card (mobile-friendly)
+- "Confirm" button deducts MITHURA balance by reward cost and records claim
+- "Cancel" button closes confirmation without claiming
+- **Re-claim support**: Claim the same reward multiple times when you have enough MITHURA
+- **Claim counter**: Displays "Claimed Nx" badge showing total times claimed
+- Claimed rewards tracked in history with cost, name, and timestamp
 
 ---
 
@@ -390,7 +400,7 @@ src/
 ├── components/
 │   ├── HabitForm.jsx               # Habit creation/edit with color picker, daily/target-based toggle, goal type selector
 │   ├── HabitCard.jsx               # Habit quick-view card with daily toggle
-│   ├── DashboardStats.jsx          # Summary stats (today, best streak, MITHURA)
+│   ├── DashboardStats.jsx          # Summary stats (today, best streak, MITHURA balance with earned/spent breakdown)
 │   ├── GlobalHeatmap.jsx           # Aggregated completion heatmap (all habits, color intensity)
 │   ├── Heatmap.jsx                 # Individual habit heatmap with unique color per habit
 │   ├── ProgressCharts.jsx          # Weekly + monthly completion charts
@@ -496,7 +506,14 @@ reward = {
   id: string,                         // UUID
   name: string,                       // Reward title
   requiredPoints: number,             // MITHURA threshold to unlock
-  claimed: boolean,                   // If user has claimed this reward
+  deleted: boolean,                   // Soft-delete flag (hidden from UI)
+}
+
+claimedReward = {
+  rewardId: string,                   // Reference to reward.id
+  claimedAt: dateKey,                 // Date of claim (ISO format)
+  cost: number,                       // MITHURA spent (snapshot at claim time)
+  name: string,                       // Reward name (snapshot for history)
   deleted: boolean,                   // Soft delete (doesn't appear in active list but persists in history)
 }
 ```

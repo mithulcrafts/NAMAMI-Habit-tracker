@@ -11,10 +11,13 @@ import { todayKey, formatDate } from '../utils/date'
 export const Dashboard = ({
   habits,
   points,
+  lifetimePoints,
+  pointsSpent,
   bonusDays,
   quoteOfDay,
   settings,
   rewards,
+  claimedRewards,
   onCategoryChange,
   onAddCustomQuote,
   onAddHabit,
@@ -143,7 +146,13 @@ export const Dashboard = ({
         </div>
       </div>
 
-      <DashboardStats habits={habits} points={points} bonusDays={bonusDays} />
+      <DashboardStats
+        habits={habits}
+        points={points}
+        lifetimePoints={lifetimePoints}
+        pointsSpent={pointsSpent}
+        bonusDays={bonusDays}
+      />
 
       <GlobalHeatmap habits={habits} />
 
@@ -205,6 +214,7 @@ export const Dashboard = ({
       <div className="glass rounded-xl p-4">
         <Rewards
           rewards={rewards}
+          claimedRewards={claimedRewards}
           points={points}
           onAdd={onAddReward}
           onClaim={onClaimReward}

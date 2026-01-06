@@ -12,7 +12,7 @@ import {
 
 const STORAGE_KEY = 'namami-state-v1'
 const STORAGE_FALLBACK_KEYS = ['namami-state-v1', 'namami-state']
-const SCHEMA_VERSION = 3
+const SCHEMA_VERSION = 4
 
 // Helper to generate deterministic color from habit ID
 const getHabitColor = (id) => {
@@ -65,9 +65,16 @@ const defaultHabits = [
 ]
 
 const defaultRewards = [
-  { id: 'reward-1', name: 'Coffee treat', requiredPoints: 50, claimed: false, deleted: false },
-  { id: 'reward-2', name: 'Movie night', requiredPoints: 120, claimed: false, deleted: false },
+  { id: 'reward-1', name: 'Coffee treat', requiredPoints: 50, deleted: false },
+  { id: 'reward-2', name: 'Movie night', requiredPoints: 120, deleted: false },
 ]
+
+const calculatePointsSpent = (claimedRewards, rewards) =>
+  (claimedRewards || []).reduce((sum, entry) => {
+    const reward = (rewards || []).find((r) => r.id === entry.rewardId)
+    const cost = entry.cost ?? reward?.requiredPoints ?? 0
+    return sum + Math.max(0, cost)
+  }, 0)
 
 const defaultSettings = {
   pointsPerHabit: 10,
@@ -218,6 +225,20 @@ export const AppProvider = ({ children }) => {
           dailyValueHistory: h.dailyValueHistory || {},
         }))
       }
+      if (version < 4) {
+        migrated.rewards = (migrated.rewards || []).map((r) => ({
+          ...r,
+          claimed: false,
+        }))
+        migrated.claimedRewards = (migrated.claimedRewards || []).map((entry) => {
+          const reward = (migrated.rewards || []).find((r) => r.id === entry.rewardId)
+          return {
+            ...entry,
+            cost: entry.cost ?? reward?.requiredPoints ?? 0,
+            name: entry.name ?? reward?.name ?? 'Reward',
+          }
+        })
+      }
       return migrated
     }
     return saved
@@ -251,10 +272,17 @@ export const AppProvider = ({ children }) => {
     }
   }, [state, loading])
 
-  const { habits, points, bonusDays } = useMemo(
+  const { habits, points: lifetimePoints, bonusDays } = useMemo(
     () => deriveStats(state.habits, state.settings),
     [state.habits, state.settings],
   )
+
+  const pointsSpent = useMemo(
+    () => calculatePointsSpent(state.claimedRewards, state.rewards),
+    [state.claimedRewards, state.rewards],
+  )
+
+  const points = Math.max(0, lifetimePoints - pointsSpent)
 
   const quoteOfDay = useMemo(() => {
     const seed = Number(todayKey().replaceAll('-', ''))
@@ -324,17 +352,21 @@ export const AppProvider = ({ children }) => {
   const addReward = (reward) => {
     setState((prev) => ({
       ...prev,
-      rewards: [...prev.rewards, { id: crypto.randomUUID(), claimed: false, ...reward }],
+      rewards: [...prev.rewards, { id: crypto.randomUUID(), ...reward }],
     }))
   }
 
   const claimReward = (rewardId) => {
+    const reward = state.rewards.find((r) => r.id === rewardId && !r.deleted)
+    if (!reward) return
+    const cost = reward.requiredPoints || 0
+    if (points < cost) return
+
     setState((prev) => ({
       ...prev,
-      rewards: prev.rewards.map((r) => (r.id === rewardId ? { ...r, claimed: true } : r)),
       claimedRewards: [
         ...prev.claimedRewards,
-        { rewardId, claimedAt: todayKey() },
+        { rewardId, claimedAt: todayKey(), cost, name: reward.name },
       ],
     }))
   }
@@ -382,6 +414,8 @@ export const AppProvider = ({ children }) => {
     loading,
     habits,
     points,
+    lifetimePoints,
+    pointsSpent,
     bonusDays,
     rewards: state.rewards.filter((r) => !r.deleted),
     settings: state.settings,
