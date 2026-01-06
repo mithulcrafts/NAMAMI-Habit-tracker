@@ -58,19 +58,6 @@
       ]
     },
     {
-      "name": "Widget",
-      "short_name": "Widget",
-      "description": "View your habit widget and streaks",
-      "url": "/?mode=widget",
-      "icons": [
-        {
-          "src": "/icons/namami-icon.svg",
-          "sizes": "192x192",
-          "type": "image/svg+xml"
-        }
-      ]
-    },
-    {
       "name": "Add Habit",
       "short_name": "Add",
       "description": "Quickly add a new habit",
@@ -82,38 +69,6 @@
           "type": "image/svg+xml"
         }
       ]
-    }
-  ],
-  "widgets": [
-    {
-      "name": "NAMAMI Widget",
-      "short_name": "Habit Tracker",
-      "description": "View your daily habit progress and MITHURA points",
-      "tag": "namami-widget",
-      "screenshots": [
-        {
-          "src": "/icons/namami-icon.svg",
-          "sizes": "256x256",
-          "type": "image/svg+xml"
-        }
-      ],
-      "sizes": [
-        {
-          "size": "128x128"
-        },
-        {
-          "size": "128x256"
-        },
-        {
-          "size": "256x128"
-        },
-        {
-          "size": "256x256"
-        }
-      ],
-      "data": {
-        "url": "/?widget=true"
-      }
     }
   ]
 }

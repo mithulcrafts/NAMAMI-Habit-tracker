@@ -3,7 +3,6 @@ import { HabitCard } from '../components/HabitCard'
 import { HabitForm } from '../components/HabitForm'
 import { DashboardStats } from '../components/DashboardStats'
 import { QuoteCard } from '../components/QuoteCard'
-import { WidgetCard } from '../components/WidgetCard'
 import { GlobalHeatmap } from '../components/GlobalHeatmap'
 import { Heatmap } from '../components/Heatmap'
 import { Rewards } from '../components/Rewards'
@@ -93,15 +92,14 @@ export const Dashboard = ({
           <h1 className="text-2xl font-semibold text-white">Habit Tracker</h1>
           <p className="text-sm text-slate-300">Offline-first. MITHURA powered. Built for streaks.</p>
         </div>
-        <div className="flex gap-2">
-          <a
-            className="rounded-md border border-white/10 px-3 py-2 text-sm text-slate-200 hover:border-white/30"
-            href="#widget"
-          >
-            Widget
-          </a>
-        </div>
       </div>
+
+      <QuoteCard
+        quote={quoteOfDay}
+        category={settings.quoteCategory}
+        onCategoryChange={onCategoryChange}
+        onAddCustom={onAddCustomQuote}
+      />
 
       <div className="glass rounded-xl p-4">
         <div className="flex w-full items-center gap-3">
@@ -213,16 +211,6 @@ export const Dashboard = ({
           onUpdate={onUpdateReward}
           onDelete={onDeleteReward}
         />
-      </div>
-
-      <div className="grid gap-4 lg:grid-cols-2">
-        <QuoteCard
-          quote={quoteOfDay}
-          category={settings.quoteCategory}
-          onCategoryChange={onCategoryChange}
-          onAddCustom={onAddCustomQuote}
-        />
-        <WidgetCard quote={quoteOfDay} streak={Math.max(0, ...habits.map((h) => h.streak || 0))} points={points} />
       </div>
     </div>
   )

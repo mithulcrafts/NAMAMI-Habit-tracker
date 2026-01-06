@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Built with React](https://img.shields.io/badge/Built%20with-React%2019-61dafb)](https://react.dev) [![Vite](https://img.shields.io/badge/Vite-7.3-646cff)](https://vitejs.dev)
 
-A **production-ready, offline-first PWA** habit tracker that works completely without internet. Features streaks, MITHURA gamification points, flexible goal types, global rewards, daily quotes, heatmap visualization, and Android home-screen widget support. No backend, no accounts, no servers—just pure client-side habit tracking.
+A **production-ready, offline-first PWA** habit tracker that works completely without internet. Features streaks, MITHURA gamification points, flexible goal types, global rewards, daily quotes, and heatmap visualization. No backend, no accounts, no servers—just pure client-side habit tracking.
 
 ### Key Features at a Glance
 - ✅ **Three flexible goal types**: Binary (done/missed), Count-based (10 pages), Duration-based (20 minutes)
@@ -10,9 +10,10 @@ A **production-ready, offline-first PWA** habit tracker that works completely wi
 - 🏆 **MITHURA gamification**: Points, streaks, badges, daily bonus, rewards system
 - 🎨 **8 custom colors**: Choose unique color for each habit's heatmap
 - 💾 **100% offline**: Works completely offline, syncs when reconnected
-- 📱 **PWA with home screen widget**: Install on any device, add live widget showing quotes and stats
+- 📱 **PWA support**: Install on any device as a progressive web app
 - 🎯 **Two habit types**: Daily (ongoing) or Target-based (30-day challenges)
 - 📊 **Charts & analytics**: Weekly/monthly completion trends
+- 💬 **Daily quotes**: General or Bhagavad Gita quotes with custom quote support
 
 ---
 
@@ -91,44 +92,25 @@ npm run dev
 3. App opens in window
 
 **Mobile**:
-- **Android (Chrome)**: Menu → "Install app" or click "Add to Home Screen" button in Widget section
+- **Android (Chrome)**: Menu → "Install app"
 - **iOS (Safari)**: Share → "Add to Home Screen"
 - **Note**: Requires HTTPS (works on deployed apps, not local)
-
-### Add Home Screen Widget (Android PWA)
-
-After installing the app as a PWA, you can add a widget to your home screen:
-
-1. **Install the app first** (see PWA installation above)
-2. Once installed, **long-press your home screen**
-3. Tap **"Widgets"**
-4. Find and select **"NAMAMI Widget"** or **"Habit Tracker"**
-5. Drag it to your home screen
-6. The widget displays:
-   - 📌 Your daily quote
-   - 🔥 Current streak
-   - 🏆 MITHURA points
-   - 📊 Works completely offline
-
-**Widget Features**:
-- ✅ Multiple sizes supported (1x1, 1x2, 2x1, 2x2)
-- ✅ Updates with your latest data
-- ✅ Works offline with cached data
-- ✅ Tap to open the full app
 
 ---
 
 ## ✨ Features
 
-### PWA & Home Screen Widget
+### PWA Support
 - 📱 **Progressive Web App**: Install on desktop, tablet, and mobile
-- 🏡 **Home Screen Widget**: Add a live widget to your Android home screen showing:
-  - Daily motivational quote
-  - Current habit streak
-  - MITHURA points balance
-- 📴 **Works offline**: All data cached, widget updates when reconnected
-- ⚡ **Multiple widget sizes**: Adaptive 1x1, 1x2, 2x1, and 2x2 layouts
+- 📴 **Works offline**: All data cached locally with IndexedDB
 - 🔄 **Auto-sync**: Data syncs across devices when online
+- ⚡ **Fast & responsive**: Optimized for all screen sizes
+
+### Daily Quotes
+- 💬 **Quote of the Day**: Displayed prominently at the top of Dashboard
+- 🎯 **Two categories**: General motivational quotes or Bhagavad Gita quotes
+- ✏️ **Custom quotes**: Add your own personal quotes to rotation
+- 🔄 **Different daily**: New quote shown each day
 
 ### 1. Habit Management
 
@@ -337,51 +319,30 @@ Badges persist and display with visual styling (glow effect when unlocked).
 - **Web notifications**: Send quote as notification (requires permission)
 - **Settings**: Switch quote category in dashboard
 
-### 7. PWA Installation & Widget
+### 7. PWA Installation
 
-#### Progressive Web App Installation
 - **Install on laptop/mobile**: Click *Install app* prompt in Chrome/Chromium/Edge or Menu → Install
 - **Home screen icon**: App launches in standalone mode (no browser UI)
 - **App shortcuts**: Quick links via manifest to:
   - Quick check-ins page
-  - Widget page
   - Add new habit
 - **Offline-first**: Service worker precaches shell; works without internet
 - **iOS support**: Share → "Add to Home Screen" on Safari
-- **Android support**: Menu → "Install app" or dedicated button in Widget section
+- **Android support**: Menu → "Install app"
+- **Cross-platform**: Works on desktop, tablet, and mobile devices
 
-#### Home Screen Widget (Android)
-After installing the app, add a live widget to your home screen:
+### 8. Daily Quotes
 
-**Widget Display**:
-- 📌 Daily motivational quote (refreshed daily)
-- 🔥 Your current longest habit streak (in days)
-- 🏆 Total MITHURA points earned
-- Responsive with multiple size options
+- **Displayed at top**: Quote of the Day shown prominently at the top of Dashboard
+- **Two quote categories**: 
+  - **General**: Motivational and inspirational quotes
+  - **Bhagavad Gita**: Spiritual wisdom from ancient text
+- **Custom quotes**: Add your own personal quotes to the rotation
+- **Category switching**: Toggle between General and Gita quotes anytime
+- **Daily rotation**: Different quote displayed each day
+- **Persistent storage**: Custom quotes saved in IndexedDB
 
-**Widget Sizes**:
-- 1×1 (compact, landscape or portrait)
-- 1×2 (tall, shows all stats vertically)
-- 2×1 (wide, shows all stats horizontally)
-- 2×2 (large, full layout with padding)
-
-**Technical Implementation**:
-- Defined in `manifest.webmanifest` with `"widgets"` array
-- Each size configuration specified with `"sizes"` property
-- Widget tag: `"namami-widget"`
-- Can be launched with `?widget=true` parameter
-- Data persisted in IndexedDB (works offline)
-- Updates automatically when app data changes
-
-**How to Add on Android**:
-1. Install app as PWA (see above)
-2. Long-press home screen
-3. Tap "Widgets"
-4. Find "NAMAMI Widget" or "Habit Tracker"
-5. Drag desired size to home screen
-6. Widget appears with your current stats
-
-### 8. Settings Page
+### 9. Settings Page
 
 **Global Gamification** (apply to all habits):
 - MITHURA per completion
@@ -436,8 +397,7 @@ src/
 │   ├── Badges.jsx                  # Badge cards (3/7/30 day streaks, 100+ points)
 │   ├── HabitGamificationPanel.jsx  # Per-habit MITHURA customization UI
 │   ├── Rewards.jsx                 # Global reward management (add/edit/remove/claim) - displayed on Dashboard
-│   ├── QuoteCard.jsx               # Daily quote + category toggle + notify button
-│   └── WidgetCard.jsx              # Widget preview (quote + streak + MITHURA)
+│   └── QuoteCard.jsx               # Daily quote + category toggle + custom quote input
 ├── utils/
 │   ├── date.js                     # Date helpers: streak, history buckets, formatting, past dates
 │   └── notifications.js            # Web Notifications API wrapper
@@ -761,13 +721,12 @@ const getHabitColor = (id) => {
 1. Visit app in mobile Chrome
 2. Tap menu > "Install app" or use install prompt
 3. App appears on home screen
-4. Long-press icon → *Widgets* to add widget shortcut
-5. Widget shows daily quote + streak + MITHURA (updates when app opens)
+4. App opens in standalone mode (no browser UI)
 
 ### Manifest Shortcuts
 Users can add app shortcuts to home screen:
 - **Quick Check-ins**: Jump to daily habit view
-- **Widget**: Quick access to widget preview
+- **Add Habit**: Quick access to add new habit
 
 ---
 
@@ -894,7 +853,7 @@ Users can add app shortcuts to home screen:
 
 ### PWA & Installation
 - [ ] **Install**: Chrome > "Install app" works, opens in window
-- [ ] **Widget**: Home screen widget shows daily quote + streak + MITHURA
+- [ ] **Quotes**: Daily quotes displayed at top of Dashboard
 - [ ] **Shortcuts**: Quick check-ins shortcut works
 - [ ] **Service Worker**: App loads offline with service worker active
 - [ ] **Cache**: Hard refresh clears cache, SW re-registers
@@ -970,7 +929,7 @@ npm run preview # Preview prod build locally
 | Heatmap colors not showing | Ensure browser CSS supports custom properties; check console for errors |
 | Per-habit gamification not applying | Confirm "Use custom MITHURA" toggle is enabled in Habit Detail |
 | Notifications not showing | Grant browser notification permission; check notifications toggle in settings |
-| Widget not updating | Open app to trigger data sync; widgets update on next app load |
+| Quotes not changing | Quotes rotate daily; force refresh or check custom quotes in settings |
 | Service worker not caching | Hard refresh (Ctrl+Shift+R) to clear stale cache |
 | Charts not rendering | Check browser console for Recharts errors; ensure window size > 300px |
 | Target-based progress stuck at 0% | Verify `isDailyHabit` is false and `targetDays` is set; check completions in history |
@@ -1207,7 +1166,7 @@ tailwind.config.js              # Tailwind theme
 - [ ] **Data persists**: Reload while offline, data remains
 - [ ] **Service Worker**: Active in DevTools
 - [ ] **"Add to Home Screen"**: Creates home screen icon
-- [ ] **Widget**: Shows quote + streak + MITHURA
+- [ ] **Quotes**: Daily quotes rotate and display correctly
 
 ### Cross-Browser
 - [ ] Chrome/Edge: All features
