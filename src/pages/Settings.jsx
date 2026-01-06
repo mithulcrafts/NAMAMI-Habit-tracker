@@ -27,16 +27,10 @@ export const Settings = ({ settings, onUpdate }) => {
       
       <div className="grid gap-3 md:grid-cols-2">
         <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
-          <p className="text-sm font-semibold text-white">Global MITHURA Points</p>
-          <label className="mt-3 block text-sm text-slate-300">Points per habit completion</label>
-          <input
-            type="number"
-            min="1"
-            value={local.pointsPerHabit}
-            onChange={(e) => setLocal((p) => ({ ...p, pointsPerHabit: Number(e.target.value) }))}
-            className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
-          />
-          <label className="mt-3 block text-sm text-slate-300">Bonus for completing all habits</label>
+          <p className="text-sm font-semibold text-white">Global Bonuses</p>
+          <p className="mt-1 text-xs text-slate-400">These bonuses apply when ALL habits are completed</p>
+          
+          <label className="mt-3 block text-sm text-slate-300">Daily bonus (all habits done)</label>
           <input
             type="number"
             min="0"
@@ -44,33 +38,33 @@ export const Settings = ({ settings, onUpdate }) => {
             onChange={(e) => setLocal((p) => ({ ...p, dailyBonus: Number(e.target.value) }))}
             className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
           />
-        </div>
+          <p className="mt-1 text-xs text-slate-400">Awarded when you complete all habits in a day</p>
 
-        <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
-          <p className="text-sm font-semibold text-white">Streak Bonuses</p>
-          <div className="mt-3 grid grid-cols-3 gap-2">
-            {[3, 7, 30].map((days) => (
-              <div key={days}>
-                <label className="text-sm text-slate-300">{days}-day streak</label>
-                <input
-                  type="number"
-                  min="0"
-                  value={local.streakBonuses?.[days] ?? 0}
-                  onChange={(e) =>
-                    setLocal((p) => ({
-                      ...p,
-                      streakBonuses: { ...p.streakBonuses, [days]: Number(e.target.value) },
-                    }))
-                  }
-                  className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
-                />
-              </div>
-            ))}
+          <div className="mt-4">
+            <label className="block text-sm text-slate-300">Global streak bonuses</label>
+            <p className="mt-1 text-xs text-slate-400">Awarded for consecutive days of completing ALL habits</p>
+            <div className="mt-2 grid grid-cols-3 gap-2">
+              {[3, 7, 30].map((days) => (
+                <div key={days}>
+                  <label className="text-xs text-slate-300">{days}-day</label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={local.globalStreakBonuses?.[days] ?? 0}
+                    onChange={(e) =>
+                      setLocal((p) => ({
+                        ...p,
+                        globalStreakBonuses: { ...p.globalStreakBonuses, [days]: Number(e.target.value) },
+                      }))
+                    }
+                    className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
+                  />
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
 
-      <div className="grid gap-3 md:grid-cols-2">
         <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
           <p className="text-sm font-semibold text-white">Features</p>
           <div className="mt-3 flex items-center justify-between">

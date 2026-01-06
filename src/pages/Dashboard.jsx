@@ -14,6 +14,7 @@ export const Dashboard = ({
   lifetimePoints,
   pointsSpent,
   bonusDays,
+  globalStreak,
   quoteOfDay,
   settings,
   rewards,
@@ -152,6 +153,7 @@ export const Dashboard = ({
         lifetimePoints={lifetimePoints}
         pointsSpent={pointsSpent}
         bonusDays={bonusDays}
+        globalStreak={globalStreak}
       />
 
       <GlobalHeatmap habits={habits} />

@@ -8,7 +8,7 @@ const Stat = ({ label, value, hint }) => (
   </div>
 )
 
-export const DashboardStats = ({ habits, points, lifetimePoints, pointsSpent, bonusDays }) => {
+export const DashboardStats = ({ habits, points, lifetimePoints, pointsSpent, bonusDays, globalStreak }) => {
   const today = todayKey()
   const completedToday = habits.filter((h) => h.history?.[today])
   const bestStreak = Math.max(0, ...habits.map((h) => h.streak || 0))
@@ -19,7 +19,11 @@ export const DashboardStats = ({ habits, points, lifetimePoints, pointsSpent, bo
   return (
     <div className="grid gap-3 sm:grid-cols-3">
       <Stat label="Habits today" value={`${completedToday.length}/${habits.length}`} hint="Completed / total" />
-      <Stat label="Best streak" value={`${bestStreak} days`} hint="Keep it going" />
+      <Stat 
+        label="Streaks" 
+        value={`${globalStreak || 0} days`} 
+        hint={`All habits · Best single: ${bestStreak} days`} 
+      />
       <Stat
         label="MITHURA balance"
         value={points}

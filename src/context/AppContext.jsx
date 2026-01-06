@@ -32,8 +32,8 @@ const defaultHabits = [
     targetDays: null,
     habitColor: '#38bdf8',
     useGlobalGamification: true,
-    customPoints: null,
-    customStreakBonuses: null,
+    customPoints: 10,
+    customStreakBonuses: { 3: 2, 7: 5, 30: 10 },
     goalType: 'binary',
     goalTarget: null,
     dailyValueHistory: {},
@@ -54,8 +54,8 @@ const defaultHabits = [
     targetDays: 20,
     habitColor: '#c084fc',
     useGlobalGamification: true,
-    customPoints: null,
-    customStreakBonuses: null,
+    customPoints: 10,
+    customStreakBonuses: { 3: 2, 7: 5, 30: 10 },
     goalType: 'binary',
     goalTarget: null,
     dailyValueHistory: {},
@@ -77,15 +77,14 @@ const calculatePointsSpent = (claimedRewards, rewards) =>
   }, 0)
 
 const defaultSettings = {
-  pointsPerHabit: 10,
   dailyBonus: 20,
   gamificationEnabled: true,
   notificationsEnabled: false,
   quoteCategory: 'general',
-  streakBonuses: {
-    3: 2,
-    7: 5,
-    30: 10,
+  globalStreakBonuses: {
+    3: 5,
+    7: 10,
+    30: 20,
   },
 }
 
@@ -146,20 +145,16 @@ const deriveStats = (habits, settings) => {
 
   const basePoints = settings.gamificationEnabled
     ? enriched.reduce((sum, habit) => {
-        const pointsPerCompletion = habit.useGlobalGamification
-          ? settings.pointsPerHabit
-          : habit.customPoints ?? settings.pointsPerHabit
+        const pointsPerCompletion = habit.customPoints ?? 10
         return sum + habit.totalCompleted * pointsPerCompletion
       }, 0)
     : 0
 
   const dailyBonusPoints = settings.gamificationEnabled ? bonusDays.length * settings.dailyBonus : 0
 
-  const streakBonus = settings.gamificationEnabled
+  const perHabitStreakBonus = settings.gamificationEnabled
     ? enriched.reduce((sum, habit) => {
-        const bonuses = habit.useGlobalGamification
-          ? settings.streakBonuses
-          : habit.customStreakBonuses ?? settings.streakBonuses
+        const bonuses = habit.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 }
         if (habit.streak >= 30) return sum + (bonuses[30] || 0)
         if (habit.streak >= 7) return sum + (bonuses[7] || 0)
         if (habit.streak >= 3) return sum + (bonuses[3] || 0)
@@ -167,12 +162,39 @@ const deriveStats = (habits, settings) => {
       }, 0)
     : 0
 
-  const totalPoints = basePoints + dailyBonusPoints + streakBonus
+  // Calculate global streak (consecutive days where ALL habits were completed)
+  let globalStreak = 0
+  if (settings.gamificationEnabled && enriched.length > 0) {
+    let cursor = new Date()
+    while (true) {
+      const key = formatDate(cursor)
+      const allCompleted = completedDates[key] >= enriched.length
+      if (allCompleted) {
+        globalStreak += 1
+        cursor.setDate(cursor.getDate() - 1)
+      } else {
+        break
+      }
+    }
+  }
+
+  const globalStreakBonus = settings.gamificationEnabled
+    ? (() => {
+        const bonuses = settings.globalStreakBonuses ?? { 3: 5, 7: 10, 30: 20 }
+        if (globalStreak >= 30) return bonuses[30] || 0
+        if (globalStreak >= 7) return bonuses[7] || 0
+        if (globalStreak >= 3) return bonuses[3] || 0
+        return 0
+      })()
+    : 0
+
+  const totalPoints = basePoints + dailyBonusPoints + perHabitStreakBonus + globalStreakBonus
 
   return {
     habits: enriched,
     points: totalPoints,
     bonusDays: bonusDays.map(([dateKey]) => dateKey),
+    globalStreak,
   }
 }
 
@@ -209,8 +231,8 @@ export const AppProvider = ({ children }) => {
           isDailyHabit: h.targetDays ? false : true,
           habitColor: h.habitColor || getHabitColor(h.id),
           useGlobalGamification: true,
-          customPoints: null,
-          customStreakBonuses: null,
+          customPoints: h.customPoints ?? 10,
+          customStreakBonuses: h.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 },
         }))
         migrated.rewards = (migrated.rewards || []).map((r) => ({
           ...r,
@@ -272,7 +294,7 @@ export const AppProvider = ({ children }) => {
     }
   }, [state, loading])
 
-  const { habits, points: lifetimePoints, bonusDays } = useMemo(
+  const { habits, points: lifetimePoints, bonusDays, globalStreak } = useMemo(
     () => deriveStats(state.habits, state.settings),
     [state.habits, state.settings],
   )
@@ -297,9 +319,8 @@ export const AppProvider = ({ children }) => {
       isDailyHabit: data.isDailyHabit ?? true,
       targetDays: data.isDailyHabit ? null : data.targetDays,
       habitColor: getHabitColor(crypto.randomUUID()),
-      useGlobalGamification: true,
-      customPoints: null,
-      customStreakBonuses: null,
+      customPoints: data.customPoints ?? 10,
+      customStreakBonuses: data.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 },
       goalType: data.goalType || 'binary',
       goalTarget: data.goalTarget || null,
       dailyValueHistory: {},
@@ -417,6 +438,7 @@ export const AppProvider = ({ children }) => {
     lifetimePoints,
     pointsSpent,
     bonusDays,
+    globalStreak,
     rewards: state.rewards.filter((r) => !r.deleted),
     settings: state.settings,
     customQuotes: state.customQuotes,

@@ -10,6 +10,8 @@ const defaultData = {
   goalType: 'binary',
   goalTarget: null,
   habitColor: '#38bdf8',
+  customPoints: 10,
+  customStreakBonuses: { 3: 2, 7: 5, 30: 10 },
 }
 
 const days = ['S', 'M', 'T', 'W', 'T', 'F', 'S']
@@ -211,6 +213,44 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
           ))}
         </div>
       </div>
+
+      <div>
+        <label className="text-sm font-semibold text-slate-200">MITHURA per completion</label>
+        <input
+          type="number"
+          min="1"
+          className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm focus:border-brand-400 focus:ring-brand-400"
+          value={form.customPoints || 10}
+          onChange={(e) => setForm((p) => ({ ...p, customPoints: Number(e.target.value) }))}
+          required
+        />
+        <p className="mt-1 text-xs text-slate-400">Points earned for completing this habit</p>
+      </div>
+
+      <div>
+        <label className="text-sm font-semibold text-slate-200">Streak bonuses (for this habit)</label>
+        <div className="mt-2 grid grid-cols-3 gap-2">
+          {[3, 7, 30].map((days) => (
+            <div key={days}>
+              <label className="text-xs text-slate-300">{days}-day streak</label>
+              <input
+                type="number"
+                min="0"
+                value={form.customStreakBonuses?.[days] ?? 0}
+                onChange={(e) =>
+                  setForm((p) => ({
+                    ...p,
+                    customStreakBonuses: { ...p.customStreakBonuses, [days]: Number(e.target.value) },
+                  }))
+                }
+                className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-2 py-1 text-sm focus:border-brand-400 focus:ring-brand-400"
+              />
+            </div>
+          ))}
+        </div>
+        <p className="mt-1 text-xs text-slate-400">Bonus MITHURA for maintaining streaks on this habit</p>
+      </div>
+
       <div className="flex items-center justify-end gap-2">
         {onCancel && (
           <button

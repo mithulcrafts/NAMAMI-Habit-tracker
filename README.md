@@ -228,7 +228,7 @@ Choose how you want to measure progress:
   - Example: "Read 10 pages for 20 days" → shows (days completed / 20) × 100%
   - Note: Daily habits have no target days, so progress bar works differently
 
-**Streak summary**: Best streak across all habits (only counts days where daily targets were met)
+**Streak summary**: Best single-habit streak plus global “all-habits” streak (only counts days where targets were met)
 
 ### 4. Gamification System (MITHURA Points)
 
@@ -245,36 +245,27 @@ Points are called **MITHURA** (✨ constellation of motivation).
 - When target IS met: **10 MITHURA** (configurable per-habit)
 - When target NOT met: **0 MITHURA** (partial progress is tracked but not rewarded)
 
-**All habits**:
+**All habits (global bonuses)**:
 - Completing all habits in a day: **+20 MITHURA bonus** (applies when ALL habits meet targets)
-- 3-day streak (all days target met): **+2 MITHURA bonus** (configurable)
-- 7-day streak: **+5 MITHURA bonus** (configurable)
-- 30-day streak: **+10 MITHURA bonus** (configurable)
+- Global streak (all habits completed for N consecutive days): **3d +5**, **7d +10**, **30d +20** (configurable)
 
 #### Global Defaults (Settings page):
-Configure baseline values for all habits:
-- **MITHURA per completion**: Base points earned (default: 10)
 - **Daily bonus**: Extra MITHURA for completing all habits (default: 20)
-- **Streak bonuses**: Extra points for maintaining streaks:
-  - 3-day streak: +2 MITHURA
-  - 7-day streak: +5 MITHURA
-  - 30-day streak: +10 MITHURA
+- **Global streak bonuses**: Extra points for consecutive days where ALL habits were completed (defaults: 3d +5, 7d +10, 30d +20)
 
 #### Per-Habit Customization (Habit Detail page):
-Override global defaults for specific habits:
-- Toggle: "Use global MITHURA rules" or "Custom MITHURA for this habit"
-- When custom is enabled:
-  - Set custom MITHURA per completion
-  - Set custom streak bonuses (3/7/30 days)
-- Note: Rewards are global (managed on Dashboard, not in Habit Detail)
-- Per-habit values override global when enabled
+- Each habit stores its own **MITHURA per completion** (default: 10) and **streak bonuses** (defaults: 3d +2, 7d +5, 30d +10)
+- Configure these when creating a habit or editing its gamification panel
+- Global bonuses (daily + global streak) remain global and stack on top
+- Rewards stay global (managed on Dashboard)
 
 **Scoring pipeline**:
-1. Base points: (days where target met × points-per-habit)
-2. Daily bonus: +20 MITHURA if ALL habits meet daily targets (global only)
-3. Streak bonus: +bonus amount based on longest streak
-4. **Lifetime MITHURA** = base + daily bonus + streak bonus
-5. **Available balance** = lifetime MITHURA − total spent on rewards
+1. Base points: sum of (habit completions × that habit’s points)
+2. Per-habit streak bonus: add each habit’s streak bonus (based on its streak)
+3. Daily bonus: +global daily bonus if ALL habits met targets
+4. Global streak bonus: based on consecutive days where ALL habits were completed
+5. **Lifetime MITHURA** = base + per-habit streaks + daily bonus + global streak bonus
+6. **Available balance** = lifetime MITHURA − total spent on rewards
 
 **Points display**:
 - Dashboard stats show "MITHURA balance" (available to spend)
@@ -442,7 +433,7 @@ package.json                        # Dependencies (React, Vite, Recharts, Calen
 - **Schema versioning**: Built-in safe migration system for data schema upgrades (v1 → v2 → v3)
 - **Real-time updates**: Heatmaps, charts, badges, and stats update immediately on habit log
 
-### Habit Schema (Current: v3)
+### Habit Schema (Current: v4)
 ```javascript
 habit = {
   id: string,                         // UUID
@@ -453,9 +444,8 @@ habit = {
   isDailyHabit: boolean,              // Daily vs Target-based toggle
   targetDays: number | undefined,     // Only exists for target-based habits; removed from daily habits before save
   habitColor: string,                 // Hex color for heatmap (e.g., '#38bdf8')
-  useGlobalGamification: boolean,     // Toggle for per-habit point customization
-  customPoints: number | null,        // Custom MITHURA per completion (if not global)
-  customStreakBonuses: {3,7,30},      // Custom streak bonus values (if not global)
+  customPoints: number,               // MITHURA per completion for this habit
+  customStreakBonuses: {3,7,30},      // Per-habit streak bonus values
   goalType: 'binary' | 'count' | 'duration',  // How to measure: done/missed, count, or time
   goalTarget: number | null,          // Target count or minutes (null for binary)
   history: { [dateKey]: boolean },    // Completion status; true if target met that day
@@ -491,12 +481,11 @@ habit = {
 ### Settings Schema
 ```javascript
 settings = {
-  pointsPerHabit: number,             // Default MITHURA per completion (default: 10)
-  dailyBonus: number,                 // MITHURA for all habits done (default: 20)
-  gamificationEnabled: boolean,       // Master gamification toggle (default: true)
-  notificationsEnabled: boolean,      // Web notifications toggle (default: false)
-  quoteCategory: 'general' | 'gita',  // Daily quote source (default: 'general')
-  streakBonuses: {3: 2, 7: 5, 30: 10},// Bonuses at milestone streaks (customizable)
+  dailyBonus: number,                      // Global MITHURA for all habits done (default: 20)
+  globalStreakBonuses: {3: 5, 7: 10, 30: 20}, // Global streak bonuses when ALL habits are done
+  gamificationEnabled: boolean,            // Master gamification toggle (default: true)
+  notificationsEnabled: boolean,           // Web notifications toggle (default: false)
+  quoteCategory: 'general' | 'gita',       // Daily quote source (default: 'general')
 }
 ```
 
@@ -548,16 +537,14 @@ claimedReward = {
 
 3. **MITHURA Calculation**:
    ```javascript
-   // For each habit, determine points per completion
-   const pointsPerCompletion = habit.useGlobalGamification
-     ? settings.pointsPerHabit
-     : (habit.customPoints ?? settings.pointsPerHabit)
-   
-   // Only award points if target WAS met
-   if (dayComplete) {
-     totalMITHURA += pointsPerCompletion
-   }
-   // No partial points for count/duration below target
+  // For each habit, determine points per completion (per-habit only)
+  const pointsPerCompletion = habit.customPoints ?? 10
+  
+  // Only award points if target WAS met
+  if (dayComplete) {
+    totalMITHURA += pointsPerCompletion
+  }
+  // No partial points for count/duration below target
    ```
 
 4. **Daily Bonus** (all habits completed):
@@ -570,14 +557,21 @@ claimedReward = {
 
 5. **Streak Bonuses** (per milestone):
    ```javascript
-   const bonuses = habit.useGlobalGamification
-     ? settings.streakBonuses
-     : (habit.customStreakBonuses ?? settings.streakBonuses)
-   
-   if (habit.streak >= 30) totalMITHURA += bonuses[30]  // +10
-   else if (habit.streak >= 7) totalMITHURA += bonuses[7]   // +5
-   else if (habit.streak >= 3) totalMITHURA += bonuses[3]   // +2
+  const bonuses = habit.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 }
+  
+  if (habit.streak >= 30) totalMITHURA += bonuses[30]  // +10
+  else if (habit.streak >= 7) totalMITHURA += bonuses[7]   // +5
+  else if (habit.streak >= 3) totalMITHURA += bonuses[3]   // +2
    ```
+
+6. **Global streak bonus** (ALL habits completed):
+  ```javascript
+  // Count consecutive days where every habit was done
+  const bonuses = settings.globalStreakBonuses ?? { 3: 5, 7: 10, 30: 20 }
+  if (globalStreak >= 30) totalMITHURA += bonuses[30]
+  else if (globalStreak >= 7) totalMITHURA += bonuses[7]
+  else if (globalStreak >= 3) totalMITHURA += bonuses[3]
+  ```
 
 6. **Final Total**: Base points + daily bonus + streak bonus
    ```javascript
@@ -668,14 +662,10 @@ const bonusDays = Object.entries(completedDates)
 ### Per-Habit Gamification Logic
 ```javascript
 // For each habit, determine points per completion
-const pointsPerCompletion = habit.useGlobalGamification
-  ? globalSettings.pointsPerHabit
-  : (habit.customPoints ?? globalSettings.pointsPerHabit)
+const pointsPerCompletion = habit.customPoints ?? 10
 
-// Same for streak bonuses
-const bonuses = habit.useGlobalGamification
-  ? globalSettings.streakBonuses
-  : (habit.customStreakBonuses ?? globalSettings.streakBonuses)
+// Per-habit streak bonuses
+const bonuses = habit.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 }
 ```
 
 ### Quote Selection (Deterministic)

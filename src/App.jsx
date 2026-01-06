@@ -13,6 +13,7 @@ const Shell = () => {
     lifetimePoints,
     pointsSpent,
     bonusDays,
+    globalStreak,
     rewards,
     claimedRewards,
     quoteOfDay,
@@ -57,6 +58,7 @@ const Shell = () => {
           habits={habits}
           points={points}
           bonusDays={bonusDays}
+          globalStreak={globalStreak}
           quoteOfDay={quoteOfDay}
           settings={settings}
           rewards={rewards}
