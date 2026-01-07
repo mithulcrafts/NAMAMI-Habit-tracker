@@ -50,9 +50,16 @@ export const GlobalHeatmap = ({ habits }) => {
           values={values}
           classForValue={(val) => {
             if (!val || !val.count) return 'color-empty'
-            if (val.count <= 2) return 'color-github-1'
-            if (val.count <= 4) return 'color-github-2'
-            return 'color-github-4'
+            
+            // Scale intensity based on percentage of total habits completed
+            const totalHabits = habits.length || 1
+            const ratio = val.count / totalHabits
+            
+            if (ratio >= 0.75) return 'color-github-4' // 75%+ of habits
+            if (ratio >= 0.5) return 'color-github-3' // 50-74% of habits
+            if (ratio >= 0.25) return 'color-github-2' // 25-49% of habits
+            if (ratio > 0) return 'color-github-1' // Some habits completed
+            return 'color-empty'
           }}
           gutterSize={2}
           showWeekdayLabels

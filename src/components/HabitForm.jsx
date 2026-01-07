@@ -127,7 +127,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
         </div>
       </div>
 
-      {form.goalType !== 'binary' && form.isDailyHabit === false && (
+      {form.goalType !== 'binary' && (
         <div>
           <label className="text-sm font-semibold text-slate-200">
             {form.goalType === 'count' ? 'Target count' : 'Target minutes'}

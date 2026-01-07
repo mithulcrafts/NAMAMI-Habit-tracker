@@ -38,7 +38,7 @@ const Shell = () => {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-950 text-slate-100">
+      <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
         Loading NAMAMI…
       </div>
     )
@@ -86,44 +86,44 @@ const Shell = () => {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950">
+    <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
       <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 pb-10 pt-6">
         {/* Header */}
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-white">NAMAMI</h1>
-            <p className="text-sm text-slate-400 mt-0.5">Your habit journey</p>
+            <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>NAMAMI</h1>
+            <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>Your habit journey</p>
           </div>
           
           {/* Simple Tab Navigation */}
-          <div className="flex gap-1 rounded-lg bg-slate-900/50 p-1">
+          <div className="flex gap-1 rounded-lg p-1" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <button
               onClick={() => setCurrentPage('home')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                currentPage === 'home'
-                  ? 'bg-slate-800 text-white'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              style={{
+                backgroundColor: currentPage === 'home' ? 'var(--active-bg)' : 'transparent',
+                color: currentPage === 'home' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              }}
             >
               Home
             </button>
             <button
               onClick={() => setCurrentPage('rewards')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                currentPage === 'rewards'
-                  ? 'bg-slate-800 text-white'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              style={{
+                backgroundColor: currentPage === 'rewards' ? 'var(--active-bg)' : 'transparent',
+                color: currentPage === 'rewards' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              }}
             >
               Rewards
             </button>
             <button
               onClick={() => setCurrentPage('settings')}
-              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-                currentPage === 'settings'
-                  ? 'bg-slate-800 text-white'
-                  : 'text-slate-400 hover:text-white'
-              }`}
+              className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              style={{
+                backgroundColor: currentPage === 'settings' ? 'var(--active-bg)' : 'transparent',
+                color: currentPage === 'settings' ? 'var(--text-primary)' : 'var(--text-secondary)',
+              }}
             >
               Settings
             </button>

@@ -33,6 +33,23 @@ export default {
       boxShadow: {
         soft: '0 10px 40px rgba(15, 23, 42, 0.25)',
       },
+      backgroundColor: {
+        'slate-950': 'var(--bg-primary)',
+        'slate-900': 'var(--bg-secondary)',
+      },
+      textColor: {
+        'white': 'var(--text-primary)',
+        'slate-50': 'var(--text-primary)',
+        'slate-100': 'var(--text-primary)',
+        'slate-200': 'var(--text-primary)',
+        'slate-300': 'var(--text-secondary)',
+        'slate-400': 'var(--text-secondary)',
+        'slate-500': 'var(--text-tertiary)',
+      },
+      borderColor: {
+        'white/5': 'var(--border-color)',
+        'white/10': 'var(--border-subtle)',
+      },
     },
   },
   plugins: [forms],

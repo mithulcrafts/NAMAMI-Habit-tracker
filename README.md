@@ -6,9 +6,10 @@ A **production-ready, offline-first PWA** habit tracker that works completely wi
 
 ### Key Features at a Glance
 - ✅ **Three flexible goal types**: Binary (done/missed), Count-based (10 pages), Duration-based (20 minutes)
-- 🔥 **Dual heatmap system**: Global completion overview + per-habit color-coded calendars
+- 🔥 **Dual heatmap system**: Global completion overview + per-habit color-coded calendars with intensity-based coloring
 - 🏆 **MITHURA gamification**: Points, streaks, badges, daily bonus, rewards system
 - 🎨 **8 custom colors**: Choose unique color for each habit's heatmap
+- 🌓 **Light & Dark themes**: Switch between themes for comfortable viewing in any environment
 - 💾 **100% offline**: Works completely offline, syncs when reconnected
 - 📱 **PWA support**: Install on any device as a progressive web app
 - 🎯 **Two habit types**: Daily (ongoing) or Target-based (30-day challenges)
@@ -102,8 +103,10 @@ npm run dev
 
 ### App Structure & Navigation
 - 🏠 **Home Page**: Main dashboard with quotes, heatmaps, and habit tracking
+- 🏠 **Home Page**: Main dashboard with quotes, heatmaps, and habit tracking
 - 🎁 **Rewards Page**: Dedicated page for viewing and redeeming rewards
-- ⚙️ **Settings Page**: Centralized app configuration and preferences
+- ⚙️ **Settings Page**: Centralized app configuration, theme switcher, and preferences
+- 🌓 **Theme switcher**: Toggle between light and dark themes in Settings → Appearance
 - 🎯 **Simple tab navigation**: Clean, minimal page switching with active state indicators
 - 📱 **Responsive design**: Works seamlessly across all screen sizes
 
@@ -133,27 +136,25 @@ npm run dev
   - Storage: `targetDays` number is saved with habit data
   - Badge: "Target: X days" badge displays on habit cards
 
-#### Goal Types (FLEXIBLE TRACKING)
-Choose how you want to measure progress:
+#### Goal Types (Flexible & Per-Habit Targets)
+Choose how you want to measure progress and set a daily target per habit:
 
-1. **Binary** (done / not done) — Simple checkbox style
-   - Mark habit as completed or missed each day
-   - Day counts toward streak only if marked done
-   - Example: "Morning meditation" (you either did it or didn't)
+1. **Binary** (done / not done)
+  - Mark habit as completed or missed each day
+  - Counts toward streak only if marked done
+  - Example: "Morning meditation" (you either did it or didn't)
 
 2. **Count-based** — Numeric target per day
-   - Set a target count (e.g., "Read 10 pages")
-   - Log how many items completed each day
-   - Day counts toward streak only if entered count ≥ target
-   - Partial progress stored (e.g., "7 pages" not meeting 10-page target)
-   - Example habits: "Read 10 pages", "Do 30 push-ups", "Drink 8 glasses of water"
+  - Set a per-habit target count (e.g., "Read 12 pages" for Habit A, "Do 20 push-ups" for Habit B)
+  - Log how many items completed each day
+  - Counts toward streak only if entered count ≥ that habit’s target
+  - Partial progress stored (e.g., "7 pages" shows in cards and heatmap intensity)
 
 3. **Duration-based** — Time in minutes
-   - Set a target duration (e.g., "Meditate 20 minutes")
-   - Log minutes spent each day
-   - Day counts toward streak only if minutes ≥ target
-   - Partial progress stored (e.g., "15 minutes" not meeting 20-minute target)
-   - Example habits: "Meditate 20 minutes", "Exercise 45 minutes", "Read 30 minutes"
+  - Set a per-habit target minutes (e.g., "Meditate 25 minutes" for Habit C)
+  - Log minutes spent each day
+  - Counts toward streak only if minutes ≥ that habit’s target
+  - Partial progress stored (e.g., "15 minutes" shows in cards and heatmap intensity)
 
 **Daily check-ins**:
 - **Binary**: Simple "Mark done" button (marks today as complete/incomplete)
@@ -183,21 +184,30 @@ Choose how you want to measure progress:
 **Global Heatmap** (Dashboard):
 - Aggregates all habits' completions per date
 - Shows overall consistency across all habits at a glance
-- **Color intensity levels**:
+- **Intensity-based color levels** (scales with percentage of habits completed):
   - Dark gray: Days with 0 habits completed
-  - Light cyan (rgba 35%): 1-2 habits completed
-  - Medium cyan (rgba 60%): 3-4 habits completed
-  - Bright cyan (#38bdf8): 5+ habits completed (or all habits)
+  - Light green: 1-24% of total habits completed
+  - Medium-light green: 25-49% of total habits completed
+  - Medium-dark green: 50-74% of total habits completed
+  - Full bright green: 75%+ of total habits completed
 - 120-day historical view
 - Updated in real-time as you log habits
 
 **Per-Habit Heatmaps** (Dashboard grid):
 - Individual 120-day calendar for each habit
 - Uses that habit's **unique color** for visual distinction
+- **Intensity-based coloring** (reflects progress toward that habit’s daily target):
+  - **Binary habits**: Full color when completed, empty when missed
+  - **Numeric goals** (count/duration): Color intensity scales with progress vs the habit’s target
+    - 25% opacity: >0% progress (some activity logged)
+    - 50% opacity: ~50% of target reached
+    - 75% opacity: ~75% of target reached
+    - 100% opacity: Goal met or exceeded (100%+)
+- Theme-aware empty state: empty cells use light/dark neutral depending on theme
 - Color is customizable when creating or editing the habit
 - 8 preset colors available: cyan, purple, green, amber, red, indigo, pink, teal
-- Shows exactly which days the habit target was met
-- Easy to spot patterns per habit at a glance
+- Provides at-a-glance visualization of both completion and effort level
+- Easy to spot patterns and partial progress per habit across themes
 
 **Heatmap Rendering**:
 - **Library**: React Calendar Heatmap
@@ -208,11 +218,10 @@ Choose how you want to measure progress:
 - **Responsive**: Scrollable on mobile, full view on desktop
 - **Offline**: Rendered entirely client-side, fully works offline
 
-**Completion Logic**:
-- **Binary**: Heatmap shows green on days marked "done"
-- **Count-based**: Heatmap shows color only when logged count ≥ target
-- **Duration-based**: Heatmap shows color only when logged minutes ≥ target
-- Partial progress NOT shown in heatmap (but tracked in dailyValueHistory)
+**Completion & Intensity Logic**:
+- **Binary**: Heatmap shows color on days marked "done"
+- **Count-based/Duration-based**: Heatmap varies color opacity by progress vs target; shows partial progress
+- Empty days: neutral theme-aware color (dark gray in dark theme, light gray in light theme)
 
 ### 3. Tracking & Visualization
 

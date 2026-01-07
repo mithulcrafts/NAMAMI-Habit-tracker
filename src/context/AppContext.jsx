@@ -81,6 +81,7 @@ const defaultSettings = {
   gamificationEnabled: true,
   notificationsEnabled: false,
   quoteCategory: 'general',
+  theme: 'dark',
   globalStreakBonuses: {
     3: 5,
     7: 10,
@@ -293,6 +294,12 @@ export const AppProvider = ({ children }) => {
       localforage.setItem(STORAGE_KEY, state)
     }
   }, [state, loading])
+
+  // Apply theme to document
+  useEffect(() => {
+    const theme = state.settings?.theme || 'dark'
+    document.documentElement.className = theme
+  }, [state.settings?.theme])
 
   const { habits, points: lifetimePoints, bonusDays, globalStreak } = useMemo(
     () => deriveStats(state.habits, state.settings),

@@ -66,6 +66,19 @@ export const Settings = ({ settings, onUpdate }) => {
         </div>
 
         <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
+          <p className="text-sm font-semibold text-white">Appearance</p>
+          <label className="mt-3 block text-sm text-slate-200">Theme</label>
+          <select
+            value={local.theme ?? 'dark'}
+            onChange={(e) => setLocal((p) => ({ ...p, theme: e.target.value }))}
+            className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
+          >
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+          </select>
+        </div>
+
+        <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
           <p className="text-sm font-semibold text-white">Features</p>
           <div className="mt-3 flex items-center justify-between">
             <span className="text-sm text-slate-200">Enable gamification</span>
