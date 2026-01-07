@@ -100,17 +100,24 @@ npm run dev
 
 ## ✨ Features
 
+### App Structure & Navigation
+- 🏠 **Home Page**: Main dashboard with quotes, heatmaps, and habit tracking
+- 🎁 **Rewards Page**: Dedicated page for viewing and redeeming rewards
+- ⚙️ **Settings Page**: Centralized app configuration and preferences
+- 🎯 **Simple tab navigation**: Clean, minimal page switching with active state indicators
+- 📱 **Responsive design**: Works seamlessly across all screen sizes
+
+### Daily Quotes
+- 💬 **Quote of the Day**: Displayed prominently at the top of Home page
+- 🎯 **Two categories**: General motivational quotes or Bhagavad Gita quotes
+- ✏️ **Custom quotes**: Add your own personal quotes to rotation
+- 🔄 **Different daily**: New quote shown each day
+
 ### PWA Support
 - 📱 **Progressive Web App**: Install on desktop, tablet, and mobile
 - 📴 **Works offline**: All data cached locally with IndexedDB
 - 🔄 **Auto-sync**: Data syncs across devices when online
 - ⚡ **Fast & responsive**: Optimized for all screen sizes
-
-### Daily Quotes
-- 💬 **Quote of the Day**: Displayed prominently at the top of Dashboard
-- 🎯 **Two categories**: General motivational quotes or Bhagavad Gita quotes
-- ✏️ **Custom quotes**: Add your own personal quotes to rotation
-- 🔄 **Different daily**: New quote shown each day
 
 ### 1. Habit Management
 
@@ -290,6 +297,9 @@ Badges persist and display with visual styling (glow effect when unlocked).
 - Set required MITHURA threshold
 - Reward becomes available when MITHURA threshold reached
 
+**Navigate to Rewards page**:
+- Click "Rewards" tab in navigation to access dedicated rewards page
+
 **Edit rewards**:
 - Click "Edit" on any reward
 - Change name or MITHURA cost
@@ -332,15 +342,13 @@ Badges persist and display with visual styling (glow effect when unlocked).
 - **Android support**: Menu → "Install app"
 - **Cross-platform**: Works on desktop, tablet, and mobile devices
 
-### 8. Daily Quotes
+### 8. Navigation & Page Structure
 
-- **Displayed at top**: Quote of the Day shown prominently at the top of Dashboard
-- **Two quote categories**: 
-  - **General**: Motivational and inspirational quotes
-  - **Bhagavad Gita**: Spiritual wisdom from ancient text
-- **Custom quotes**: Add your own personal quotes to the rotation
-- **Category switching**: Toggle between General and Gita quotes anytime
-- **Daily rotation**: Different quote displayed each day
+- **Home Page**: Main dashboard with daily quote, stats, global heatmap, per-habit heatmaps, habit cards, and add habit form
+- **Rewards Page**: Dedicated page for viewing available rewards, claiming rewards, and managing reward history
+- **Settings Page**: Centralized configuration for gamification settings, notifications, and app preferences
+- **Simple tab navigation**: Clean pill-style tabs with active state highlighting
+- **Responsive layout**: Navigation adapts to screen size (icons only on small screens)
 - **Persistent storage**: Custom quotes saved in IndexedDB
 
 ### 9. Settings Page

@@ -1,7 +1,8 @@
 import './App.css'
 import { useState } from 'react'
 import { AppProvider, useApp } from './context/AppContext'
-import { Dashboard } from './pages/Dashboard'
+import { Home } from './pages/Home'
+import { RewardsPage } from './pages/RewardsPage'
 import { HabitDetail } from './pages/HabitDetail'
 import { Settings } from './pages/Settings'
 
@@ -32,16 +33,8 @@ const Shell = () => {
   } = useApp()
 
   const [openHabitId, setOpenHabitId] = useState(null)
+  const [currentPage, setCurrentPage] = useState('home')
   const selectedHabit = openHabitId ? habits.find((h) => h.id === openHabitId) : null
-  
-  console.log('DEBUG App:', { openHabitId, habitsCount: habits.length, selectedHabitExists: !!selectedHabit, selectedHabitName: selectedHabit?.name })
-  
-  if (selectedHabit) {
-    console.log('selectedHabit is TRUTHY:', selectedHabit)
-  } else {
-    console.log('selectedHabit is FALSY, even though openHabitId =', openHabitId)
-    console.log('Habits array:', habits)
-  }
 
   if (loading) {
     return (
@@ -51,33 +44,96 @@ const Shell = () => {
     )
   }
 
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'home':
+        return (
+          <Home
+            habits={habits}
+            points={points}
+            lifetimePoints={lifetimePoints}
+            pointsSpent={pointsSpent}
+            bonusDays={bonusDays}
+            globalStreak={globalStreak}
+            quoteOfDay={quoteOfDay}
+            category={settings.quoteCategory}
+            onCategoryChange={(category) => updateSettings({ quoteCategory: category })}
+            onAddCustomQuote={addCustomQuote}
+            onAddHabit={addHabit}
+            onToggle={toggleCompletion}
+            onOpenHabit={setOpenHabitId}
+            onEditHabit={updateHabit}
+            onDeleteHabit={deleteHabit}
+          />
+        )
+      case 'rewards':
+        return (
+          <RewardsPage
+            rewards={rewards}
+            claimedRewards={claimedRewards}
+            points={points}
+            onAddReward={addReward}
+            onClaimReward={claimReward}
+            onUpdateReward={updateReward}
+            onDeleteReward={deleteReward}
+          />
+        )
+      case 'settings':
+        return <Settings settings={settings} onUpdate={updateSettings} />
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="min-h-screen bg-slate-950">
-      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-4 pb-10 pt-6">
-        <Dashboard
-          habits={habits}
-          points={points}
-          bonusDays={bonusDays}
-          globalStreak={globalStreak}
-          quoteOfDay={quoteOfDay}
-          settings={settings}
-          rewards={rewards}
-          claimedRewards={claimedRewards}
-          lifetimePoints={lifetimePoints}
-          pointsSpent={pointsSpent}
-          onCategoryChange={(category) => updateSettings({ quoteCategory: category })}
-          onAddCustomQuote={addCustomQuote}
-          onAddHabit={addHabit}
-          onToggle={toggleCompletion}
-          onOpenHabit={setOpenHabitId}
-          onEditHabit={updateHabit}
-          onDeleteHabit={deleteHabit}
-          onAddReward={addReward}
-          onClaimReward={claimReward}
-          onUpdateReward={updateReward}
-          onDeleteReward={deleteReward}
-        />
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 pb-10 pt-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-white">NAMAMI</h1>
+            <p className="text-sm text-slate-400 mt-0.5">Your habit journey</p>
+          </div>
+          
+          {/* Simple Tab Navigation */}
+          <div className="flex gap-1 rounded-lg bg-slate-900/50 p-1">
+            <button
+              onClick={() => setCurrentPage('home')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                currentPage === 'home'
+                  ? 'bg-slate-800 text-white'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Home
+            </button>
+            <button
+              onClick={() => setCurrentPage('rewards')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                currentPage === 'rewards'
+                  ? 'bg-slate-800 text-white'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Rewards
+            </button>
+            <button
+              onClick={() => setCurrentPage('settings')}
+              className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+                currentPage === 'settings'
+                  ? 'bg-slate-800 text-white'
+                  : 'text-slate-400 hover:text-white'
+              }`}
+            >
+              Settings
+            </button>
+          </div>
+        </div>
 
+        {/* Page Content */}
+        {renderPage()}
+
+        {/* Habit Detail Modal */}
         {selectedHabit && (
           <HabitDetail
             habit={selectedHabit}
@@ -87,8 +143,6 @@ const Shell = () => {
             onClose={() => setOpenHabitId(null)}
           />
         )}
-
-        <Settings settings={settings} onUpdate={updateSettings} />
       </div>
     </div>
   )
