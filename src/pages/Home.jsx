@@ -5,6 +5,7 @@ import { DashboardStats } from '../components/DashboardStats'
 import { QuoteCard } from '../components/QuoteCard'
 import { GlobalHeatmap } from '../components/GlobalHeatmap'
 import { Heatmap } from '../components/Heatmap'
+import { HabitDetail } from './HabitDetail'
 import { todayKey, formatDate } from '../utils/date'
 
 export const Home = ({
@@ -23,8 +24,11 @@ export const Home = ({
   onOpenHabit,
   onEditHabit,
   onDeleteHabit,
+  globalSettings,
+  onUpdateHabitGamification,
 }) => {
   const [editing, setEditing] = useState(null)
+  const [openDetailHabitId, setOpenDetailHabitId] = useState(null)
   const [selectedDate, setSelectedDate] = useState(new Date())
   const today = todayKey()
   const selectedDateKey = formatDate(selectedDate)
@@ -43,6 +47,8 @@ export const Home = ({
     if (diffDays > 1) return `${diffDays} days ago`
     return 'Upcoming'
   })()
+
+  const openDetailHabit = openDetailHabitId ? habits.find((h) => h.id === openDetailHabitId) : null
 
   const handlePreviousDay = () => {
     setSelectedDate(prev => {
@@ -158,18 +164,30 @@ export const Home = ({
       <div id="checkins" className="grid gap-4 lg:grid-cols-3">
         <div className="lg:col-span-2 space-y-3">
           {sortedHabits.map((habit) => (
-            <HabitCard
-              key={habit.id}
-              habit={habit}
-              selectedDateKey={selectedDateKey}
-              isToday={isToday}
-              selectedDateLabel={selectedDateDisplay}
-              relativeLabel={relativeLabel}
-              onToggle={onToggle}
-              onOpen={onOpenHabit}
-              onEdit={(h) => setEditing(h)}
-              onDelete={onDeleteHabit}
-            />
+            <div key={habit.id}>
+              <HabitCard
+                habit={habit}
+                selectedDateKey={selectedDateKey}
+                isToday={isToday}
+                selectedDateLabel={selectedDateDisplay}
+                relativeLabel={relativeLabel}
+                onToggle={onToggle}
+                onOpen={() => setOpenDetailHabitId(habit.id)}
+                onEdit={(h) => setEditing(h)}
+                onDelete={onDeleteHabit}
+              />
+              {openDetailHabitId === habit.id && openDetailHabit && (
+                <div className="mt-3">
+                  <HabitDetail
+                    habit={openDetailHabit}
+                    points={lifetimePoints}
+                    globalSettings={globalSettings}
+                    onUpdateHabitGamification={onUpdateHabitGamification}
+                    onClose={() => setOpenDetailHabitId(null)}
+                  />
+                </div>
+              )}
+            </div>
           ))}
           {!sortedHabits.length && (
             <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4 text-sm text-slate-300">

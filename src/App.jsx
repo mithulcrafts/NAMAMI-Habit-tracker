@@ -17,6 +17,8 @@ const Shell = () => {
     globalStreak,
     rewards,
     claimedRewards,
+    earnedBadges,
+    badgeDefinitions,
     quoteOfDay,
     settings,
     addHabit,
@@ -34,7 +36,6 @@ const Shell = () => {
 
   const [openHabitId, setOpenHabitId] = useState(null)
   const [currentPage, setCurrentPage] = useState('home')
-  const selectedHabit = openHabitId ? habits.find((h) => h.id === openHabitId) : null
 
   if (loading) {
     return (
@@ -64,6 +65,8 @@ const Shell = () => {
             onOpenHabit={setOpenHabitId}
             onEditHabit={updateHabit}
             onDeleteHabit={deleteHabit}
+            globalSettings={settings}
+            onUpdateHabitGamification={updateHabitGamification}
           />
         )
       case 'rewards':
@@ -72,6 +75,9 @@ const Shell = () => {
             rewards={rewards}
             claimedRewards={claimedRewards}
             points={points}
+            earnedBadges={earnedBadges}
+            badgeDefinitions={badgeDefinitions}
+            habits={habits}
             onAddReward={addReward}
             onClaimReward={claimReward}
             onUpdateReward={updateReward}
@@ -132,17 +138,6 @@ const Shell = () => {
 
         {/* Page Content */}
         {renderPage()}
-
-        {/* Habit Detail Modal */}
-        {selectedHabit && (
-          <HabitDetail
-            habit={selectedHabit}
-            points={lifetimePoints}
-            globalSettings={settings}
-            onUpdateHabitGamification={updateHabitGamification}
-            onClose={() => setOpenHabitId(null)}
-          />
-        )}
       </div>
     </div>
   )

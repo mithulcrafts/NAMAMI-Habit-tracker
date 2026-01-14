@@ -290,12 +290,19 @@ Points are called **MITHURA** (✨ constellation of motivation).
 - Rewards check available balance (not lifetime) to determine if claimable
 
 **Badge system** (auto-unlocked):
-- 🏅 3-day Streak (3+ days of meeting all daily targets)
-- 🏅 7-day Streak
-- 🏅 30-day Streak
+- 🔥 3-day Streak (3+ days of meeting all daily targets)
+- 🌟 7-day Streak (7+ days of meeting all daily targets)
+- 👑 30-day Streak (30+ days of meeting all daily targets)
 - 💎 100+ MITHURA points
+- ✨ 500+ MITHURA points
 
-Badges persist and display with visual styling (glow effect when unlocked).
+**Badge Features**:
+- **Per-habit badges**: Streak badges are earned per habit and can be earned multiple times for different habits
+- **Persistent tracking**: Badges earned are permanently recorded and never disappear, even if a streak is lost
+- **Repeatable**: Same badge can be earned multiple times (e.g., a 3-day streak badge for Habit A, then again for Habit B)
+- **Detailed history**: Track which habit each badge was earned for and how many times
+- **Visual display**: Each badge has an emoji icon (🔥🌟👑💎✨) for visual engagement
+- **Badges page**: View all earned badges with breakdown by habit on the Rewards page
 
 ### 5. Rewards System (Full CRUD - Global)
 
@@ -308,6 +315,16 @@ Badges persist and display with visual styling (glow effect when unlocked).
 
 **Navigate to Rewards page**:
 - Click "Rewards" tab in navigation to access dedicated rewards page
+- View all earned badges with detailed breakdowns
+- See which habits earned each badge and how many times
+
+**Earned Badges Section** (on Rewards page):
+- **Badge gallery**: Display all earned badges with emoji icons (🔥🌟👑💎✨)
+- **Earn counter**: Shows how many times each badge was earned
+- **Per-habit details**: Lists which habits earned each streak badge
+- **Permanent history**: All earned badges are displayed; never disappear even if streak is lost
+- **Visual feedback**: Emerald accent design with badge details clearly visible
+- **Multiple occurrences**: Same badge displays for each habit that earned it
 
 **Edit rewards**:
 - Click "Edit" on any reward
@@ -354,11 +371,17 @@ Badges persist and display with visual styling (glow effect when unlocked).
 ### 8. Navigation & Page Structure
 
 - **Home Page**: Main dashboard with daily quote, stats, global heatmap, per-habit heatmaps, habit cards, and add habit form
+  - **View Details**: Click "View detail →" on any habit card to see the detailed view **inline below the card**
+  - Detail view includes individual heatmap, charts, badges, and gamification settings
+  - Detail view only displays on Home page (not on other pages)
 - **Rewards Page**: Dedicated page for viewing available rewards, claiming rewards, and managing reward history
+  - **🏆 Badges Earned section**: View all earned badges with emoji icons and detailed breakdown
+  - Shows which habits earned each badge and how many times
+  - Displays total count of badge earnings per habit
 - **Settings Page**: Centralized configuration for gamification settings, notifications, and app preferences
 - **Simple tab navigation**: Clean pill-style tabs with active state highlighting
 - **Responsive layout**: Navigation adapts to screen size (icons only on small screens)
-- **Persistent storage**: Custom quotes saved in IndexedDB
+- **Persistent storage**: Custom quotes and earned badges saved in IndexedDB
 
 ### 9. Settings Page
 
@@ -402,8 +425,11 @@ src/
 ├── context/
 │   └── AppContext.jsx              # Global state, storage, gamification logic, migration
 ├── pages/
-│   ├── Dashboard.jsx               # Main view: habits, global heatmap, per-habit heatmaps, stats, quotes, global rewards
+│   ├── Home.jsx                    # Main dashboard with quote, stats, heatmaps, habit cards, add habit form, inline detail view
 │   ├── HabitDetail.jsx             # Habit detail: individual heatmap, charts, badges, gamification settings
+│   ├── RewardsPage.jsx             # Rewards page: earned badges section + reward management
+│   ├── Dashboard.jsx               # (Legacy) Main view component
+│   ├── QuotesPage.jsx              # Quotes page
 │   └── Settings.jsx                # Global configuration, feature toggles
 ├── components/
 │   ├── HabitForm.jsx               # Habit creation/edit with color picker, daily/target-based toggle, goal type selector
@@ -412,9 +438,10 @@ src/
 │   ├── GlobalHeatmap.jsx           # Aggregated completion heatmap (all habits, color intensity)
 │   ├── Heatmap.jsx                 # Individual habit heatmap with unique color per habit
 │   ├── ProgressCharts.jsx          # Weekly + monthly completion charts
-│   ├── Badges.jsx                  # Badge cards (3/7/30 day streaks, 100+ points)
+│   ├── Badges.jsx                  # Badge cards (3/7/30 day streaks, 100+ points) with emoji icons
+│   ├── EarnedBadges.jsx            # Display earned badges with per-habit breakdown and emoji icons
 │   ├── HabitGamificationPanel.jsx  # Per-habit MITHURA customization UI
-│   ├── Rewards.jsx                 # Global reward management (add/edit/remove/claim) - displayed on Dashboard
+│   ├── Rewards.jsx                 # Global reward management (add/edit/remove/claim)
 │   └── QuoteCard.jsx               # Daily quote + category toggle + custom quote input
 ├── utils/
 │   ├── date.js                     # Date helpers: streak, history buckets, formatting, past dates
@@ -522,6 +549,24 @@ claimedReward = {
   name: string,                       // Reward name (snapshot for history)
   deleted: boolean,                   // Soft delete (doesn't appear in active list but persists in history)
 }
+
+// Badge definitions (system-wide)
+badge = {
+  id: string,                         // Badge identifier (e.g., 'streak-3', 'points-100')
+  label: string,                      // Display name (e.g., '3-day Streak')
+  icon: string,                       // Emoji icon (🔥 🌟 👑 💎 ✨)
+  habitSpecific: boolean,             // true for streak badges, false for points badges
+  requirement: number,                // Threshold (3, 7, 30 for streaks; 100, 500 for points)
+  type: 'streak' | 'points',          // Category
+}
+
+earnedBadge = {
+  id: string,                         // Unique ID for this earning (e.g., 'habit-123-streak-3')
+  badgeId: string,                    // Reference to badge.id
+  habitId: string | null,             // Habit ID if streak badge, null if points badge
+  habitName: string | null,           // Habit name (snapshot), null if points badge
+  earnedAt: dateKey,                  // Date earned (ISO format)
+}
 ```
 
 ### Gamification Pipeline (Complete Flow)
@@ -595,11 +640,13 @@ claimedReward = {
    totalPoints = basePoints + dailyBonusPoints + streakBonus
    ```
 
-7. **Badges** unlocked when:
-   - 3-day streak: `habit.streak >= 3`
-   - 7-day streak: `habit.streak >= 7`
-   - 30-day streak: `habit.streak >= 30`
-   - 100+ points: `totalPoints >= 100`
+7. **Badges** earned and tracked:
+   - **Streak badges** (per-habit): 3-day 🔥, 7-day 🌟, 30-day 👑 earned when `habit.streak >= requirement`
+   - **Points badges** (global): 100+ MITHURA 💎, 500+ MITHURA ✨ earned when `totalPoints >= requirement`
+   - **Tracking**: Each earned badge stored in `earnedBadges` array with badge ID, habit reference, and earn date
+   - **Persistence**: Badges never disappear; remain recorded even if streak is lost
+   - **Multiple earnings**: Same badge can be earned multiple times for different habits or repeated achievement
+   - **Display**: All earned badges shown on Rewards page with emoji icon and per-habit breakdown
 
 8. **Heatmaps** show completion (colored cell) only when target met:
    - **Binary**: Green on days where `history[date] === true`
@@ -754,6 +801,38 @@ Users can add app shortcuts to home screen:
 
 ---
 
+## 🎨 UI/UX Improvements & View Details
+
+### Inline Habit Details (Home Page)
+- **View Details Button**: Click "View detail →" on any habit card to expand details inline
+- **Positioned Below Habit**: Detail view appears immediately below the clicked habit for better UX
+- **Page-Scoped**: Detail view only displays on the Home page, not on other pages
+- **Contains**: 
+  - Individual heatmap for the habit
+  - Weekly/monthly progress charts
+  - Earned badges specific to this habit
+  - Gamification customization panel
+  - Streak, total completed, and progress percentage
+- **Quick Navigation**: Easy to close detail view and continue with other habits
+
+### Badge Display & Icons
+- **Visual Icons**: All badges display with emoji icons (🔥 🌟 👑 💎 ✨) for better recognition
+- **Glow Effect**: Unlocked badges have a subtle glow effect; locked badges appear dimmed
+- **Earned Count**: Shows how many times each badge was earned
+- **Per-Habit Breakdown**: Display which habits earned streak badges and how many times per habit
+
+### Rewards Page Badge Section
+- **🏆 Badges Earned**: New dedicated section at the top of the Rewards page
+- **Badge Gallery**: Grid layout displaying all earned badges with emoji icons
+- **Detailed Breakdown**: Shows:
+  - Badge name and description
+  - Total earn count
+  - Which habits earned it and how many times per habit
+- **Visual Design**: Emerald accent background with clear typography
+- **Never Disappears**: Earned badges permanently displayed, regardless of current streak status
+
+---
+
 ## 🎨 Habit Colors & Heatmap Visualization
 
 ### Available Colors (8 preset options)
@@ -848,6 +927,28 @@ Users can add app shortcuts to home screen:
   - [ ] Habit Detail shows: heatmap, charts, badges, gamification settings (rewards are on Dashboard)
   - [ ] Habit Detail page shows: heatmap, charts, badges, gamification panel (no rewards)
 
+### Badges System
+- [ ] **Streak Badges** (per-habit):
+  - [ ] 🔥 3-day Streak unlocks at 3-day streak
+  - [ ] 🌟 7-day Streak unlocks at 7-day streak
+  - [ ] 👑 30-day Streak unlocks at 30-day streak
+  - [ ] Each habit can earn its own badges
+- [ ] **Points Badges** (global):
+  - [ ] 💎 100+ MITHURA unlocks when total points ≥ 100
+  - [ ] ✨ 500+ MITHURA unlocks when total points ≥ 500
+- [ ] **Badge Persistence**:
+  - [ ] Earned badges displayed on Habit Detail page
+  - [ ] Badges never disappear, even if streak is lost
+  - [ ] Badge appears again if streak is rebuilt (tracked separately)
+- [ ] **Rewards Page Badges**:
+  - [ ] View all earned badges in "🏆 Badges Earned" section
+  - [ ] Shows each badge with emoji icon, count, and per-habit breakdown
+  - [ ] Multiple earnings per badge displayed (e.g., "3-day Streak" earned for 2 habits = 2 entries)
+- [ ] **Badge Visual**:
+  - [ ] Unlocked badges show with full color and glow effect
+  - [ ] Locked badges appear dimmed
+  - [ ] Icons are clear and recognizable
+
 ### Progress Bars & Stats
 - [ ] **Daily Habits (Binary)**: Shows streak × 10 % (e.g., 5 days = 50%)
 - [ ] **Daily Habits (Count/Duration)**: Shows % of today's target achieved (e.g., 7/10 = 70%)
@@ -856,12 +957,15 @@ Users can add app shortcuts to home screen:
 
 ### Rewards System (Global - Dashboard)
 - [ ] **Location**: Rewards panel visible on Dashboard (not in Habit Detail)
+- [ ] **Rewards Page**: Click "Rewards" tab for dedicated rewards page with badges section
 - [ ] **Create**: Add reward name + MITHURA cost
 - [ ] **Edit**: Click edit on unclaimed reward, change name/cost, save
 - [ ] **Delete**: Click remove on unclaimed reward, confirm deletion
 - [ ] **Claim**: When MITHURA ≥ required, claim button appears and works
 - [ ] **History**: Claimed rewards persist even after deletion (in history, not active list)
 - [ ] **Global Access**: All rewards shared across all habits, not per-habit
+- [ ] **Badges on Rewards Page**: Top section shows "🏆 Badges Earned" with all earned badges
+- [ ] **Inline Habit Details**: Works on Home page only; clicking habit card shows detail inline below it
 
 ### Quotes & Notifications
 - [ ] **Daily Rotation**: Different quote each day (deterministic seed based on date)

@@ -89,6 +89,15 @@ const defaultSettings = {
   },
 }
 
+// Badge definitions
+const BADGE_DEFINITIONS = [
+  { id: 'streak-3', label: '3-day Streak', habitSpecific: true, requirement: 3, type: 'streak', icon: '🔥' },
+  { id: 'streak-7', label: '7-day Streak', habitSpecific: true, requirement: 7, type: 'streak', icon: '🌟' },
+  { id: 'streak-30', label: '30-day Streak', habitSpecific: true, requirement: 30, type: 'streak', icon: '👑' },
+  { id: 'points-100', label: '100+ MITHURA', habitSpecific: false, requirement: 100, type: 'points', icon: '💎' },
+  { id: 'points-500', label: '500+ MITHURA', habitSpecific: false, requirement: 500, type: 'points', icon: '✨' },
+]
+
 const AppContext = createContext()
 
 const deriveStats = (habits, settings) => {
@@ -199,6 +208,41 @@ const deriveStats = (habits, settings) => {
   }
 }
 
+// Check which badges should be earned based on current state
+const checkBadgesEarned = (habits, points) => {
+  const badges = []
+  
+  // Streak-based badges (per habit)
+  habits.forEach((habit) => {
+    BADGE_DEFINITIONS.filter(b => b.type === 'streak').forEach((badge) => {
+      if (habit.streak >= badge.requirement) {
+        badges.push({
+          id: `${habit.id}-${badge.id}`,
+          badgeId: badge.id,
+          habitId: habit.id,
+          habitName: habit.name,
+          earnedAt: todayKey(),
+        })
+      }
+    })
+  })
+
+  // Points-based badges (global)
+  BADGE_DEFINITIONS.filter(b => b.type === 'points').forEach((badge) => {
+    if (points >= badge.requirement) {
+      badges.push({
+        id: `global-${badge.id}`,
+        badgeId: badge.id,
+        habitId: null,
+        habitName: null,
+        earnedAt: todayKey(),
+      })
+    }
+  })
+
+  return badges
+}
+
 const pickQuote = (category, customQuotes, daySeed) => {
   const source = category === 'gita' ? gitaQuotes : generalQuotes
   const combined = [...source, ...(customQuotes || [])]
@@ -216,6 +260,7 @@ export const AppProvider = ({ children }) => {
     settings: defaultSettings,
     customQuotes: [],
     claimedRewards: [],
+    earnedBadges: [], // Track earned badges with habit and timestamp
     schemaVersion: SCHEMA_VERSION,
   })
   const [loading, setLoading] = useState(true)
@@ -261,6 +306,9 @@ export const AppProvider = ({ children }) => {
             name: entry.name ?? reward?.name ?? 'Reward',
           }
         })
+      }
+      if (version < SCHEMA_VERSION) {
+        migrated.earnedBadges = migrated.earnedBadges || []
       }
       return migrated
     }
@@ -312,6 +360,22 @@ export const AppProvider = ({ children }) => {
   )
 
   const points = Math.max(0, lifetimePoints - pointsSpent)
+
+  // Check for newly earned badges
+  useEffect(() => {
+    if (loading || !habits.length) return
+
+    const newBadges = checkBadgesEarned(habits, points)
+    const existingBadgeIds = new Set((state.earnedBadges || []).map((b) => b.id))
+    const badgesToAdd = newBadges.filter((b) => !existingBadgeIds.has(b.id))
+
+    if (badgesToAdd.length > 0) {
+      setState((prev) => ({
+        ...prev,
+        earnedBadges: [...(prev.earnedBadges || []), ...badgesToAdd],
+      }))
+    }
+  }, [habits, points, loading])
 
   const quoteOfDay = useMemo(() => {
     const seed = Number(todayKey().replaceAll('-', ''))
@@ -451,6 +515,8 @@ export const AppProvider = ({ children }) => {
     customQuotes: state.customQuotes,
     quoteOfDay,
     claimedRewards: state.claimedRewards,
+    earnedBadges: state.earnedBadges,
+    badgeDefinitions: BADGE_DEFINITIONS,
     addHabit,
     updateHabit,
     deleteHabit,
