@@ -32,6 +32,7 @@ const Shell = () => {
     updateSettings,
     addCustomQuote,
     updateHabitGamification,
+    adjustMithura,
   } = useApp()
 
   const [openHabitId, setOpenHabitId] = useState(null)
@@ -85,7 +86,7 @@ const Shell = () => {
           />
         )
       case 'settings':
-        return <Settings settings={settings} onUpdate={updateSettings} />
+        return <Settings settings={settings} onUpdate={updateSettings} onAdjustMithura={adjustMithura} />
       default:
         return null
     }
