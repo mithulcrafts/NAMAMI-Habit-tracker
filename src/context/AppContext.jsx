@@ -261,6 +261,7 @@ export const AppProvider = ({ children }) => {
     customQuotes: [],
     claimedRewards: [],
     earnedBadges: [], // Track earned badges with habit and timestamp
+    manualAdjustment: 0, // Track manual MITHURA adjustments
     schemaVersion: SCHEMA_VERSION,
   })
   const [loading, setLoading] = useState(true)
@@ -309,6 +310,7 @@ export const AppProvider = ({ children }) => {
       }
       if (version < SCHEMA_VERSION) {
         migrated.earnedBadges = migrated.earnedBadges || []
+        migrated.manualAdjustment = migrated.manualAdjustment || 0
       }
       return migrated
     }
@@ -355,8 +357,8 @@ export const AppProvider = ({ children }) => {
   )
 
   const pointsSpent = useMemo(
-    () => calculatePointsSpent(state.claimedRewards, state.rewards),
-    [state.claimedRewards, state.rewards],
+    () => calculatePointsSpent(state.claimedRewards, state.rewards) + (state.manualAdjustment || 0),
+    [state.claimedRewards, state.rewards, state.manualAdjustment],
   )
 
   const points = Math.max(0, lifetimePoints - pointsSpent)
@@ -482,6 +484,13 @@ export const AppProvider = ({ children }) => {
     setState((prev) => ({ ...prev, customQuotes: [...prev.customQuotes, quote.trim()] }))
   }
 
+  const adjustMithura = (amount) => {
+    setState((prev) => ({
+      ...prev,
+      manualAdjustment: (prev.manualAdjustment || 0) + amount,
+    }))
+  }
+
   const updateSettings = (partial) => {
     setState((prev) => ({ ...prev, settings: { ...prev.settings, ...partial } }))
   }
@@ -528,6 +537,7 @@ export const AppProvider = ({ children }) => {
     addCustomQuote,
     updateSettings,
     updateHabitGamification,
+    adjustMithura,
   }
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>

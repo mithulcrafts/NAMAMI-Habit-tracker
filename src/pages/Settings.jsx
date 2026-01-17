@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { requestNotificationPermission } from '../utils/notifications'
 
-export const Settings = ({ settings, onUpdate }) => {
+export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
   const [local, setLocal] = useState(settings)
 
   useEffect(() => {
@@ -108,12 +108,59 @@ export const Settings = ({ settings, onUpdate }) => {
         </div>
       </div>
 
+      <MithuraAdjustment onAdjust={onAdjustMithura} />
+
       <button
         onClick={handleSave}
         className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white"
       >
         Save settings
       </button>
+    </div>
+  )
+}
+
+export const MithuraAdjustment = ({ onAdjust }) => {
+  const [amount, setAmount] = useState('')
+
+  const handleAdjust = () => {
+    const value = parseInt(amount, 10)
+    if (isNaN(value) || value === 0) {
+      alert('Please enter a valid non-zero number')
+      return
+    }
+    onAdjust(value)
+    setAmount('')
+  }
+
+  return (
+    <div className="mt-4 rounded-xl border border-white/5 bg-slate-900/70 p-4">
+      <p className="text-sm font-semibold text-white">⚖️ Manual MITHURA Adjustment</p>
+      <p className="mt-1 text-xs text-slate-400">
+        Adjust MITHURA for external rewards or corrections
+      </p>
+      <p className="mt-2 text-xs text-slate-300">
+        • Positive number (e.g., 10): Spend MITHURA (adds to used, reduces available)
+      </p>
+      <p className="text-xs text-slate-300">
+        • Negative number (e.g., -5): Refund MITHURA (removes from used, increases available)
+      </p>
+      
+      <div className="mt-3 flex gap-2">
+        <input
+          type="number"
+          value={amount}
+          onChange={(e) => setAmount(e.target.value)}
+          placeholder="Enter amount (e.g., 10 or -5)"
+          className="flex-1 rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
+        />
+        <button
+          onClick={handleAdjust}
+          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700"
+        >
+          Adjust
+        </button>
+      </div>
     </div>
   )
 }
