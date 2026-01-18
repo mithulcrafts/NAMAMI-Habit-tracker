@@ -6,7 +6,7 @@ const defaultData = {
   frequency: 'daily',
   customDays: [],
   isDailyHabit: true,
-  targetDays: 30,
+  targetDays: null,
   goalType: 'binary',
   goalTarget: null,
   habitColor: '#38bdf8',
@@ -36,12 +36,33 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    
+    // Validation: goalTarget must be > 0 if goal type is not binary
+    if (form.goalType !== 'binary' && (!form.goalTarget || form.goalTarget <= 0)) {
+      alert('Please enter a valid target value (must be greater than 0)')
+      return
+    }
+    
+    // Validation: targetDays must be > 0 if target-based
+    if (!form.isDailyHabit && (!form.targetDays || form.targetDays <= 0)) {
+      alert('Please enter valid target days (must be greater than 0)')
+      return
+    }
+    
     const dataToSave = { ...form }
     if (dataToSave.isDailyHabit) {
       delete dataToSave.targetDays
     }
     onSave(dataToSave)
     if (!initial) setForm(defaultData)
+  }
+
+  // Check if form is valid for submission
+  const isFormValid = () => {
+    if (!form.name.trim()) return false
+    if (form.goalType !== 'binary' && (!form.goalTarget || form.goalTarget <= 0)) return false
+    if (!form.isDailyHabit && (!form.targetDays || form.targetDays <= 0)) return false
+    return true
   }
 
   return (
@@ -110,7 +131,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
               name="goalType"
               value="count"
               checked={form.goalType === 'count'}
-              onChange={() => setForm((p) => ({ ...p, goalType: 'count', goalTarget: 10 }))}
+              onChange={() => setForm((p) => ({ ...p, goalType: 'count', goalTarget: null }))}
             />
             <span className="text-sm text-slate-200">Count-based (e.g., read 10 pages)</span>
           </label>
@@ -120,7 +141,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
               name="goalType"
               value="duration"
               checked={form.goalType === 'duration'}
-              onChange={() => setForm((p) => ({ ...p, goalType: 'duration', goalTarget: 20 }))}
+              onChange={() => setForm((p) => ({ ...p, goalType: 'duration', goalTarget: null }))}
             />
             <span className="text-sm text-slate-200">Duration-based (e.g., meditate 20 min)</span>
           </label>
@@ -133,12 +154,15 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
             {form.goalType === 'count' ? 'Target count' : 'Target minutes'}
           </label>
           <input
-            type="number"
-            min="1"
+            type="text"
+            inputMode="numeric"
             className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm focus:border-brand-400 focus:ring-brand-400"
-            value={form.goalTarget || (form.goalType === 'count' ? 10 : 20)}
-            onChange={(e) => setForm((p) => ({ ...p, goalTarget: Number(e.target.value) }))}
-            required
+            placeholder="Enter target value"
+            value={form.goalTarget ?? ''}
+            onChange={(e) => {
+              const val = e.target.value.replace(/[^0-9]/g, '')
+              setForm((p) => ({ ...p, goalTarget: val ? Number(val) : null }))
+            }}
           />
         </div>
       )}
@@ -160,12 +184,15 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
           <div>
             <label className="text-sm font-semibold text-slate-200">Target days</label>
             <input
-              type="number"
-              min="1"
+              type="text"
+              inputMode="numeric"
               className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm focus:border-brand-400 focus:ring-brand-400"
-              value={form.targetDays || 30}
-              onChange={(e) => setForm((p) => ({ ...p, targetDays: Number(e.target.value) }))}
-              required
+              placeholder="Enter target days"
+              value={form.targetDays ?? ''}
+              onChange={(e) => {
+                const val = e.target.value.replace(/[^0-9]/g, '')
+                setForm((p) => ({ ...p, targetDays: val ? Number(val) : null }))
+              }}
             />
           </div>
         )}
@@ -217,12 +244,15 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
       <div>
         <label className="text-sm font-semibold text-slate-200">MITHURA per completion</label>
         <input
-          type="number"
-          min="1"
+          type="text"
+          inputMode="numeric"
           className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm focus:border-brand-400 focus:ring-brand-400"
-          value={form.customPoints || 10}
-          onChange={(e) => setForm((p) => ({ ...p, customPoints: Number(e.target.value) }))}
-          required
+          value={form.customPoints ?? ''}
+          onChange={(e) => {
+            const val = e.target.value.replace(/[^0-9]/g, '')
+            setForm((p) => ({ ...p, customPoints: val ? Number(val) : null }))
+          }}
+          placeholder="Enter points"
         />
         <p className="mt-1 text-xs text-slate-400">Points earned for completing this habit</p>
       </div>
@@ -263,7 +293,8 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
         )}
         <button
           type="submit"
-          className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-brand-400"
+          disabled={!isFormValid()}
+          className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {initial ? 'Save changes' : 'Add habit'}
         </button>
