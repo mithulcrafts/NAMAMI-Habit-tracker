@@ -122,18 +122,18 @@ export const Rewards = ({ rewards, claimedRewards, points, onAdd, onClaim, onUpd
               onChange={(e) => setForm((p) => ({ ...p, requiredPoints: e.target.value }))}
             />
           </div>
-          <div className="mt-2 flex gap-2">
-            <button
-              onClick={handleSaveEdit}
-              className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white"
-            >
-              Save edit
-            </button>
+          <div className="mt-2 flex flex-col-reverse gap-2 sm:flex-row">
             <button
               onClick={() => setEditing(null)}
               className="rounded-md border border-white/10 px-4 py-2 text-sm text-slate-200"
             >
               Cancel
+            </button>
+            <button
+              onClick={handleSaveEdit}
+              className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white"
+            >
+              Save edit
             </button>
           </div>
         </div>

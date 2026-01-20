@@ -40,15 +40,15 @@ export const HabitCard = ({ habit, selectedDateKey, isToday, selectedDateLabel, 
             )}
           </div>
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 shrink-0">
           <button
-            className="rounded-md border border-white/10 px-3 py-1 text-xs text-slate-200 hover:border-white/30"
+            className="rounded-md border border-white/10 px-3 py-1.5 text-xs text-slate-200 hover:border-white/30 whitespace-nowrap"
             onClick={() => onEdit(habit)}
           >
             Edit
           </button>
           <button
-            className="rounded-md border border-red-500/40 px-3 py-1 text-xs text-red-200 hover:border-red-400/60"
+            className="rounded-md border border-red-500/40 px-3 py-1.5 text-xs text-red-200 hover:border-red-400/60 whitespace-nowrap"
             onClick={() => onDelete(habit.id)}
           >
             Delete
@@ -87,7 +87,7 @@ export const HabitCard = ({ habit, selectedDateKey, isToday, selectedDateLabel, 
             {doneToday ? (isToday ? 'Completed today' : 'Completed') : (isToday ? 'Mark done today' : 'Mark done')}
           </button>
         ) : (
-          <div className="flex gap-2">
+          <div className="flex flex-col gap-2 sm:flex-row">
             <input
               type="number"
               min="0"
@@ -99,7 +99,7 @@ export const HabitCard = ({ habit, selectedDateKey, isToday, selectedDateLabel, 
             <button
               onClick={handleSubmitValue}
               disabled={valueInput === ''}
-              className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="rounded-lg bg-brand-500 px-4 py-2 text-sm font-semibold text-white shadow-soft hover:bg-brand-400 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
             >
               Log
             </button>

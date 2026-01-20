@@ -281,7 +281,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
         <p className="mt-1 text-xs text-slate-400">Bonus MITHURA for maintaining streaks on this habit</p>
       </div>
 
-      <div className="flex items-center justify-end gap-2">
+      <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
         {onCancel && (
           <button
             type="button"

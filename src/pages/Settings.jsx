@@ -146,7 +146,7 @@ export const MithuraAdjustment = ({ onAdjust }) => {
         • Negative number (e.g., -5): Refund MITHURA (removes from used, increases available)
       </p>
       
-      <div className="mt-3 flex gap-2">
+      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
         <input
           type="number"
           value={amount}
@@ -156,7 +156,7 @@ export const MithuraAdjustment = ({ onAdjust }) => {
         />
         <button
           onClick={handleAdjust}
-          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700"
+          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700 whitespace-nowrap"
         >
           Adjust
         </button>
