@@ -31,9 +31,6 @@ self.addEventListener('activate', (event) => {
       );
 
       await self.clients.claim();
-
-      const clientsList = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-      clientsList.forEach((client) => client.navigate(client.url));
     })()
   );
 });
