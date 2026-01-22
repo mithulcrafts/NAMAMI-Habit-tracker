@@ -1,5 +1,5 @@
 import './App.css'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { AppProvider, useApp } from './context/AppContext'
 import { Home } from './pages/Home'
 import { RewardsPage } from './pages/RewardsPage'
@@ -37,13 +37,18 @@ const Shell = () => {
 
   const [openHabitId, setOpenHabitId] = useState(null)
   const [currentPage, setCurrentPage] = useState('home')
+  const [hydrated, setHydrated] = useState(false)
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
-        Loading NAMAMI…
-      </div>
-    )
+  // Remove splash screen when data is loaded
+  useEffect(() => {
+    if (!loading && !hydrated) {
+      setHydrated(true)
+      window._NAMAMI_HYDRATED?.()
+    }
+  }, [loading, hydrated])
+
+  if (!hydrated) {
+    return null
   }
 
   const renderPage = () => {

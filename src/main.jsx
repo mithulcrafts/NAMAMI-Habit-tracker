@@ -42,6 +42,19 @@ const enableInstallPrompt = () => {
   })
 }
 
+// Hide splash screen when app is hydrated
+const removeSplash = () => {
+  const splash = document.getElementById('splash')
+  if (splash) {
+    splash.style.opacity = '0'
+    splash.style.transition = 'opacity 0.3s ease-out'
+    setTimeout(() => splash.remove(), 300)
+  }
+}
+
+// Expose for React to call
+window._NAMAMI_HYDRATED = removeSplash
+
 enableServiceWorker()
 enableInstallPrompt()
 
