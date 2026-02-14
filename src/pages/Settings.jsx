@@ -13,31 +13,31 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
 
   return (
     <div className="space-y-3">
-      <h3 className="text-lg font-semibold text-white">⚙️ Settings</h3>
+      <h3 className="text-lg font-bold uppercase tracking-wider text-white">⚙️ SETTINGS</h3>
       <p className="text-xs text-slate-400">Configure global gamification defaults. Per-habit overrides are set on individual habit detail pages.</p>
       
       <div className="grid gap-3 md:grid-cols-2">
-        <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
-          <p className="text-sm font-semibold text-white">Global Bonuses</p>
+        <div className="glass rounded-xl p-4">
+          <p className="text-sm font-bold uppercase tracking-wide text-white">GLOBAL BONUSES</p>
           <p className="mt-1 text-xs text-slate-400">These bonuses apply when ALL habits are completed</p>
           
-          <label className="mt-3 block text-sm text-slate-300">Daily bonus (all habits done)</label>
+          <label className="mt-3 block text-sm text-slate-300">DAILY BONUS (ALL HABITS DONE)</label>
           <input
             type="number"
             min="0"
             value={local.dailyBonus}
             onChange={(e) => setLocal((p) => ({ ...p, dailyBonus: Number(e.target.value) }))}
-            className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
           />
           <p className="mt-1 text-xs text-slate-400">Awarded when you complete all habits in a day</p>
 
           <div className="mt-4">
-            <label className="block text-sm text-slate-300">Global streak bonuses</label>
+            <label className="block text-sm text-slate-300">GLOBAL STREAK BONUSES</label>
             <p className="mt-1 text-xs text-slate-400">Awarded for consecutive days of completing ALL habits</p>
             <div className="mt-2 grid grid-cols-3 gap-2">
               {[3, 7, 30].map((days) => (
                 <div key={days}>
-                  <label className="text-xs text-slate-300">{days}-day</label>
+                  <label className="text-xs text-slate-400">{days}-day</label>
                   <input
                     type="number"
                     min="0"
@@ -48,7 +48,7 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
                         globalStreakBonuses: { ...p.globalStreakBonuses, [days]: Number(e.target.value) },
                       }))
                     }
-                    className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
                   />
                 </div>
               ))}
@@ -56,23 +56,23 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
-          <p className="text-sm font-semibold text-white">Appearance</p>
-          <label className="mt-3 block text-sm text-slate-200">Theme</label>
+        <div className="glass rounded-xl p-4">
+          <p className="text-sm font-bold uppercase tracking-wide text-white">APPEARANCE</p>
+          <label className="mt-3 block text-sm text-slate-300">THEME</label>
           <select
             value={local.theme ?? 'dark'}
             onChange={(e) => setLocal((p) => ({ ...p, theme: e.target.value }))}
-            className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
           >
             <option value="dark">Dark</option>
             <option value="light">Light</option>
           </select>
         </div>
 
-        <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
-          <p className="text-sm font-semibold text-white">Features</p>
+        <div className="glass rounded-xl p-4">
+          <p className="text-sm font-bold uppercase tracking-wide text-white">FEATURES</p>
           <div className="mt-3 flex items-center justify-between">
-            <span className="text-sm text-slate-200">Enable gamification</span>
+            <span className="text-sm text-slate-300">ENABLE GAMIFICATION</span>
             <input
               type="checkbox"
               checked={local.gamificationEnabled}
@@ -81,13 +81,13 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
           </div>
         </div>
 
-        <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
-          <p className="text-sm font-semibold text-white">Quote Settings</p>
-          <label className="mt-3 block text-sm text-slate-200">Preferred quote category</label>
+        <div className="glass rounded-xl p-4">
+          <p className="text-sm font-bold uppercase tracking-wide text-white">QUOTE SETTINGS</p>
+          <label className="mt-3 block text-sm text-slate-300">PREFERRED QUOTE CATEGORY</label>
           <select
             value={local.quoteCategory ?? 'general'}
             onChange={(e) => setLocal((p) => ({ ...p, quoteCategory: e.target.value }))}
-            className="mt-1 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
+            className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
           >
             <option value="general">General inspirational</option>
             <option value="gita">Bhagavad Gita wisdom</option>
@@ -99,7 +99,7 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
 
       <button
         onClick={handleSave}
-        className="rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white"
+        className="rounded-md bg-brand-500 px-4 py-2 text-sm font-bold uppercase tracking-wider text-white hover:bg-brand-400"
       >
         Save settings
       </button>
@@ -121,15 +121,15 @@ export const MithuraAdjustment = ({ onAdjust }) => {
   }
 
   return (
-    <div className="mt-4 rounded-xl border border-white/5 bg-slate-900/70 p-4">
-      <p className="text-sm font-semibold text-white">⚖️ Manual MITHURA Adjustment</p>
-      <p className="mt-1 text-xs text-slate-400">
+    <div className="mt-4 glass rounded-xl p-4">
+      <p className="text-sm font-bold uppercase tracking-wider text-white\">⚖️ MANUAL MITHURA ADJUSTMENT</p>
+      <p className="mt-1 text-xs text-slate-400\">
         Adjust MITHURA for external rewards or corrections
       </p>
-      <p className="mt-2 text-xs text-slate-300">
+      <p className="mt-2 text-xs text-slate-400\">
         • Positive number (e.g., 10): Spend MITHURA (adds to used, reduces available)
       </p>
-      <p className="text-xs text-slate-300">
+      <p className="text-xs text-slate-400\">
         • Negative number (e.g., -5): Refund MITHURA (removes from used, increases available)
       </p>
       
@@ -139,11 +139,11 @@ export const MithuraAdjustment = ({ onAdjust }) => {
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="Enter amount (e.g., 10 or -5)"
-          className="flex-1 rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
+          className="flex-1 rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
         />
         <button
           onClick={handleAdjust}
-          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-semibold text-white hover:bg-purple-700 whitespace-nowrap"
+          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-bold uppercase tracking-wider text-white hover:bg-purple-700 whitespace-nowrap"
         >
           Adjust
         </button>

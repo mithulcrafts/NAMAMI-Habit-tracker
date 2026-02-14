@@ -38,32 +38,40 @@ export const GlobalHeatmap = ({ habits }) => {
   }))
 
   return (
-    <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
+    <div className="glass rounded-xl p-4">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-semibold text-white">Overall completion heatmap</h4>
-        <span className="text-xs text-slate-400">All habits aggregated</span>
+        <h4 className="text-sm font-bold uppercase tracking-wider text-white">OVERALL COMPLETION HEATMAP</h4>
+        <span className="text-xs text-slate-400 font-medium">ALL HABITS AGGREGATED</span>
       </div>
       <div className="mt-2 overflow-x-auto">
-        <CalendarHeatmap
-          startDate={startDateStr}
-          endDate={endDateStr}
-          values={values}
-          classForValue={(val) => {
-            if (!val || !val.count) return 'color-empty'
-            
-            // Scale intensity based on percentage of total habits completed
-            const totalHabits = habits.length || 1
-            const ratio = val.count / totalHabits
-            
-            if (ratio >= 0.75) return 'color-github-4' // 75%+ of habits
-            if (ratio >= 0.5) return 'color-github-3' // 50-74% of habits
-            if (ratio >= 0.25) return 'color-github-2' // 25-49% of habits
-            if (ratio > 0) return 'color-github-1' // Some habits completed
-            return 'color-empty'
-          }}
-          gutterSize={2}
-          showWeekdayLabels
-        />
+        <style>{`
+          #global-heatmap .color-github-1 { fill: #00F5FF !important; opacity: 0.35 !important; filter: drop-shadow(0 0 4px #00F5FF) !important; }
+          #global-heatmap .color-github-2 { fill: #00F5FF !important; opacity: 0.55 !important; filter: drop-shadow(0 0 6px #00F5FF) !important; }
+          #global-heatmap .color-github-3 { fill: #00F5FF !important; opacity: 0.8 !important; filter: drop-shadow(0 0 8px #00F5FF) !important; }
+          #global-heatmap .color-github-4 { fill: #00F5FF !important; opacity: 1 !important; filter: drop-shadow(0 0 10px #00F5FF) !important; }
+        `}</style>
+        <div id="global-heatmap">
+          <CalendarHeatmap
+            startDate={startDateStr}
+            endDate={endDateStr}
+            values={values}
+            classForValue={(val) => {
+              if (!val || !val.count) return 'color-empty'
+              
+              // Scale intensity based on percentage of total habits completed
+              const totalHabits = habits.length || 1
+              const ratio = val.count / totalHabits
+              
+              if (ratio >= 0.75) return 'color-github-4' // 75%+ of habits
+              if (ratio >= 0.5) return 'color-github-3' // 50-74% of habits
+              if (ratio >= 0.25) return 'color-github-2' // 25-49% of habits
+              if (ratio > 0) return 'color-github-1' // Some habits completed
+              return 'color-empty'
+            }}
+            gutterSize={2}
+            showWeekdayLabels
+          />
+        </div>
       </div>
     </div>
   )

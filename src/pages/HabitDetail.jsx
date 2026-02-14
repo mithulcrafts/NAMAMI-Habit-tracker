@@ -27,12 +27,12 @@ export const HabitDetail = ({
     .pop()
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-slate-950/90 p-5 shadow-soft">
+    <div className="rounded-2xl glass p-5">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-xs uppercase tracking-widest text-brand-100">Habit detail</p>
-          <h2 className="text-2xl font-semibold text-white">{habit.name}</h2>
-          <p className="text-sm text-slate-300">{habit.description}</p>
+          <p className="text-xs uppercase tracking-widest text-brand-100">HABIT DETAIL</p>
+          <h2 className="text-2xl font-bold uppercase tracking-wider text-white">{habit.name}</h2>
+          <p className="text-sm text-slate-400">{habit.description}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2">
             <span className="inline-block h-3 w-3 rounded-full" style={{ backgroundColor: habit.habitColor }} />
             <span className="text-xs text-slate-400">
@@ -48,7 +48,7 @@ export const HabitDetail = ({
         </div>
         <button
           onClick={onClose}
-          className="rounded-md border border-white/10 px-3 py-1 text-sm text-slate-200 hover:border-white/30"
+          className="rounded-md border border-cyan-400/20 px-3 py-1 text-sm font-medium uppercase text-slate-300 hover:border-cyan-400/40"
         >
           Close
         </button>
@@ -56,26 +56,26 @@ export const HabitDetail = ({
 
       <div className="mt-4 grid gap-3 sm:grid-cols-3">
         <div className="glass rounded-xl p-3">
-          <p className="text-xs uppercase tracking-widest text-brand-100">Streak</p>
-          <p className="text-2xl font-semibold text-white">{habit.streak} days</p>
+          <p className="text-xs uppercase tracking-widest text-brand-100">STREAK</p>
+          <p className="text-2xl font-bold text-white">{habit.streak} days</p>
         </div>
         <div className="glass rounded-xl p-3">
-          <p className="text-xs uppercase tracking-widest text-brand-100">Total completed</p>
-          <p className="text-2xl font-semibold text-white">{habit.totalCompleted}</p>
+          <p className="text-xs uppercase tracking-widest text-brand-100">TOTAL COMPLETED</p>
+          <p className="text-2xl font-bold text-white">{habit.totalCompleted}</p>
         </div>
         <div className="glass rounded-xl p-3">
-          <p className="text-xs uppercase tracking-widest text-brand-100">Progress</p>
-          <p className="text-2xl font-semibold text-white">{completionRate}%</p>
+          <p className="text-xs uppercase tracking-widest text-brand-100">PROGRESS</p>
+          <p className="text-2xl font-bold text-white">{completionRate}%</p>
         </div>
       </div>
 
-      <div className="mt-3 rounded-xl border border-white/5 bg-slate-900/70 p-4">
-        <div className="flex items-center justify-between text-sm text-slate-300">
+      <div className="mt-3 glass rounded-xl p-4">
+        <div className="flex items-center justify-between text-sm text-slate-400">
           <span>
-            {habit.isDailyHabit ? 'Ongoing daily habit' : `Target: ${habit.targetDays} days`} · Frequency:{' '}
-            {habit.frequency}
+            {habit.isDailyHabit ? 'ONGOING DAILY HABIT' : `TARGET: ${habit.targetDays} DAYS`} · FREQUENCY:{' '}
+            {habit.frequency.toUpperCase()}
           </span>
-          <span>Last done: {lastCheck ? formatDate(new Date(lastCheck)) : '—'}</span>
+          <span>LAST DONE: {lastCheck ? formatDate(new Date(lastCheck)) : '—'}</span>
         </div>
         <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-800">
           <div
@@ -110,9 +110,9 @@ export const HabitDetail = ({
         <Badges maxStreak={habit.streak} points={points} />
       </div>
 
-      <div id="widget" className="mt-4 rounded-xl border border-white/5 bg-slate-900/70 p-3">
-        <p className="text-sm font-semibold text-white">Today</p>
-        <p className="text-sm text-slate-300">{todayKey()}</p>
+      <div id="widget" className="mt-4 glass rounded-xl p-3">
+        <p className="text-sm font-bold uppercase tracking-wider text-white">TODAY</p>
+        <p className="text-sm text-slate-400">{todayKey()}</p>
       </div>
     </div>
   )
