@@ -19,6 +19,11 @@ export const Dashboard = ({
   settings,
   rewards,
   claimedRewards,
+  streakFreezes,
+  streakFreezeCost,
+  onBuyStreakFreeze,
+  onUseStreakFreeze,
+  onRemoveStreakFreeze,
   onCategoryChange,
   onAddCustomQuote,
   onAddHabit,
@@ -169,6 +174,7 @@ export const Dashboard = ({
               goalType={habit.goalType}
               goalTarget={habit.goalTarget}
               dailyValueHistory={habit.dailyValueHistory}
+              freezeDates={habit.freezeDates}
             />
           ))}
         </div>
@@ -188,6 +194,9 @@ export const Dashboard = ({
               onOpen={onOpenHabit}
               onEdit={(h) => setEditing(h)}
               onDelete={onDeleteHabit}
+              streakFreezes={streakFreezes}
+              onUseStreakFreeze={onUseStreakFreeze}
+              onRemoveStreakFreeze={onRemoveStreakFreeze}
             />
           ))}
           {!sortedHabits.length && (
@@ -218,6 +227,9 @@ export const Dashboard = ({
           rewards={rewards}
           claimedRewards={claimedRewards}
           points={points}
+          streakFreezes={streakFreezes}
+          streakFreezeCost={streakFreezeCost}
+          onBuyStreakFreeze={onBuyStreakFreeze}
           onAdd={onAddReward}
           onClaim={onClaimReward}
           onUpdate={onUpdateReward}

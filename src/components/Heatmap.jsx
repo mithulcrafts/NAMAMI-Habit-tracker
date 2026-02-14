@@ -1,7 +1,8 @@
 import CalendarHeatmap from 'react-calendar-heatmap'
 import 'react-calendar-heatmap/dist/styles.css'
 
-export const Heatmap = ({ history, habitColor, habitName, goalType, goalTarget, dailyValueHistory }) => {
+export const Heatmap = ({ history, habitColor, habitName, goalType, goalTarget, dailyValueHistory, freezeDates }) => {
+  const patternId = `freeze-${habitColor?.slice(1) || 'default'}`
   const endDate = new Date()
   const startDate = new Date()
   startDate.setDate(startDate.getDate() - 120)
@@ -23,12 +24,13 @@ export const Heatmap = ({ history, habitColor, habitName, goalType, goalTarget, 
     const end = new Date(endDate)
     while (cursor <= end) {
       const key = formatDateString(cursor)
+      const frozen = (freezeDates || {})[key] === true
       if (goalType === 'binary') {
         const done = (history || {})[key] === true
-        vals.push({ date: key, count: done ? 1 : 0 })
+        vals.push({ date: key, count: done ? 1 : 0, frozen })
       } else {
         const value = (dailyValueHistory || {})[key] ?? 0
-        vals.push({ date: key, count: value })
+        vals.push({ date: key, count: value, frozen })
       }
       cursor.setDate(cursor.getDate() - -1) // increment by 1 day
     }
@@ -53,14 +55,25 @@ export const Heatmap = ({ history, habitColor, habitName, goalType, goalTarget, 
           .heatmap-${habitColor?.slice(1)} .color-github-2 { fill: ${habitColor}; opacity: 0.5; }
           .heatmap-${habitColor?.slice(1)} .color-github-3 { fill: ${habitColor}; opacity: 0.75; }
           .heatmap-${habitColor?.slice(1)} .color-github-4 { fill: ${habitColor}; opacity: 1; }
+          .heatmap-${habitColor?.slice(1)} .color-freeze { fill: url(#${patternId}); opacity: 1; }
         `}</style>
         <div className={`heatmap-${habitColor?.slice(1)}`}>
+          <svg width="0" height="0" aria-hidden="true" focusable="false">
+            <defs>
+              <pattern id={patternId} patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+                <rect width="6" height="6" fill={habitColor || '#38bdf8'} />
+                <rect width="2" height="6" fill="rgba(255,255,255,0.45)" />
+              </pattern>
+            </defs>
+          </svg>
           <CalendarHeatmap
             startDate={startDateStr}
             endDate={endDateStr}
             values={values}
             classForValue={(val) => {
-              if (!val || !val.count) return 'color-empty'
+              if (!val) return 'color-empty'
+              if (val.frozen) return 'color-freeze'
+              if (!val.count) return 'color-empty'
               
               // For binary habits, just show full intensity
               if (goalType === 'binary') return 'color-github-4'

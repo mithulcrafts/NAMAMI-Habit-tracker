@@ -93,6 +93,7 @@ export const HabitDetail = ({
           goalType={habit.goalType}
           goalTarget={habit.goalTarget}
           dailyValueHistory={habit.dailyValueHistory}
+          freezeDates={habit.freezeDates}
         />
         <ProgressCharts history={habit.history} />
       </div>

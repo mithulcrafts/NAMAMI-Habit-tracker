@@ -12,7 +12,8 @@ import {
 
 const STORAGE_KEY = 'namami-state-v1'
 const STORAGE_FALLBACK_KEYS = ['namami-state-v1', 'namami-state']
-const SCHEMA_VERSION = 5
+const SCHEMA_VERSION = 6
+const STREAK_FREEZE_COST = 60
 
 // Helper to generate deterministic color from habit ID
 const getHabitColor = (id) => {
@@ -45,6 +46,7 @@ const defaultHabits = [
     createdAt: todayKey(),
     previousStreak: 0,
     streakMilestones: {},
+    freezeDates: {},
   },
   {
     id: 'habit-2',
@@ -65,6 +67,7 @@ const defaultHabits = [
     createdAt: todayKey(),
     previousStreak: 0,
     streakMilestones: {},
+    freezeDates: {},
   },
 ]
 
@@ -122,13 +125,20 @@ const deriveStats = (habits, settings) => {
     
     while (true) {
       const key = formatDate(cursor)
+      const isFrozen = habit.freezeDates?.[key] === true
+      if (isFrozen) {
+        streak += 1
+        cursor.setDate(cursor.getDate() - 1)
+        continue
+      }
+
       const dayEntry = habit.history?.[key]
-      
+
       // If day exists and is explicitly false, break the streak
       if (dayEntry === false) {
         break
       }
-      
+
       const isCompleted = getDayCompletion(key, habit.goalType, habit.goalTarget, null)
       if (isCompleted) {
         streak += 1
@@ -283,6 +293,7 @@ export const AppProvider = ({ children }) => {
     claimedRewards: [],
     earnedBadges: [], // Track earned badges with habit and timestamp
     manualAdjustment: 0, // Track manual MITHURA adjustments
+    streakFreezes: 0,
     schemaVersion: SCHEMA_VERSION,
   })
   const [loading, setLoading] = useState(true)
@@ -329,13 +340,20 @@ export const AppProvider = ({ children }) => {
           }
         })
       }
-      if (version < SCHEMA_VERSION) {
+      if (version < 5) {
         migrated.earnedBadges = migrated.earnedBadges || []
         migrated.manualAdjustment = migrated.manualAdjustment || 0
         migrated.habits = (migrated.habits || []).map((h) => ({
           ...h,
           previousStreak: h.previousStreak ?? 0,
           streakMilestones: h.streakMilestones ?? {},
+        }))
+      }
+      if (version < 6) {
+        migrated.streakFreezes = migrated.streakFreezes ?? 0
+        migrated.habits = (migrated.habits || []).map((h) => ({
+          ...h,
+          freezeDates: h.freezeDates ?? {},
         }))
       }
       return migrated
@@ -457,30 +475,48 @@ export const AppProvider = ({ children }) => {
   }
 
   const toggleCompletion = (id, dateKey = todayKey(), completed = true, value = null) => {
-    setState((prev) => ({
-      ...prev,
-      habits: prev.habits.map((habit) => {
+    setState((prev) => {
+      let refund = 0
+      const habits = prev.habits.map((habit) => {
         if (habit.id !== id) return habit
-        
+
+        const freezeDates = { ...(habit.freezeDates || {}) }
+        const hadFreeze = freezeDates[dateKey] === true
+        if (hadFreeze && completed === true) {
+          delete freezeDates[dateKey]
+          refund = 1
+        }
+
         if (habit.goalType === 'binary') {
           // Binary: explicitly set to true/false
           const history = { ...(habit.history || {}) }
           history[dateKey] = completed
-          return { ...habit, history }
-        } else {
-          // Count/Duration: store numeric value
-          const dailyValueHistory = { ...(habit.dailyValueHistory || {}) }
-          if (value !== null) {
-            dailyValueHistory[dateKey] = value
-            // Also update binary history based on whether target is met
-            const history = { ...(habit.history || {}) }
-            history[dateKey] = value >= (habit.goalTarget || 1)
-            return { ...habit, dailyValueHistory, history }
-          }
-          return habit
+          return { ...habit, history, freezeDates }
         }
-      }),
-    }))
+
+        // Count/Duration: store numeric value
+        const dailyValueHistory = { ...(habit.dailyValueHistory || {}) }
+        if (value !== null) {
+          dailyValueHistory[dateKey] = value
+          // Also update binary history based on whether target is met
+          const history = { ...(habit.history || {}) }
+          history[dateKey] = value >= (habit.goalTarget || 1)
+          return { ...habit, dailyValueHistory, history, freezeDates }
+        }
+
+        return { ...habit, freezeDates }
+      })
+
+      if (!refund) {
+        return { ...prev, habits }
+      }
+
+      return {
+        ...prev,
+        habits,
+        streakFreezes: (prev.streakFreezes || 0) + refund,
+      }
+    })
   }
 
   const addReward = (reward) => {
@@ -503,6 +539,82 @@ export const AppProvider = ({ children }) => {
         { rewardId, claimedAt: todayKey(), cost, name: reward.name },
       ],
     }))
+  }
+
+  const buyStreakFreeze = () => {
+    if (points < STREAK_FREEZE_COST) return
+    setState((prev) => ({
+      ...prev,
+      streakFreezes: (prev.streakFreezes || 0) + 1,
+      claimedRewards: [
+        ...prev.claimedRewards,
+        {
+          rewardId: 'streak-freeze',
+          claimedAt: todayKey(),
+          cost: STREAK_FREEZE_COST,
+          name: 'Streak Freeze',
+        },
+      ],
+    }))
+  }
+
+  const useStreakFreeze = (habitId, dateKey = todayKey()) => {
+    const today = todayKey()
+    if (dateKey > today) return
+
+    setState((prev) => {
+      if ((prev.streakFreezes || 0) <= 0) return prev
+
+      let used = false
+      const habits = prev.habits.map((habit) => {
+        if (habit.id !== habitId) return habit
+
+        const freezeDates = { ...(habit.freezeDates || {}) }
+        if (freezeDates[dateKey]) return habit
+
+        const isCompleted = habit.goalType === 'binary'
+          ? habit.history?.[dateKey] === true
+          : (habit.dailyValueHistory?.[dateKey] ?? 0) >= (habit.goalTarget || 1)
+
+        if (isCompleted) return habit
+
+        freezeDates[dateKey] = true
+        used = true
+        return { ...habit, freezeDates }
+      })
+
+      if (!used) return prev
+
+      return {
+        ...prev,
+        habits,
+        streakFreezes: (prev.streakFreezes || 0) - 1,
+      }
+    })
+  }
+
+  const removeStreakFreeze = (habitId, dateKey = todayKey()) => {
+    setState((prev) => {
+      let removed = false
+      const habits = prev.habits.map((habit) => {
+        if (habit.id !== habitId) return habit
+
+        const freezeDates = { ...(habit.freezeDates || {}) }
+        if (!freezeDates[dateKey]) return habit
+
+        delete freezeDates[dateKey]
+        removed = true
+        return { ...habit, freezeDates }
+      })
+
+      if (!removed) return prev
+
+      return {
+        ...prev,
+        habits,
+        streakFreezes: (prev.streakFreezes || 0) + 1,
+      }
+    })
   }
 
   const updateReward = (rewardId, data) => {
@@ -566,6 +678,8 @@ export const AppProvider = ({ children }) => {
     claimedRewards: state.claimedRewards,
     earnedBadges: state.earnedBadges,
     badgeDefinitions: BADGE_DEFINITIONS,
+    streakFreezes: state.streakFreezes || 0,
+    streakFreezeCost: STREAK_FREEZE_COST,
     addHabit,
     updateHabit,
     deleteHabit,
@@ -574,6 +688,9 @@ export const AppProvider = ({ children }) => {
     claimReward,
     updateReward,
     deleteReward,
+    buyStreakFreeze,
+    useStreakFreeze,
+    removeStreakFreeze,
     addCustomQuote,
     updateSettings,
     updateHabitGamification,

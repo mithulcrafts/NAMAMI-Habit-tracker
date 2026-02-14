@@ -1,6 +1,17 @@
 import { useState } from 'react'
 
-export const Rewards = ({ rewards, claimedRewards, points, onAdd, onClaim, onUpdate, onDelete }) => {
+export const Rewards = ({
+  rewards,
+  claimedRewards,
+  points,
+  onAdd,
+  onClaim,
+  onUpdate,
+  onDelete,
+  streakFreezes = 0,
+  streakFreezeCost = 60,
+  onBuyStreakFreeze,
+}) => {
   const [form, setForm] = useState({ name: '', requiredPoints: 50 })
   const [editing, setEditing] = useState(null)
   const [confirmingId, setConfirmingId] = useState(null)
@@ -32,6 +43,28 @@ export const Rewards = ({ rewards, claimedRewards, points, onAdd, onClaim, onUpd
   return (
     <div className="space-y-3">
       <h3 className="text-sm font-semibold text-white">Rewards</h3>
+      <div className="rounded-lg border border-white/5 bg-slate-900/70 p-3">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <p className="text-base font-semibold text-white">Streak Freeze</p>
+            <p className="text-sm text-slate-300">Spend {streakFreezeCost} MITHURA to protect a missed day</p>
+          </div>
+          <div className="text-xs text-slate-300">Owned: {streakFreezes}</div>
+        </div>
+        <div className="mt-3">
+          <button
+            disabled={!onBuyStreakFreeze || points < streakFreezeCost}
+            onClick={() => onBuyStreakFreeze?.()}
+            className={`w-full rounded-md px-3 py-1 text-xs font-semibold text-white ${
+              points >= streakFreezeCost && onBuyStreakFreeze
+                ? 'bg-sky-500 hover:bg-sky-400'
+                : 'bg-slate-800 text-slate-400'
+            }`}
+          >
+            {points >= streakFreezeCost ? 'Buy streak freeze' : `Need ${Math.max(streakFreezeCost - points, 0)} more`}
+          </button>
+        </div>
+      </div>
       <div className="grid gap-3 sm:grid-cols-2">
         {rewards.map((reward) => {
           const available = points >= reward.requiredPoints
@@ -95,7 +128,7 @@ export const Rewards = ({ rewards, claimedRewards, points, onAdd, onClaim, onUpd
                         : 'bg-slate-800 text-slate-400'
                     }`}
                   >
-                    {available ? 'Claim now' : `${Math.max(reward.requiredPoints - points, 0)} left`}
+                    {available ? 'Claim now' : `Need ${Math.max(reward.requiredPoints - points, 0)} more`}
                   </button>
                 )}
               </div>

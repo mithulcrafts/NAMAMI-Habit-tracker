@@ -1,7 +1,20 @@
 import { useState } from 'react'
 import { todayKey } from '../utils/date'
 
-export const HabitCard = ({ habit, selectedDateKey, isToday, selectedDateLabel, relativeLabel, onToggle, onOpen, onEdit, onDelete }) => {
+export const HabitCard = ({
+  habit,
+  selectedDateKey,
+  isToday,
+  selectedDateLabel,
+  relativeLabel,
+  onToggle,
+  onOpen,
+  onEdit,
+  onDelete,
+  streakFreezes = 0,
+  onUseStreakFreeze,
+  onRemoveStreakFreeze,
+}) => {
   const today = todayKey()
   const [valueInput, setValueInput] = useState('')
   
@@ -15,6 +28,9 @@ export const HabitCard = ({ habit, selectedDateKey, isToday, selectedDateLabel, 
   // For count/duration, get the selected date's value
   const todayValue = habit.dailyValueHistory?.[dateKey] ?? null
   const goalMet = habit.goalType === 'binary' ? doneToday : (todayValue ?? 0) >= (habit.goalTarget || 1)
+  const isFrozen = habit.freezeDates?.[dateKey] === true
+  const isFuture = dateKey > today
+  const canUseFreeze = Boolean(onUseStreakFreeze) && !isFuture && !goalMet && !isFrozen && streakFreezes > 0
 
   const handleSubmitValue = () => {
     if (valueInput === '' || isNaN(valueInput)) return
@@ -112,6 +128,30 @@ export const HabitCard = ({ habit, selectedDateKey, isToday, selectedDateLabel, 
             {todayValue} / {habit.goalTarget} {habit.goalType === 'count' ? 'completed' : 'minutes'}
             {goalMet && ' ✓ Goal met!'}
           </div>
+        )}
+        {isFrozen && (
+          <div className="rounded-md bg-sky-500/15 px-3 py-2 text-sm font-semibold text-sky-200">
+            Streak freeze used for this day
+          </div>
+        )}
+        {isFrozen && (
+          <button
+            onClick={() => onRemoveStreakFreeze?.(habit.id, dateKey)}
+            className="rounded-lg border border-sky-500/40 px-4 py-2 text-sm font-semibold text-sky-100 shadow-soft transition hover:border-sky-400/70"
+          >
+            Remove streak freeze
+          </button>
+        )}
+        {!goalMet && !isFrozen && (
+          <button
+            onClick={() => onUseStreakFreeze?.(habit.id, dateKey)}
+            disabled={!canUseFreeze}
+            className={`rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-soft transition ${
+              canUseFreeze ? 'bg-sky-500 hover:bg-sky-400' : 'bg-slate-800 text-slate-400'
+            }`}
+          >
+            {streakFreezes > 0 ? 'Use streak freeze' : 'No streak freezes'}
+          </button>
         )}
       </div>
 

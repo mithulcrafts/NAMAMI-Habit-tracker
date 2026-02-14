@@ -8,6 +8,9 @@ export const RewardsPage = ({
   earnedBadges,
   badgeDefinitions,
   habits,
+  streakFreezes,
+  streakFreezeCost,
+  onBuyStreakFreeze,
   onAddReward,
   onClaimReward,
   onUpdateReward,
@@ -32,6 +35,9 @@ export const RewardsPage = ({
           rewards={rewards}
           claimedRewards={claimedRewards}
           points={points}
+          streakFreezes={streakFreezes}
+          streakFreezeCost={streakFreezeCost}
+          onBuyStreakFreeze={onBuyStreakFreeze}
           onAdd={onAddReward}
           onClaim={onClaimReward}
           onUpdate={onUpdateReward}

@@ -26,6 +26,9 @@ export const Home = ({
   onDeleteHabit,
   globalSettings,
   onUpdateHabitGamification,
+  streakFreezes,
+  onUseStreakFreeze,
+  onRemoveStreakFreeze,
 }) => {
   const [editing, setEditing] = useState(null)
   const [openDetailHabitId, setOpenDetailHabitId] = useState(null)
@@ -156,6 +159,7 @@ export const Home = ({
               goalType={habit.goalType}
               goalTarget={habit.goalTarget}
               dailyValueHistory={habit.dailyValueHistory}
+              freezeDates={habit.freezeDates}
             />
           ))}
         </div>
@@ -175,6 +179,9 @@ export const Home = ({
                 onOpen={() => setOpenDetailHabitId(habit.id)}
                 onEdit={(h) => setEditing(h)}
                 onDelete={onDeleteHabit}
+                streakFreezes={streakFreezes}
+                onUseStreakFreeze={onUseStreakFreeze}
+                onRemoveStreakFreeze={onRemoveStreakFreeze}
               />
               {openDetailHabitId === habit.id && openDetailHabit && (
                 <div className="mt-3">

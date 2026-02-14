@@ -21,6 +21,8 @@ const Shell = () => {
     badgeDefinitions,
     quoteOfDay,
     settings,
+    streakFreezes,
+    streakFreezeCost,
     addHabit,
     toggleCompletion,
     updateHabit,
@@ -29,6 +31,9 @@ const Shell = () => {
     claimReward,
     updateReward,
     deleteReward,
+    buyStreakFreeze,
+    useStreakFreeze,
+    removeStreakFreeze,
     updateSettings,
     addCustomQuote,
     updateHabitGamification,
@@ -73,6 +78,9 @@ const Shell = () => {
             onDeleteHabit={deleteHabit}
             globalSettings={settings}
             onUpdateHabitGamification={updateHabitGamification}
+            streakFreezes={streakFreezes}
+            onUseStreakFreeze={useStreakFreeze}
+            onRemoveStreakFreeze={removeStreakFreeze}
           />
         )
       case 'rewards':
@@ -84,6 +92,9 @@ const Shell = () => {
             earnedBadges={earnedBadges}
             badgeDefinitions={badgeDefinitions}
             habits={habits}
+            streakFreezes={streakFreezes}
+            streakFreezeCost={streakFreezeCost}
+            onBuyStreakFreeze={buyStreakFreeze}
             onAddReward={addReward}
             onClaimReward={claimReward}
             onUpdateReward={updateReward}
