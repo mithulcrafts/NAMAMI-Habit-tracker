@@ -19,13 +19,13 @@ export const RewardsPage = ({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-white">🎁 Rewards</h2>
-        <p className="text-sm text-slate-300 mt-1">Redeem your MITHURA points for rewards</p>
+        <h2 className="text-2xl font-bold uppercase tracking-wider text-white">🎁 REWARDS</h2>
+        <p className="text-sm text-slate-400 mt-1">Redeem your MITHURA points for rewards</p>
       </div>
 
       {/* Earned Badges Section */}
       <div className="glass rounded-xl p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">🏆 Badges Earned</h3>
+        <h3 className="text-lg font-bold uppercase tracking-wider text-white mb-4">🏆 BADGES EARNED</h3>
         <EarnedBadges earnedBadges={earnedBadges} badgeDefinitions={badgeDefinitions} habits={habits} />
       </div>
 
