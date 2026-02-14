@@ -1,9 +1,6 @@
-﻿import { useState } from 'react'
-import { sendNotification } from '../utils/notifications'
+﻿import { sendNotification } from '../utils/notifications'
 
-export const QuoteCard = ({ quote, category, onCategoryChange, onAddCustom }) => {
-  const [custom, setCustom] = useState('')
-
+export const QuoteCard = ({ quote, category, onCategoryChange }) => {
   const pushNotification = async () => {
     await sendNotification('NAMAMI – Quote', quote)
   }
@@ -22,30 +19,13 @@ export const QuoteCard = ({ quote, category, onCategoryChange, onAddCustom }) =>
         </select>
       </div>
       <p className="mt-3 text-lg font-semibold text-white">"{quote}"</p>
-      <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-        <input
-          value={custom}
-          onChange={(e) => setCustom(e.target.value)}
-          placeholder="Add your own quote"
-          className="flex-1 rounded-md border border-white/10 bg-slate-900 px-3 py-2 text-sm"
-        />
-        <div className="flex gap-2">
-          <button
-            onClick={() => {
-              onAddCustom(custom)
-              setCustom('')
-            }}
-            className="flex-1 sm:flex-none rounded-md bg-brand-500 px-4 py-2 text-sm font-semibold text-white whitespace-nowrap"
-          >
-            Save
-          </button>
-          <button
-            onClick={pushNotification}
-            className="flex-1 sm:flex-none rounded-md border border-white/10 px-4 py-2 text-sm text-slate-200 hover:border-white/30 whitespace-nowrap"
-          >
-            Notify
-          </button>
-        </div>
+      <div className="mt-4 flex justify-end">
+        <button
+          onClick={pushNotification}
+          className="rounded-md border border-white/10 px-4 py-2 text-sm text-slate-200 hover:border-white/30"
+        >
+          Notify
+        </button>
       </div>
     </div>
   )

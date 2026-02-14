@@ -4,7 +4,6 @@ export const QuotesPage = ({
   quoteOfDay,
   category,
   onCategoryChange,
-  onAddCustomQuote,
 }) => {
   return (
     <div className="space-y-6">
@@ -17,7 +16,6 @@ export const QuotesPage = ({
         quote={quoteOfDay}
         category={category}
         onCategoryChange={onCategoryChange}
-        onAddCustom={onAddCustomQuote}
       />
     </div>
   )
