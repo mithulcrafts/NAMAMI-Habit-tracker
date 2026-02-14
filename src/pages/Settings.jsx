@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react'
-import { requestNotificationPermission } from '../utils/notifications'
 
 export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
   const [local, setLocal] = useState(settings)
@@ -10,14 +9,6 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
 
   const handleSave = () => {
     onUpdate(local)
-  }
-
-  const handleNotifyToggle = async () => {
-    const ok = await requestNotificationPermission()
-    if (ok) {
-      setLocal((p) => ({ ...p, notificationsEnabled: !p.notificationsEnabled }))
-      onUpdate({ ...local, notificationsEnabled: !local.notificationsEnabled })
-    }
   }
 
   return (
@@ -87,10 +78,6 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
               checked={local.gamificationEnabled}
               onChange={(e) => setLocal((p) => ({ ...p, gamificationEnabled: e.target.checked }))}
             />
-          </div>
-          <div className="mt-2 flex items-center justify-between">
-            <span className="text-sm text-slate-200">Enable notifications</span>
-            <input type="checkbox" checked={local.notificationsEnabled} onChange={handleNotifyToggle} />
           </div>
         </div>
 

@@ -83,7 +83,6 @@ const calculatePointsSpent = (claimedRewards, rewards) =>
 const defaultSettings = {
   dailyBonus: 20,
   gamificationEnabled: true,
-  notificationsEnabled: false,
   quoteCategory: 'general',
   theme: 'dark',
   globalStreakBonuses: {
