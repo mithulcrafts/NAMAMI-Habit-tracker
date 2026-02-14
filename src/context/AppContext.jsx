@@ -12,7 +12,7 @@ import {
 
 const STORAGE_KEY = 'namami-state-v1'
 const STORAGE_FALLBACK_KEYS = ['namami-state-v1', 'namami-state']
-const SCHEMA_VERSION = 4
+const SCHEMA_VERSION = 5
 
 // Helper to generate deterministic color from habit ID
 const getHabitColor = (id) => {
@@ -43,6 +43,8 @@ const defaultHabits = [
       [formatDate(new Date(Date.now() - 2 * 86400000))]: true,
     },
     createdAt: todayKey(),
+    previousStreak: 0,
+    streakMilestones: {},
   },
   {
     id: 'habit-2',
@@ -61,6 +63,8 @@ const defaultHabits = [
     dailyValueHistory: {},
     history: {},
     createdAt: todayKey(),
+    previousStreak: 0,
+    streakMilestones: {},
   },
 ]
 
@@ -112,16 +116,26 @@ const deriveStats = (habits, settings) => {
       return value >= (goalTarget || 1)
     }
 
-    // Compute streak: only increment when target is met
+    // Compute streak: start from yesterday, so today's incompletion doesn't affect it
     let streak = 0
     let cursor = new Date()
+    cursor.setDate(cursor.getDate() - 1) // Start from yesterday, not today
+    
     while (true) {
       const key = formatDate(cursor)
+      const dayEntry = habit.history?.[key]
+      
+      // If day exists and is explicitly false, break the streak
+      if (dayEntry === false) {
+        break
+      }
+      
       const isCompleted = getDayCompletion(key, habit.goalType, habit.goalTarget, null)
       if (isCompleted) {
         streak += 1
         cursor.setDate(cursor.getDate() - 1)
       } else {
+        // Day not completed - stop counting
         break
       }
     }
@@ -215,14 +229,22 @@ const checkBadgesEarned = (habits, points) => {
   // Streak-based badges (per habit)
   habits.forEach((habit) => {
     BADGE_DEFINITIONS.filter(b => b.type === 'streak').forEach((badge) => {
-      if (habit.streak >= badge.requirement) {
-        badges.push({
-          id: `${habit.id}-${badge.id}`,
-          badgeId: badge.id,
-          habitId: habit.id,
-          habitName: habit.name,
-          earnedAt: todayKey(),
-        })
+      const currentMilestone = Math.floor(habit.streak / badge.requirement)
+      const previousMilestone = Math.floor((habit.previousStreak || 0) / badge.requirement)
+      
+      // Award badge each time we reach a new "batch" of this requirement
+      // E.g., if requirement is 3: earned at 3, 6, 9, 12, etc.
+      if (currentMilestone > previousMilestone) {
+        for (let i = previousMilestone + 1; i <= currentMilestone; i++) {
+          badges.push({
+            id: `${habit.id}-${badge.id}-${i}`,
+            badgeId: badge.id,
+            habitId: habit.id,
+            habitName: habit.name,
+            earnedAt: todayKey(),
+            milestone: i,
+          })
+        }
       }
     })
   })
@@ -311,6 +333,11 @@ export const AppProvider = ({ children }) => {
       if (version < SCHEMA_VERSION) {
         migrated.earnedBadges = migrated.earnedBadges || []
         migrated.manualAdjustment = migrated.manualAdjustment || 0
+        migrated.habits = (migrated.habits || []).map((h) => ({
+          ...h,
+          previousStreak: h.previousStreak ?? 0,
+          streakMilestones: h.streakMilestones ?? {},
+        }))
       }
       return migrated
     }
@@ -363,7 +390,7 @@ export const AppProvider = ({ children }) => {
 
   const points = Math.max(0, lifetimePoints - pointsSpent)
 
-  // Check for newly earned badges
+  // Check for newly earned badges and update streak tracking
   useEffect(() => {
     if (loading || !habits.length) return
 
@@ -377,6 +404,18 @@ export const AppProvider = ({ children }) => {
         earnedBadges: [...(prev.earnedBadges || []), ...badgesToAdd],
       }))
     }
+
+    // Update previousStreak for each habit to current streak for next comparison
+    setState((prev) => ({
+      ...prev,
+      habits: prev.habits.map((habit) => {
+        const updated = habits.find((h) => h.id === habit.id)
+        if (updated && updated.streak !== habit.previousStreak) {
+          return { ...habit, previousStreak: updated.streak }
+        }
+        return habit
+      }),
+    }))
   }, [habits, points, loading])
 
   const quoteOfDay = useMemo(() => {
@@ -397,6 +436,8 @@ export const AppProvider = ({ children }) => {
       goalType: data.goalType || 'binary',
       goalTarget: data.goalTarget || null,
       dailyValueHistory: {},
+      previousStreak: 0,
+      streakMilestones: {},
       ...data,
     }
     setState((prev) => ({ ...prev, habits: [...prev.habits, newHabit] }))
@@ -423,7 +464,7 @@ export const AppProvider = ({ children }) => {
         if (habit.id !== id) return habit
         
         if (habit.goalType === 'binary') {
-          // Binary: simple true/false toggle
+          // Binary: explicitly set to true/false
           const history = { ...(habit.history || {}) }
           history[dateKey] = completed
           return { ...habit, history }
