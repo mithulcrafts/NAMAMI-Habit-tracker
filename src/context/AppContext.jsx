@@ -411,28 +411,31 @@ export const AppProvider = ({ children }) => {
   useEffect(() => {
     if (loading || !habits.length) return
 
-    const newBadges = checkBadgesEarned(habits, points)
-    const existingBadgeIds = new Set((state.earnedBadges || []).map((b) => b.id))
-    const badgesToAdd = newBadges.filter((b) => !existingBadgeIds.has(b.id))
+    setState((prev) => {
+      const newBadges = checkBadgesEarned(habits, points)
+      const existingBadgeIds = new Set((prev.earnedBadges || []).map((b) => b.id))
+      const badgesToAdd = newBadges.filter((b) => !existingBadgeIds.has(b.id))
 
-    if (badgesToAdd.length > 0) {
-      setState((prev) => ({
-        ...prev,
-        earnedBadges: [...(prev.earnedBadges || []), ...badgesToAdd],
-      }))
-    }
-
-    // Update previousStreak for each habit to current streak for next comparison
-    setState((prev) => ({
-      ...prev,
-      habits: prev.habits.map((habit) => {
+      const updatedHabits = prev.habits.map((habit) => {
         const updated = habits.find((h) => h.id === habit.id)
         if (updated && updated.streak !== habit.previousStreak) {
           return { ...habit, previousStreak: updated.streak }
         }
         return habit
-      }),
-    }))
+      })
+
+      const hasStreakUpdates = updatedHabits.some((habit, idx) => habit !== prev.habits[idx])
+
+      if (!badgesToAdd.length && !hasStreakUpdates) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        earnedBadges: badgesToAdd.length > 0 ? [...(prev.earnedBadges || []), ...badgesToAdd] : prev.earnedBadges,
+        habits: hasStreakUpdates ? updatedHabits : prev.habits,
+      }
+    })
   }, [habits, points, loading])
 
   const quoteOfDay = useMemo(() => {
