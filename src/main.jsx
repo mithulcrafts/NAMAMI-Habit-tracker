@@ -30,6 +30,7 @@ const enableInstallPrompt = () => {
   window.addEventListener('beforeinstallprompt', (e) => {
     e.preventDefault()
     installPrompt = e
+    window.__NAMAMI_INSTALL_READY = true
     console.log('Install prompt captured')
     // Dispatch custom event so React can listen
     window.dispatchEvent(new CustomEvent('installPromptReady', { detail: { prompt: e } }))
@@ -39,6 +40,7 @@ const enableInstallPrompt = () => {
   window.addEventListener('appinstalled', () => {
     console.log('App was installed')
     installPrompt = null
+    window.__NAMAMI_INSTALL_READY = false
   })
 }
 
@@ -65,6 +67,7 @@ window.triggerInstall = async () => {
     const { outcome } = await installPrompt.userChoice
     console.log(`User response to install prompt: ${outcome}`)
     installPrompt = null
+    window.__NAMAMI_INSTALL_READY = false
   }
 }
 

@@ -43,6 +43,8 @@ const Shell = () => {
   const [openHabitId, setOpenHabitId] = useState(null)
   const [currentPage, setCurrentPage] = useState('home')
   const [hydrated, setHydrated] = useState(false)
+  const [installAvailable, setInstallAvailable] = useState(false)
+  const [installing, setInstalling] = useState(false)
 
   // Remove splash screen when data is loaded
   useEffect(() => {
@@ -51,6 +53,33 @@ const Shell = () => {
       window._NAMAMI_HYDRATED?.()
     }
   }, [loading, hydrated])
+
+  useEffect(() => {
+    const onReady = () => setInstallAvailable(true)
+    const onInstalled = () => setInstallAvailable(false)
+
+    window.addEventListener('installPromptReady', onReady)
+    window.addEventListener('appinstalled', onInstalled)
+
+    if (window.__NAMAMI_INSTALL_READY) {
+      setInstallAvailable(true)
+    }
+
+    return () => {
+      window.removeEventListener('installPromptReady', onReady)
+      window.removeEventListener('appinstalled', onInstalled)
+    }
+  }, [])
+
+  const handleInstall = async () => {
+    if (!installAvailable || typeof window.triggerInstall !== 'function') return
+    setInstalling(true)
+    try {
+      await window.triggerInstall()
+    } finally {
+      setInstalling(false)
+    }
+  }
 
   if (!hydrated) {
     return null
@@ -119,7 +148,22 @@ const Shell = () => {
           </div>
           
           {/* Simple Tab Navigation */}
-          <div className="flex gap-1 rounded-lg p-1" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+          <div className="flex items-center gap-2">
+            {installAvailable && (
+              <button
+                onClick={handleInstall}
+                disabled={installing}
+                className="px-3 py-2 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors"
+                style={{
+                  backgroundColor: 'var(--active-bg)',
+                  color: 'var(--text-primary)',
+                  opacity: installing ? 0.6 : 1,
+                }}
+              >
+                {installing ? 'Installing...' : 'Install'}
+              </button>
+            )}
+            <div className="flex gap-1 rounded-lg p-1" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <button
               onClick={() => setCurrentPage('home')}
               className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
@@ -150,6 +194,7 @@ const Shell = () => {
             >
               Settings
             </button>
+            </div>
           </div>
         </div>
 
