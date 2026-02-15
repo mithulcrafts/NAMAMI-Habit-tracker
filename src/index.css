@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Sans:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Exo:wght@400;500;600;700&family=Rajdhani:wght@400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,20 +6,27 @@
 
 :root {
   color-scheme: dark;
+  /* Cyberpunk color system */
+  --color-cyan: #00F5FF;
+  --color-purple: #B026FF;
+  --color-mint: #00FFA3;
+  --color-amber: #FFC857;
+  --color-text-primary: #E6F1FF;
+  --color-text-secondary: #7F8A9A;
 }
 
-/* Dark theme (default) */
+/* Dark theme (default) - Cyberpunk style */
 .dark {
-  --bg-primary: #020617;
-  --bg-secondary: #0f172a;
-  --bg-card: rgba(15, 23, 42, 0.7);
-  --text-primary: #f8fafc;
-  --text-secondary: #94a3b8;
-  --text-tertiary: #64748b;
-  --border-color: rgba(255, 255, 255, 0.05);
-  --border-subtle: rgba(255, 255, 255, 0.1);
-  --hover-bg: rgba(255, 255, 255, 0.05);
-  --active-bg: #1e293b;
+  --bg-primary: #05070A;
+  --bg-secondary: #0a0e14;
+  --bg-card: rgba(10, 14, 20, 0.4);
+  --text-primary: #E6F1FF;
+  --text-secondary: #7F8A9A;
+  --text-tertiary: #4a5568;
+  --border-color: rgba(0, 245, 255, 0.15);
+  --border-subtle: rgba(0, 245, 255, 0.08);
+  --hover-bg: rgba(0, 245, 255, 0.08);
+  --active-bg: rgba(0, 245, 255, 0.12);
   color-scheme: dark;
 }
 
@@ -42,17 +49,35 @@ body {
   @apply antialiased min-h-screen;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  letter-spacing: 0.3px;
+  background-image: 
+    linear-gradient(to right, rgba(0, 245, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  background-position: 0 0, 0 0;
 }
 
 #root {
   @apply min-h-screen;
 }
 
+/* Glassmorphism effect - cyberpunk style */
 .glass {
-  backdrop-filter: blur(12px);
-  background-color: var(--bg-card) !important;
-  border: 1px solid var(--border-color) !important;
-  box-shadow: 0 10px 40px rgba(15, 23, 42, 0.25);
+  backdrop-filter: blur(14px) saturate(180%);
+  background-color: rgba(10, 14, 20, 0.35) !important;
+  border: 1px solid rgba(0, 245, 255, 0.15) !important;
+  box-shadow: 
+    0 0 20px rgba(0, 245, 255, 0.1),
+    inset 0 0 1px rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+}
+
+.glass:hover {
+  border-color: rgba(0, 245, 255, 0.25) !important;
+  box-shadow: 
+    0 0 30px rgba(0, 245, 255, 0.15),
+    inset 0 0 1px rgba(255, 255, 255, 0.1) !important;
 }
 
 .light .glass {
@@ -60,7 +85,333 @@ body {
 }
 
 .card-hover {
-  @apply transition-transform duration-200 hover:-translate-y-0.5 hover:shadow-soft;
+  @apply transition-all duration-200;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 30px rgba(0, 245, 255, 0.2) !important;
+    border-color: rgba(0, 245, 255, 0.25) !important;
+  }
+}
+
+/* Override hardcoded Tailwind classes with CSS variables */
+.bg-slate-950 {
+  background-color: var(--bg-primary) !important;
+}
+
+.bg-slate-900,
+.bg-slate-900\/70,
+.bg-slate-900\/80,
+.bg-slate-900\/90,
+.bg-slate-900\/50 {
+  background-color: var(--bg-card) !important;
+  backdrop-filter: blur(14px);
+  border: 1px solid var(--border-color) !important;
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.08) !important;
+}
+
+.bg-slate-800 {
+  background-color: var(--active-bg) !important;
+}
+
+.text-white,
+.text-slate-50,
+.text-slate-100,
+.text-slate-200 {
+  color: var(--text-primary) !important;
+}
+
+.text-slate-300,
+.text-slate-400 {
+  color: var(--text-secondary) !important;
+}
+
+.text-slate-500 {
+  color: var(--text-tertiary) !important;
+}
+
+.border-white\/5,
+.border-white\/10 {
+  border-color: var(--border-subtle) !important;
+}
+
+.hover\:border-white\/30:hover {
+  border-color: var(--border-color) !important;
+}
+
+.hover\:bg-white\/5:hover {
+  background-color: var(--hover-bg) !important;
+}
+
+.hover\:text-white:hover {
+  color: var(--text-primary) !important;
+}
+
+/* Gradient backgrounds need special handling for light theme */
+.light .bg-gradient-to-br {
+  background: linear-gradient(to bottom right, var(--bg-card), var(--bg-secondary)) !important;
+}
+
+/* Theme-aware input styles with cyberpunk aesthetic */
+input[type="text"],
+input[type="number"],
+input[type="date"],
+select,
+textarea {
+  background-color: rgba(10, 14, 20, 0.4) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid rgba(0, 245, 255, 0.12) !important;
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  font-family: 'Rajdhani', system-ui, sans-serif;
+  letter-spacing: 0.3px;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+input[type="date"]:focus,
+select:focus,
+textarea:focus {
+  border-color: #00F5FF !important;
+  outline: none;
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3) !important;
+}
+
+/* Checkbox styles - cyberpunk */
+input[type="checkbox"] {
+  accent-color: #00F5FF;
+}
+
+/* Placeholder text */
+::placeholder {
+  color: var(--text-secondary) !important;
+  opacity: 0.7;
+}
+
+/* Brand color classes - cyberpunk cyan */
+.bg-brand-500 {
+  background-color: #00F5FF !important;
+}
+
+.bg-brand-500\/20 {
+  background-color: rgba(0, 245, 255, 0.2) !important;
+}
+
+.bg-brand-500\/15 {
+  background-color: rgba(0, 245, 255, 0.15) !important;
+}
+
+.hover\:bg-brand-400:hover {
+  background-color: #00d9e8 !important;
+}
+
+.text-brand-50,
+.text-brand-100 {
+  color: #00F5FF !important;
+}
+
+.light .text-brand-50,
+.light .text-brand-100 {
+  color: #0284c7 !important;
+}
+
+.text-brand-200 {
+  color: #7ff5ff !important;
+}
+
+.light .text-brand-200 {
+  color: #0369a1 !important;
+}
+
+.hover\:text-brand-100:hover {
+  color: #00F5FF !important;
+}
+
+.light .hover\:text-brand-100:hover {
+  color: #0284c7 !important;
+}
+
+.border-brand-400 {
+  border-color: #00F5FF !important;
+}
+
+/* Success/Mint green colors - cyberpunk */
+.bg-emerald-500 {
+  background-color: #00FFA3 !important;
+}
+
+.hover\:bg-emerald-400:hover {
+  background-color: #00e68a !important;
+}
+
+.bg-emerald-500\/10 {
+  background-color: rgba(0, 255, 163, 0.1) !important;
+}
+
+.bg-emerald-500\/15 {
+  background-color: rgba(0, 255, 163, 0.15) !important;
+}
+
+.border-emerald-500\/30 {
+  border-color: rgba(0, 255, 163, 0.3) !important;
+}
+
+.text-emerald-200 {
+  color: #00FFA3 !important;
+}
+
+.light .text-emerald-200 {
+  color: #059669 !important;
+}
+
+/* Warning/Amber colors - cyberpunk */
+.bg-amber-500\/15 {
+  background-color: rgba(255, 200, 87, 0.15) !important;
+}
+
+.text-amber-200 {
+  color: #FFC857 !important;
+}
+
+.light .text-amber-200 {
+  color: #d97706 !important;
+}
+
+/* Danger/Red colors - cyberpunk purple accent */
+.text-red-200 {
+  color: #b026ff !important;
+}
+
+.light .text-red-200 {
+  color: #dc2626 !important;
+}
+
+.text-red-400 {
+  color: #d946ef !important;
+}
+
+.light .text-red-400 {
+  color: #dc2626 !important;
+}
+
+.border-red-500\/40 {
+  border-color: rgba(176, 38, 255, 0.4) !important;
+}
+
+.light .border-red-500\/40 {
+  border-color: rgba(220, 38, 38, 0.6) !important;
+}
+
+.hover\:border-red-400\/60:hover {
+  border-color: rgba(176, 38, 255, 0.6) !important;
+}
+
+.light .hover\:border-red-400\/60:hover {
+  border-color: rgba(185, 28, 28, 0.8) !important;
+}
+
+.hover\:border-red-500\/30:hover {
+  border-color: rgba(176, 38, 255, 0.3) !important;
+}
+
+.light .hover\:border-red-500\/30:hover {
+  border-color: rgba(220, 38, 38, 0.6) !important;
+}
+
+/* Slate hover states */
+.bg-slate-700,
+.hover\:bg-slate-700:hover {
+  background-color: var(--active-bg) !important;
+}
+
+/* Calendar heatmap - cyberpunk style */
+.react-calendar-heatmap .color-empty {
+  fill: rgba(0, 245, 255, 0.08) !important;
+}
+
+.light .react-calendar-heatmap .color-empty {
+  fill: #cbd5e1 !important;
+}
+
+/* Calendar heatmap colors - gradient from cyan to mint */
+.react-calendar-heatmap .color-github-1 {
+  fill: rgba(0, 245, 255, 0.25) !important;
+}
+
+.react-calendar-heatmap .color-github-2 {
+  fill: rgba(0, 245, 255, 0.5) !important;
+}
+
+.react-calendar-heatmap .color-github-4 {
+  fill: #00F5FF !important;
+}
+
+/* Calendar heatmap text/labels */
+.react-calendar-heatmap text {
+  fill: var(--text-secondary) !important;
+  font-size: 10px;
+  font-family: 'Rajdhani', system-ui, sans-serif;
+}
+
+/* Glow effects for various elements */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.2);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(176, 38, 255, 0.2);
+}
+
+.glow-mint {
+  box-shadow: 0 0 20px rgba(0, 255, 163, 0.15);
+}
+
+/* Heading styles - bold and prominent */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Orbitron', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+/* Shadow adjustments for light theme */
+.light .shadow-soft {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Progress bar styling */
+progress {
+  accent-color: #00F5FF;
+}
+
+/* Neon borders */
+.border-neon {
+  border-color: rgba(0, 245, 255, 0.5);
+}
+
+.border-neon:hover {
+  border-color: #00F5FF;
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
+}
+
+/* Soft glow on active elements */
+.active-glow {
+  box-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
+}
+
+/* HUD effect for numbers/stats */
+.hud-value {
+  font-family: 'Orbitron', 'Rajdhani', system-ui, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: #00F5FF;
+  text-shadow: 0 0 10px rgba(0, 245, 255, 0.3);
+}
+
+/* Smooth transitions */
+* {
+  transition: border-color 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
 }
 
 /* Override hardcoded Tailwind classes with CSS variables */

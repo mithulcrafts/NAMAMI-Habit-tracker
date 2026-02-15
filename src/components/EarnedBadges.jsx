@@ -17,8 +17,8 @@ export const EarnedBadges = ({ earnedBadges, badgeDefinitions, habits }) => {
 
   if (!earnedBadges || earnedBadges.length === 0) {
     return (
-      <div className="rounded-lg border border-white/5 bg-slate-900/70 p-4 text-center">
-        <p className="text-sm text-slate-300">No badges earned yet. Start building habits to earn badges!</p>
+      <div className="glass rounded-lg p-4 text-center">
+        <p className="text-sm text-slate-400">No badges earned yet. Start building habits to earn badges!</p>
       </div>
     )
   }
@@ -35,21 +35,21 @@ export const EarnedBadges = ({ earnedBadges, badgeDefinitions, habits }) => {
             return (
               <div
                 key={badge.id}
-                className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-4 backdrop-blur-sm"
+                className="glass rounded-lg p-4 border-emerald-500/40 hover:border-emerald-500/60"
               >
                 <div className="flex items-start gap-3">
                   <div className="text-4xl">{badge.icon}</div>
                   <div className="flex-1">
-                    <h3 className="font-semibold text-white">{badge.label}</h3>
-                    <p className="text-xs text-emerald-200 mt-1">Earned {count}x</p>
+                    <h3 className="font-bold uppercase tracking-wide text-white">{badge.label}</h3>
+                    <p className="text-xs text-emerald-300 mt-1 font-semibold">EARNED {count}x</p>
 
                     {badge.habitSpecific && Object.keys(habitsForBadge).length > 0 && (
                       <div className="mt-2 space-y-1">
                         {Object.entries(habitsForBadge).map(([habitId, habitCount]) => {
                           const habit = habits?.find((h) => h.id === habitId)
                           return (
-                            <div key={habitId} className="text-xs text-slate-300 bg-slate-900/50 rounded px-2 py-1">
-                              <span className="font-medium">{habit?.name || 'Unknown habit'}:</span> {habitCount}x
+                            <div key={habitId} className="text-xs text-slate-400 bg-slate-900/30 rounded px-2 py-1">
+                              <span className="font-bold">{habit?.name || 'Unknown habit'}:</span> {habitCount}x
                             </div>
                           )
                         })}

@@ -38,30 +38,30 @@ export const Heatmap = ({ history, habitColor, habitName, goalType, goalTarget, 
   })()
 
   return (
-    <div className="rounded-xl border border-white/5 bg-slate-900/70 p-4">
+    <div className="glass rounded-xl p-4">
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-sm font-semibold text-white">Completion heatmap</h4>
+          <h4 className="text-sm font-bold uppercase tracking-wider text-white">COMPLETION HEATMAP</h4>
           {habitName && <p className="text-xs text-slate-400">{habitName}</p>}
           {goalType !== 'binary' && (
-            <p className="text-xs text-slate-500">Target: {goalTarget} {goalType === 'count' ? 'items' : 'min'}</p>
+            <p className="text-xs text-slate-500">TARGET: {goalTarget} {goalType === 'count' ? 'ITEMS' : 'MIN'}</p>
           )}
         </div>
-        <span className="text-xs text-slate-400">Last 4 months</span>
+        <span className="text-xs text-slate-400 font-medium">LAST 4 MONTHS</span>
       </div>
       <div className="mt-2 overflow-x-auto">
         <style>{`
-          .heatmap-${habitColor?.slice(1)} .color-github-1 { fill: ${habitColor}; opacity: 0.25; }
-          .heatmap-${habitColor?.slice(1)} .color-github-2 { fill: ${habitColor}; opacity: 0.5; }
-          .heatmap-${habitColor?.slice(1)} .color-github-3 { fill: ${habitColor}; opacity: 0.75; }
-          .heatmap-${habitColor?.slice(1)} .color-github-4 { fill: ${habitColor}; opacity: 1; }
-          .heatmap-${habitColor?.slice(1)} .color-freeze { fill: url(#${patternId}); opacity: 1; }
+          #heatmap-${habitColor?.slice(1)} .color-github-1 { fill: ${habitColor} !important; opacity: 0.35 !important; filter: drop-shadow(0 0 4px ${habitColor}) !important; }
+          #heatmap-${habitColor?.slice(1)} .color-github-2 { fill: ${habitColor} !important; opacity: 0.55 !important; filter: drop-shadow(0 0 6px ${habitColor}) !important; }
+          #heatmap-${habitColor?.slice(1)} .color-github-3 { fill: ${habitColor} !important; opacity: 0.8 !important; filter: drop-shadow(0 0 8px ${habitColor}) !important; }
+          #heatmap-${habitColor?.slice(1)} .color-github-4 { fill: ${habitColor} !important; opacity: 1 !important; filter: drop-shadow(0 0 10px ${habitColor}) !important; }
+          #heatmap-${habitColor?.slice(1)} .color-freeze { fill: url(#${patternId}) !important; opacity: 1 !important; filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.3)) !important; }
         `}</style>
-        <div className={`heatmap-${habitColor?.slice(1)}`}>
+        <div id={`heatmap-${habitColor?.slice(1)}`} className={`heatmap-${habitColor?.slice(1)}`}>
           <svg width="0" height="0" aria-hidden="true" focusable="false">
             <defs>
               <pattern id={patternId} patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
-                <rect width="6" height="6" fill={habitColor || '#38bdf8'} />
+                <rect width="6" height="6" fill={habitColor || '#00F5FF'} />
                 <rect width="2" height="6" fill="rgba(255,255,255,0.45)" />
               </pattern>
             </defs>

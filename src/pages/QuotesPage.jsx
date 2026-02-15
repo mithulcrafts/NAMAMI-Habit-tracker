@@ -8,8 +8,8 @@ export const QuotesPage = ({
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-semibold text-white">💭 Daily Quotes</h2>
-        <p className="text-sm text-slate-300 mt-1">Get inspired with daily wisdom</p>
+        <h2 className="text-2xl font-bold uppercase tracking-wider text-white">💭 DAILY QUOTES</h2>
+        <p className="text-sm text-slate-400 mt-1">Get inspired with daily wisdom</p>
       </div>
 
       <QuoteCard
