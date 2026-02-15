@@ -475,7 +475,7 @@ input[type="number"],
 input[type="date"],
 select,
 textarea {
-  background-color: var(--bg-secondary) !important;
+  background-color: rgba(15, 23, 42, 0.6) !important;
   color: var(--text-primary) !important;
   border-color: var(--border-subtle) !important;
 }

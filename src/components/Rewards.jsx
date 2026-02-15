@@ -142,7 +142,7 @@ export const Rewards = ({
           <p className="text-sm font-bold uppercase tracking-wider text-white\">EDIT REWARD</p>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
             <input
-              className="rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
+              className="rounded-md border border-cyan-400/20 bg-slate-800/60 backdrop-blur px-3 py-2 text-sm text-cyan-200 placeholder-slate-500"
               placeholder="Reward name"
               value={form.name}
               onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
@@ -150,7 +150,7 @@ export const Rewards = ({
             <input
               type="number"
               min="1"
-              className="rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
+              className="rounded-md border border-cyan-400/20 bg-slate-800/60 backdrop-blur px-3 py-2 text-sm text-cyan-200 placeholder-slate-500"
               value={form.requiredPoints}
               onChange={(e) => setForm((p) => ({ ...p, requiredPoints: e.target.value }))}
             />
@@ -175,7 +175,7 @@ export const Rewards = ({
           <p className="text-sm font-bold uppercase tracking-wider text-white\">ADD NEW REWARD</p>
           <div className="mt-2 grid gap-2 sm:grid-cols-2">
             <input
-              className="rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
+              className="rounded-md border border-cyan-400/20 bg-slate-800/60 backdrop-blur px-3 py-2 text-sm text-cyan-200 placeholder-slate-500"
               placeholder="Reward name"
               value={form.name}
               onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
@@ -184,7 +184,7 @@ export const Rewards = ({
             <input
               type="number"
               min="1"
-              className="rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
+              className="rounded-md border border-cyan-400/20 bg-slate-800/60 backdrop-blur px-3 py-2 text-sm text-cyan-200 placeholder-slate-500"
               value={form.requiredPoints}
               onChange={(e) => setForm((p) => ({ ...p, requiredPoints: e.target.value }))}
             />
