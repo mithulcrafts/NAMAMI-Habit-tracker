@@ -1,4 +1,19 @@
+import { useMemo } from 'react'
+
+const getThemeClasses = () => {
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  return {
+    borderBadge: isDark ? 'border-emerald-500/40' : 'border-emerald-400/30',
+    borderBadgeHover: isDark ? 'hover:border-emerald-500/60' : 'hover:border-emerald-400/50',
+    textAchieved: isDark ? 'text-emerald-300' : 'text-emerald-600',
+    textSecondary: isDark ? 'text-slate-400' : 'text-slate-600',
+    bgHabitInfo: isDark ? 'bg-slate-900/30' : 'bg-slate-100/60',
+  }
+}
+
 export const EarnedBadges = ({ earnedBadges, badgeDefinitions, habits }) => {
+  const theme = useMemo(() => getThemeClasses(), [])
+
   // Group badges by badge id to count occurrences
   const badgeCounts = {}
   const badgesByHabit = {}
@@ -35,20 +50,20 @@ export const EarnedBadges = ({ earnedBadges, badgeDefinitions, habits }) => {
             return (
               <div
                 key={badge.id}
-                className="glass rounded-lg p-4 border-emerald-500/40 hover:border-emerald-500/60"
+                className={`glass rounded-lg p-4 border-emerald-500/40 ${theme.borderBadge} ${theme.borderBadgeHover}`}
               >
                 <div className="flex items-start gap-3">
                   <div className="text-4xl">{badge.icon}</div>
                   <div className="flex-1">
                     <h3 className="font-bold uppercase tracking-wide text-white">{badge.label}</h3>
-                    <p className="text-xs text-emerald-300 mt-1 font-semibold">EARNED {count}x</p>
+                    <p className={`text-xs ${theme.textAchieved} mt-1 font-semibold`}>EARNED {count}x</p>
 
                     {badge.habitSpecific && Object.keys(habitsForBadge).length > 0 && (
                       <div className="mt-2 space-y-1">
                         {Object.entries(habitsForBadge).map(([habitId, habitCount]) => {
                           const habit = habits?.find((h) => h.id === habitId)
                           return (
-                            <div key={habitId} className="text-xs text-slate-400 bg-slate-900/30 rounded px-2 py-1">
+                            <div key={habitId} className={`text-xs ${theme.textSecondary} ${theme.bgHabitInfo} rounded px-2 py-1`}>
                               <span className="font-bold">{habit?.name || 'Unknown habit'}:</span> {habitCount}x
                             </div>
                           )

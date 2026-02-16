@@ -37,6 +37,29 @@ export const GlobalHeatmap = ({ habits }) => {
     count: Math.min(count, habits.length),
   }))
 
+  // Get theme-aware colors
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  const colors = isDark 
+    ? {
+        c1: { fill: '#00F5FF', shadow: '#00F5FF', opacity: 0.35 },
+        c2: { fill: '#00F5FF', shadow: '#00F5FF', opacity: 0.55 },
+        c3: { fill: '#00F5FF', shadow: '#00F5FF', opacity: 0.8 },
+        c4: { fill: '#00F5FF', shadow: '#00F5FF', opacity: 1 },
+      }
+    : {
+        c1: { fill: '#bfdbfe', shadow: '#3b82f6', opacity: 0.4 },
+        c2: { fill: '#93c5fd', shadow: '#3b82f6', opacity: 0.6 },
+        c3: { fill: '#60a5fa', shadow: '#3b82f6', opacity: 0.8 },
+        c4: { fill: '#3b82f6', shadow: '#3b82f6', opacity: 1 },
+      }
+
+  const styleContent = `
+    #global-heatmap .color-github-1 { fill: ${colors.c1.fill} !important; opacity: ${colors.c1.opacity} !important; filter: drop-shadow(0 0 4px ${colors.c1.shadow}) !important; }
+    #global-heatmap .color-github-2 { fill: ${colors.c2.fill} !important; opacity: ${colors.c2.opacity} !important; filter: drop-shadow(0 0 6px ${colors.c2.shadow}) !important; }
+    #global-heatmap .color-github-3 { fill: ${colors.c3.fill} !important; opacity: ${colors.c3.opacity} !important; filter: drop-shadow(0 0 8px ${colors.c3.shadow}) !important; }
+    #global-heatmap .color-github-4 { fill: ${colors.c4.fill} !important; opacity: ${colors.c4.opacity} !important; filter: drop-shadow(0 0 10px ${colors.c4.shadow}) !important; }
+  `
+
   return (
     <div className="glass rounded-xl p-4">
       <div className="flex items-center justify-between">
@@ -44,12 +67,7 @@ export const GlobalHeatmap = ({ habits }) => {
         <span className="text-xs text-slate-400 font-medium">ALL HABITS AGGREGATED</span>
       </div>
       <div className="mt-2 overflow-x-auto">
-        <style>{`
-          #global-heatmap .color-github-1 { fill: #00F5FF !important; opacity: 0.35 !important; filter: drop-shadow(0 0 4px #00F5FF) !important; }
-          #global-heatmap .color-github-2 { fill: #00F5FF !important; opacity: 0.55 !important; filter: drop-shadow(0 0 6px #00F5FF) !important; }
-          #global-heatmap .color-github-3 { fill: #00F5FF !important; opacity: 0.8 !important; filter: drop-shadow(0 0 8px #00F5FF) !important; }
-          #global-heatmap .color-github-4 { fill: #00F5FF !important; opacity: 1 !important; filter: drop-shadow(0 0 10px #00F5FF) !important; }
-        `}</style>
+        <style>{styleContent}</style>
         <div id="global-heatmap">
           <CalendarHeatmap
             startDate={startDateStr}

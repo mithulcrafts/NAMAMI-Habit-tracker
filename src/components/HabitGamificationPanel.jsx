@@ -1,6 +1,17 @@
+import { useMemo } from 'react'
+
+const getThemeClasses = () => {
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  return {
+    inputBorder: isDark ? 'border-cyan-400/20' : 'border-blue-400/20',
+    inputBg: isDark ? 'bg-slate-900/40' : 'bg-white/50',
+  }
+}
+
 export const HabitGamificationPanel = ({ habit, globalSettings, onUpdate }) => {
   const customPoints = habit.customPoints ?? 10
   const customBonuses = habit.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 }
+  const theme = useMemo(() => getThemeClasses(), [])
 
   return (
     <div className="glass rounded-xl p-4">
@@ -22,7 +33,7 @@ export const HabitGamificationPanel = ({ habit, globalSettings, onUpdate }) => {
                 customBonuses
               )
             }
-            className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
+            className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBg} backdrop-blur px-3 py-2 text-sm`}
           />
         </div>
         
@@ -44,7 +55,7 @@ export const HabitGamificationPanel = ({ habit, globalSettings, onUpdate }) => {
                       { ...customBonuses, [days]: Number(e.target.value) }
                     )
                   }
-                  className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-2 py-1 text-sm"
+                  className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBg} backdrop-blur px-2 py-1 text-sm`}
                 />
               </div>
             ))}

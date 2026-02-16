@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 const defaultData = {
   name: '',
@@ -26,8 +26,24 @@ const colorOptions = [
   '#FF10F0', // Magenta
 ]
 
+const getThemeClasses = () => {
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  return {
+    inputBorder: isDark ? 'border-cyan-400/20' : 'border-blue-400/20',
+    inputBg: isDark ? 'dark:bg-black bg-slate-100' : 'bg-white/60',
+    inputText: isDark ? 'dark:text-cyan-200 text-slate-900' : 'text-slate-900',
+    inputBgDark: isDark ? 'bg-slate-900/40' : 'bg-white/50',
+    inputTextDark: isDark ? 'text-cyan-200' : 'text-slate-900',
+    labelText: isDark ? 'text-slate-200' : 'text-slate-700',
+    buttonCancel: isDark ? 'border-cyan-400/20' : 'border-blue-400/20',
+    buttonCancelHover: isDark ? 'hover:border-cyan-400/40' : 'hover:border-blue-400/30',
+    buttonCancelText: isDark ? 'text-slate-200' : 'text-slate-700',
+  }
+}
+
 export const HabitForm = ({ onSave, onCancel, initial }) => {
   const [form, setForm] = useState(initial || defaultData)
+  const theme = useMemo(() => getThemeClasses(), [])
 
   useEffect(() => {
     if (initial) setForm(initial)
@@ -77,18 +93,18 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <div>
-        <label className="text-sm font-bold uppercase tracking-wider text-slate-200 dark:text-slate-200">HABIT NAME</label>
+        <label className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>HABIT NAME</label>
         <input
-          className="mt-1 w-full rounded-md border border-cyan-400/20 dark:border-cyan-400/20 bg-slate-100 dark:bg-black backdrop-blur px-3 py-2 text-sm text-slate-900 dark:text-cyan-200 placeholder-slate-400 dark:placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400"
+          className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBg} backdrop-blur px-3 py-2 text-sm ${theme.inputText} placeholder-slate-400 focus:border-brand-400 focus:ring-brand-400`}
           value={form.name}
           onChange={(e) => setForm((p) => ({ ...p, name: e.target.value }))}
           required
         />
       </div>
       <div>
-        <label className="text-sm font-bold uppercase tracking-wider text-slate-200">DESCRIPTION</label>
+        <label className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>DESCRIPTION</label>
         <textarea
-          className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm text-cyan-200 placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400"
+          className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBgDark} backdrop-blur px-3 py-2 text-sm ${theme.inputTextDark} placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400`}
           value={form.description}
           onChange={(e) => setForm((p) => ({ ...p, description: e.target.value }))}
           rows={2}
@@ -122,7 +138,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
       </div>
 
       <div>
-        <p className="text-sm font-bold uppercase tracking-wider text-slate-200\">GOAL TYPE</p>
+        <p className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>GOAL TYPE</p>
         <div className="mt-2 flex flex-col gap-2">
           <label className="flex items-center gap-2 cursor-pointer">
             <input
@@ -159,13 +175,13 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
 
       {form.goalType !== 'binary' && (
         <div>
-          <label className="text-sm font-bold uppercase tracking-wider text-slate-200">
+          <label className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>
             {form.goalType === 'count' ? 'TARGET COUNT' : 'TARGET MINUTES'}
           </label>
           <input
             type="text"
             inputMode="numeric"
-            className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm text-cyan-200 placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400"
+            className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBgDark} backdrop-blur px-3 py-2 text-sm ${theme.inputTextDark} placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400`}
             placeholder="Enter target value"
             value={form.goalTarget ?? ''}
             onChange={(e) => {
@@ -178,9 +194,9 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-sm font-bold uppercase tracking-wider text-slate-200">FREQUENCY</label>
+          <label className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>FREQUENCY</label>
           <select
-            className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm text-cyan-200 focus:border-brand-400 focus:ring-brand-400"
+            className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBgDark} backdrop-blur px-3 py-2 text-sm ${theme.inputTextDark} focus:border-brand-400 focus:ring-brand-400`}
             value={form.frequency}
             onChange={(e) => setForm((p) => ({ ...p, frequency: e.target.value }))}
           >
@@ -191,11 +207,11 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
         </div>
         {!form.isDailyHabit && (
           <div>
-            <label className="text-sm font-bold uppercase tracking-wider text-slate-200">TARGET DAYS</label>
+            <label className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>TARGET DAYS</label>
             <input
               type="text"
               inputMode="numeric"
-              className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm text-cyan-200 placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400"
+              className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBgDark} backdrop-blur px-3 py-2 text-sm ${theme.inputTextDark} placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400`}
               placeholder="Enter target days"
               value={form.targetDays ?? ''}
               onChange={(e) => {
@@ -208,7 +224,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
       </div>
       {form.frequency === 'custom' && (
         <div>
-          <p className="text-sm font-bold uppercase tracking-wider text-slate-200\">SELECT DAYS</p>
+          <p className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>SELECT DAYS</p>
           <div className="mt-2 flex gap-2">
             {days.map((label, idx) => {
               const active = form.customDays?.includes(idx)
@@ -231,7 +247,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
         </div>
       )}
       <div>
-        <label className="text-sm font-bold uppercase tracking-wider text-slate-200">HEATMAP COLOR</label>
+        <label className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>HEATMAP COLOR</label>
         <div className="mt-2 flex flex-wrap gap-2">
           {colorOptions.map((color) => (
             <button
@@ -254,11 +270,11 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
       </div>
 
       <div>
-        <label className="text-sm font-bold uppercase tracking-wider text-slate-200">MITHURA PER COMPLETION</label>
+        <label className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>MITHURA PER COMPLETION</label>
         <input
           type="text"
           inputMode="numeric"
-          className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm text-cyan-200 placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400"
+          className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBgDark} backdrop-blur px-3 py-2 text-sm ${theme.inputTextDark} placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400`}
           value={form.customPoints ?? ''}
           onChange={(e) => {
             const val = e.target.value.replace(/[^0-9]/g, '')
@@ -266,11 +282,11 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
           }}
           placeholder="Enter points"
         />
-        <p className="mt-1 text-xs text-slate-400\">Points earned for completing this habit</p>
+        <p className="mt-1 text-xs text-slate-400">Points earned for completing this habit</p>
       </div>
 
       <div>
-        <label className="text-sm font-bold uppercase tracking-wider text-slate-200">STREAK BONUSES (FOR THIS HABIT)</label>
+        <label className={`text-sm font-bold uppercase tracking-wider ${theme.labelText}`}>STREAK BONUSES (FOR THIS HABIT)</label>
         <div className="mt-2 grid grid-cols-3 gap-2">
           {[3, 7, 30].map((days) => (
             <div key={days}>
@@ -285,12 +301,12 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
                     customStreakBonuses: { ...p.customStreakBonuses, [days]: Number(e.target.value) },
                   }))
                 }
-                className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-2 py-1 text-sm text-cyan-200 placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400"
+                className={`mt-1 w-full rounded-md border ${theme.inputBorder} ${theme.inputBgDark} backdrop-blur px-2 py-1 text-sm ${theme.inputTextDark} placeholder-slate-500 focus:border-brand-400 focus:ring-brand-400`}
               />
             </div>
           ))}
         </div>
-        <p className="mt-1 text-xs text-slate-400\">Bonus MITHURA for maintaining streaks on this habit</p>
+        <p className="mt-1 text-xs text-slate-400">Bonus MITHURA for maintaining streaks on this habit</p>
       </div>
 
       <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
@@ -298,7 +314,7 @@ export const HabitForm = ({ onSave, onCancel, initial }) => {
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md border border-cyan-400/20 px-4 py-2 text-sm font-bold uppercase tracking-wider text-slate-200 hover:border-cyan-400/40"
+            className={`rounded-md border ${theme.buttonCancel} px-4 py-2 text-sm font-bold uppercase tracking-wider ${theme.buttonCancelText} ${theme.buttonCancelHover}`}
           >
             Cancel
           </button>

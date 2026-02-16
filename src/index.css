@@ -32,16 +32,18 @@
 
 /* Light theme */
 .light {
-  --bg-primary: #f8fafc;
+  --bg-primary: #f5f7fa;
   --bg-secondary: #ffffff;
-  --bg-card: rgba(255, 255, 255, 0.9);
-  --text-primary: #0f172a;
-  --text-secondary: #475569;
-  --text-tertiary: #64748b;
-  --border-color: rgba(0, 0, 0, 0.1);
-  --border-subtle: rgba(0, 0, 0, 0.15);
-  --hover-bg: rgba(0, 0, 0, 0.05);
-  --active-bg: #e2e8f0;
+  --bg-card: rgba(255, 255, 255, 0.95);
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-tertiary: #94a3b8;
+  --border-color: rgba(51, 65, 85, 0.12);
+  --border-subtle: rgba(51, 65, 85, 0.08);
+  --hover-bg: rgba(51, 65, 85, 0.05);
+  --active-bg: rgba(51, 65, 85, 0.08);
+  --color-accent-light: #3b82f6;
+  --color-accent-secondary: #8b5cf6;
   color-scheme: light;
 }
 
@@ -56,6 +58,12 @@ body {
     linear-gradient(to bottom, rgba(0, 245, 255, 0.03) 1px, transparent 1px);
   background-size: 40px 40px;
   background-position: 0 0, 0 0;
+}
+
+.light body {
+  background-image: 
+    linear-gradient(to right, rgba(51, 65, 85, 0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(51, 65, 85, 0.04) 1px, transparent 1px);
 }
 
 #root {
@@ -81,7 +89,14 @@ body {
 }
 
 .light .glass {
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(51, 65, 85, 0.15) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
+}
+
+.light .glass:hover {
+  border-color: rgba(51, 65, 85, 0.25) !important;
+  box-shadow: 0 15px 50px rgba(0, 0, 0, 0.12) !important;
 }
 
 .card-hover {
@@ -92,6 +107,11 @@ body {
     box-shadow: 0 0 30px rgba(0, 245, 255, 0.2) !important;
     border-color: rgba(0, 245, 255, 0.25) !important;
   }
+}
+
+.light .card-hover:hover {
+  box-shadow: 0 8px 25px rgba(51, 65, 85, 0.15) !important;
+  border-color: rgba(51, 65, 85, 0.2) !important;
 }
 
 /* Override hardcoded Tailwind classes with CSS variables */
@@ -167,6 +187,15 @@ textarea {
   letter-spacing: 0.3px;
 }
 
+.light input[type="text"],
+.light input[type="number"],
+.light input[type="date"],
+.light select,
+.light textarea {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(51, 65, 85, 0.15) !important;
+}
+
 input[type="text"]:focus,
 input[type="number"]:focus,
 input[type="date"]:focus,
@@ -177,9 +206,22 @@ textarea:focus {
   box-shadow: 0 0 20px rgba(0, 245, 255, 0.3) !important;
 }
 
+.light input[type="text"]:focus,
+.light input[type="number"]:focus,
+.light input[type="date"]:focus,
+.light select:focus,
+.light textarea:focus {
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.2) !important;
+}
+
 /* Checkbox styles - cyberpunk */
 input[type="checkbox"] {
   accent-color: #00F5FF;
+}
+
+.light input[type="checkbox"] {
+  accent-color: #3b82f6;
 }
 
 /* Placeholder text */
@@ -330,7 +372,7 @@ input[type="checkbox"] {
 }
 
 .light .react-calendar-heatmap .color-empty {
-  fill: #cbd5e1 !important;
+  fill: #e2e8f0 !important;
 }
 
 /* Calendar heatmap colors - gradient from cyan to mint */
@@ -338,12 +380,24 @@ input[type="checkbox"] {
   fill: rgba(0, 245, 255, 0.25) !important;
 }
 
+.light .react-calendar-heatmap .color-github-1 {
+  fill: #bfdbfe !important;
+}
+
 .react-calendar-heatmap .color-github-2 {
   fill: rgba(0, 245, 255, 0.5) !important;
 }
 
+.light .react-calendar-heatmap .color-github-2 {
+  fill: #93c5fd !important;
+}
+
 .react-calendar-heatmap .color-github-4 {
   fill: #00F5FF !important;
+}
+
+.light .react-calendar-heatmap .color-github-4 {
+  fill: #3b82f6 !important;
 }
 
 /* Calendar heatmap text/labels */
@@ -384,6 +438,10 @@ progress {
   accent-color: #00F5FF;
 }
 
+.light progress {
+  accent-color: #3b82f6;
+}
+
 /* Neon borders */
 .border-neon {
   border-color: rgba(0, 245, 255, 0.5);
@@ -394,9 +452,22 @@ progress {
   box-shadow: 0 0 15px rgba(0, 245, 255, 0.3);
 }
 
+.light .border-neon {
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+.light .border-neon:hover {
+  border-color: #3b82f6;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
 /* Soft glow on active elements */
 .active-glow {
   box-shadow: 0 0 15px rgba(0, 245, 255, 0.2);
+}
+
+.light .active-glow {
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.15);
 }
 
 /* HUD effect for numbers/stats */
@@ -407,6 +478,11 @@ progress {
   text-transform: uppercase;
   color: #00F5FF;
   text-shadow: 0 0 10px rgba(0, 245, 255, 0.3);
+}
+
+.light .hud-value {
+  color: #3b82f6;
+  text-shadow: 0 0 8px rgba(59, 130, 246, 0.2);
 }
 
 /* Smooth transitions */
@@ -467,185 +543,6 @@ progress {
 /* Gradient backgrounds need special handling for light theme */
 .light .bg-gradient-to-br {
   background: linear-gradient(to bottom right, var(--bg-card), var(--bg-secondary)) !important;
-}
-
-/* Theme-aware input styles */
-input[type="text"],
-input[type="number"],
-input[type="date"],
-select,
-textarea {
-  background-color: var(--bg-secondary) !important;
-  color: var(--text-primary) !important;
-  border-color: var(--border-subtle) !important;
-}
-
-input[type="text"]:focus,
-input[type="number"]:focus,
-input[type="date"]:focus,
-select:focus,
-textarea:focus {
-  border-color: #38bdf8 !important;
-  outline: none;
-  ring: 2px;
-  ring-color: rgba(56, 189, 248, 0.2);
-}
-
-/* Checkbox styles */
-input[type="checkbox"] {
-  accent-color: #38bdf8;
-}
-
-/* Placeholder text */
-::placeholder {
-  color: var(--text-tertiary) !important;
-  opacity: 0.6;
-}
-
-/* Brand color classes - keep vibrant in both themes */
-.bg-brand-500 {
-  background-color: #0ea5e9 !important;
-}
-
-.bg-brand-500\/20 {
-  background-color: rgba(14, 165, 233, 0.2) !important;
-}
-
-.bg-brand-500\/15 {
-  background-color: rgba(14, 165, 233, 0.15) !important;
-}
-
-.hover\:bg-brand-400:hover {
-  background-color: #38bdf8 !important;
-}
-
-.text-brand-50,
-.text-brand-100 {
-  color: #e0f2fe !important;
-}
-
-.light .text-brand-50,
-.light .text-brand-100 {
-  color: #0284c7 !important;
-}
-
-.text-brand-200 {
-  color: #bae6fd !important;
-}
-
-.light .text-brand-200 {
-  color: #0369a1 !important;
-}
-
-.hover\:text-brand-100:hover {
-  color: #e0f2fe !important;
-}
-
-.light .hover\:text-brand-100:hover {
-  color: #0284c7 !important;
-}
-
-.border-brand-400 {
-  border-color: #38bdf8 !important;
-}
-
-/* Success/Emerald colors */
-.bg-emerald-500 {
-  background-color: #10b981 !important;
-}
-
-.hover\:bg-emerald-400:hover {
-  background-color: #34d399 !important;
-}
-
-.bg-emerald-500\/10 {
-  background-color: rgba(16, 185, 129, 0.1) !important;
-}
-
-.bg-emerald-500\/15 {
-  background-color: rgba(16, 185, 129, 0.15) !important;
-}
-
-.border-emerald-500\/30 {
-  border-color: rgba(16, 185, 129, 0.3) !important;
-}
-
-.text-emerald-200 {
-  color: #a7f3d0 !important;
-}
-
-.light .text-emerald-200 {
-  color: #059669 !important;
-}
-
-/* Warning/Amber colors */
-.bg-amber-500\/15 {
-  background-color: rgba(245, 158, 11, 0.15) !important;
-}
-
-.text-amber-200 {
-  color: #fcd34d !important;
-}
-
-.light .text-amber-200 {
-  color: #d97706 !important;
-}
-
-/* Danger/Red colors */
-.text-red-200 {
-  color: #fca5a5 !important;
-}
-
-.light .text-red-200 {
-  color: #dc2626 !important;
-}
-
-.text-red-400 {
-  color: #f87171 !important;
-}
-
-.light .text-red-400 {
-  color: #dc2626 !important;
-}
-
-.border-red-500\/40 {
-  border-color: rgba(239, 68, 68, 0.4) !important;
-}
-
-.light .border-red-500\/40 {
-  border-color: rgba(220, 38, 38, 0.6) !important;
-}
-
-.hover\:border-red-400\/60:hover {
-  border-color: rgba(248, 113, 113, 0.6) !important;
-}
-
-.light .hover\:border-red-400\/60:hover {
-  border-color: rgba(185, 28, 28, 0.8) !important;
-}
-
-.hover\:border-red-500\/30:hover {
-  border-color: rgba(239, 68, 68, 0.3) !important;
-}
-
-.light .hover\:border-red-500\/30:hover {
-  border-color: rgba(220, 38, 38, 0.6) !important;
-}
-
-/* Slate hover states */
-.bg-slate-700,
-.hover\:bg-slate-700:hover {
-  background-color: var(--active-bg) !important;
-  opacity: 0.8;
-}
-
-/* Calendar heatmap - only style empty state to be theme aware */
-.react-calendar-heatmap .color-empty {
-  fill: var(--border-color) !important;
-}
-
-.light .react-calendar-heatmap .color-empty {
-  fill: #cbd5e1 !important;
 }
 
 /* Calendar heatmap text/labels */

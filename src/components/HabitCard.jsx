@@ -1,5 +1,17 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { todayKey } from '../utils/date'
+
+const getThemeClasses = () => {
+  const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
+  return {
+    freezeBg: isDark ? 'bg-sky-500/15' : 'bg-blue-100/60',
+    freezeText: isDark ? 'text-sky-200' : 'text-blue-700',
+    freezeBorder: isDark ? 'border-sky-500/40' : 'border-blue-400/50',
+    freezeTextLight: isDark ? 'text-sky-100' : 'text-blue-700',
+    freezeButtonHover: isDark ? 'hover:border-sky-400/70' : 'hover:border-blue-400/70',
+    freezeButtonBg: isDark ? 'bg-sky-500 hover:bg-sky-400' : 'bg-blue-500 hover:bg-blue-400',
+  }
+}
 
 export const HabitCard = ({
   habit,
@@ -17,6 +29,7 @@ export const HabitCard = ({
 }) => {
   const today = todayKey()
   const [valueInput, setValueInput] = useState('')
+  const theme = useMemo(() => getThemeClasses(), [])
   
   // Use selectedDateKey instead of today
   const dateKey = selectedDateKey || today
@@ -130,14 +143,14 @@ export const HabitCard = ({
           </div>
         )}
         {isFrozen && (
-          <div className="rounded-md bg-sky-500/15 px-3 py-2 text-sm font-semibold text-sky-200">
+          <div className={`rounded-md ${theme.freezeBg} px-3 py-2 text-sm font-semibold ${theme.freezeText}`}>
             Streak freeze used for this day
           </div>
         )}
         {isFrozen && (
           <button
             onClick={() => onRemoveStreakFreeze?.(habit.id, dateKey)}
-            className="rounded-lg border border-sky-500/40 px-4 py-2 text-sm font-semibold text-sky-100 shadow-soft transition hover:border-sky-400/70"
+            className={`rounded-lg border ${theme.freezeBorder} px-4 py-2 text-sm font-semibold ${theme.freezeTextLight} shadow-soft transition ${theme.freezeButtonHover}`}
           >
             Remove streak freeze
           </button>
@@ -147,7 +160,7 @@ export const HabitCard = ({
             onClick={() => onUseStreakFreeze?.(habit.id, dateKey)}
             disabled={!canUseFreeze}
             className={`rounded-lg px-4 py-2 text-sm font-semibold text-white shadow-soft transition ${
-              canUseFreeze ? 'bg-sky-500 hover:bg-sky-400' : 'bg-slate-800 text-slate-400'
+              canUseFreeze ? theme.freezeButtonBg : 'bg-slate-800 text-slate-400'
             }`}
           >
             {streakFreezes > 0 ? 'Use streak freeze' : 'No streak freezes'}
