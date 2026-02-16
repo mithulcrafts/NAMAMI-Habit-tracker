@@ -4,6 +4,23 @@
 
 A **production-ready, offline-first PWA** habit tracker that works completely without internet. Track your habits, earn MITHURA gamification points, celebrate streaks, and build lasting routines—no backend, no accounts, no servers.
 
+## ⚠️ Development Notice
+
+This project was created as a hobby and shared publicly in the hope that it may
+be useful to others.
+
+It was developed using AI-assisted ("vibe coding") techniques, and large
+portions of the code were not manually reviewed. As a result, the
+codebase may contain bugs, edge-case failures, performance issues, or security
+problems.
+
+This repository is provided for learning, experimentation, and personal use.
+Do not rely on it for production, backups, financial tracking, health data,
+or anything important.
+
+Use at your own risk.
+
+
 ## ✨ Key Features
 
 - **Three flexible goal types**: Binary (done/missed), Count-based (10 pages), Duration-based (20 minutes)
@@ -164,5 +181,6 @@ Want to help? Read [CONTRIBUTING.md](docs/CONTRIBUTING.md) for:
 **Made with 🔥 for habit builders everywhere.**
 
 **Start building better habits – offline, with no servers attached.**
+
 
 
