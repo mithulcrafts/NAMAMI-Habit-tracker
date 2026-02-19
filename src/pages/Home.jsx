@@ -15,6 +15,7 @@ export const Home = ({
   pointsSpent,
   bonusDays,
   globalStreak,
+  earnedBadges,
   quoteOfDay,
   category,
   onCategoryChange,
@@ -188,6 +189,7 @@ export const Home = ({
                   <HabitDetail
                     habit={openDetailHabit}
                     points={lifetimePoints}
+                    earnedBadges={earnedBadges}
                     globalSettings={globalSettings}
                     onUpdateHabitGamification={onUpdateHabitGamification}
                     onClose={() => setOpenDetailHabitId(null)}

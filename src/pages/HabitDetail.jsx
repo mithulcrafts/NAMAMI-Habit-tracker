@@ -7,6 +7,7 @@ import { formatDate, todayKey } from '../utils/date'
 export const HabitDetail = ({
   habit,
   points,
+  earnedBadges,
   onClose,
   globalSettings,
   onUpdateHabitGamification,
@@ -107,7 +108,7 @@ export const HabitDetail = ({
       </div>
 
       <div className="mt-4">
-        <Badges maxStreak={habit.streak} points={points} />
+        <Badges maxStreak={habit.streak} points={points} earnedBadges={earnedBadges} habitId={habit.id} />
       </div>
 
       <div id="widget" className="mt-4 glass rounded-xl p-3">

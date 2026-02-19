@@ -96,6 +96,7 @@ const Shell = () => {
             pointsSpent={pointsSpent}
             bonusDays={bonusDays}
             globalStreak={globalStreak}
+            earnedBadges={earnedBadges}
             quoteOfDay={quoteOfDay}
             category={settings.quoteCategory}
             onCategoryChange={(category) => updateSettings({ quoteCategory: category })}
