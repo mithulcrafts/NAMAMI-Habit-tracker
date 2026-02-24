@@ -107,21 +107,20 @@ const BADGE_DEFINITIONS = [
 const AppContext = createContext()
 
 const deriveStats = (habits, settings) => {
-  const enriched = habits.map((habit) => {
-    // Helper: determine if a day is "completed" based on goal type
-    const getDayCompletion = (dateKey, goalType, goalTarget, dailyValue) => {
-      if (goalType === 'binary') {
-        return habit.history?.[dateKey] === true
-      }
-      // For count/duration: day is completed if dailyValue >= goalTarget
-      const value = dailyValue ?? habit.dailyValueHistory?.[dateKey] ?? 0
-      return value >= (goalTarget || 1)
+  const isHabitCompletedOnDate = (habit, dateKey) => {
+    if (habit.goalType === 'binary') {
+      return habit.history?.[dateKey] === true
     }
+    const value = habit.dailyValueHistory?.[dateKey] ?? 0
+    return value >= (habit.goalTarget || 1)
+  }
 
-    // Compute streak: start from yesterday, so today's incompletion doesn't affect it
+  const enriched = habits.map((habit) => {
+    // Compute streak: include today if completed/frozen; otherwise show streak up to yesterday
     let streak = 0
     let cursor = new Date()
-    cursor.setDate(cursor.getDate() - 1) // Start from yesterday, not today
+    cursor.setHours(0, 0, 0, 0)
+    const today = todayKey()
     
     while (true) {
       const key = formatDate(cursor)
@@ -136,23 +135,34 @@ const deriveStats = (habits, settings) => {
 
       // If day exists and is explicitly false, break the streak
       if (dayEntry === false) {
+        if (key === today) {
+          cursor.setDate(cursor.getDate() - 1)
+          continue
+        }
         break
       }
 
-      const isCompleted = getDayCompletion(key, habit.goalType, habit.goalTarget, null)
+      const isCompleted = isHabitCompletedOnDate(habit, key)
       if (isCompleted) {
         streak += 1
         cursor.setDate(cursor.getDate() - 1)
       } else {
+        // If today is not yet completed, fall back to streak up to yesterday
+        if (key === today) {
+          cursor.setDate(cursor.getDate() - 1)
+          continue
+        }
         // Day not completed - stop counting
         break
       }
     }
 
     // Count total completions (days where target was met)
-    const totalCompleted = Object.keys(habit.history || {}).filter((dateKey) =>
-      getDayCompletion(dateKey, habit.goalType, habit.goalTarget, null),
-    ).length
+    const uniqueDateKeys = new Set([
+      ...Object.keys(habit.history || {}),
+      ...Object.keys(habit.dailyValueHistory || {}),
+    ])
+    const totalCompleted = Array.from(uniqueDateKeys).filter((dateKey) => isHabitCompletedOnDate(habit, dateKey)).length
 
     const completionRate =
       habit.isDailyHabit ? null : Math.min(100, Math.round((totalCompleted / (habit.targetDays || 1)) * 100))
@@ -163,11 +173,12 @@ const deriveStats = (habits, settings) => {
   // Collect all completed dates for bonuses (only when target is met)
   const completedDates = {}
   enriched.forEach((habit) => {
-    Object.keys(habit.history || {}).forEach((dateKey) => {
-      const isCompleted = habit.goalType === 'binary' 
-        ? habit.history[dateKey] === true
-        : (habit.dailyValueHistory?.[dateKey] ?? 0) >= (habit.goalTarget || 1)
-      if (isCompleted) {
+    const keys = new Set([
+      ...Object.keys(habit.history || {}),
+      ...Object.keys(habit.dailyValueHistory || {}),
+    ])
+    keys.forEach((dateKey) => {
+      if (isHabitCompletedOnDate(habit, dateKey)) {
         completedDates[dateKey] = (completedDates[dateKey] || 0) + 1
       }
     })
@@ -199,11 +210,18 @@ const deriveStats = (habits, settings) => {
   let globalStreak = 0
   if (settings.gamificationEnabled && enriched.length > 0) {
     let cursor = new Date()
+    cursor.setHours(0, 0, 0, 0)
+    const today = todayKey()
     while (true) {
       const key = formatDate(cursor)
-      const allCompleted = completedDates[key] >= enriched.length
+      const allCompleted = enriched.every((habit) => {
+        const isFrozen = habit.freezeDates?.[key] === true
+        return isFrozen || isHabitCompletedOnDate(habit, key)
+      })
       if (allCompleted) {
         globalStreak += 1
+        cursor.setDate(cursor.getDate() - 1)
+      } else if (key === today) {
         cursor.setDate(cursor.getDate() - 1)
       } else {
         break

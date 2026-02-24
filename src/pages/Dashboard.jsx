@@ -48,8 +48,11 @@ export const Dashboard = ({
     year: 'numeric',
   })
   const relativeLabel = (() => {
-    const todayDate = new Date(today)
-    const diffDays = Math.round((todayDate - new Date(selectedDateKey)) / 86400000)
+    const todayDate = new Date()
+    todayDate.setHours(0, 0, 0, 0)
+    const selectedDay = new Date(selectedDate)
+    selectedDay.setHours(0, 0, 0, 0)
+    const diffDays = Math.round((todayDate - selectedDay) / 86400000)
     if (diffDays === 0) return 'Today'
     if (diffDays === 1) return 'Yesterday'
     if (diffDays > 1) return `${diffDays} days ago`
@@ -78,7 +81,8 @@ export const Dashboard = ({
 
   const handleDateChange = (value) => {
     if (!value) return
-    const parsed = new Date(value)
+    const [year, month, day] = value.split('-').map(Number)
+    const parsed = new Date(year, month - 1, day)
     if (Number.isNaN(parsed.getTime())) return
     setSelectedDate(parsed)
   }
