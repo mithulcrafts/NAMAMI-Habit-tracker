@@ -54,11 +54,11 @@ export const HabitCard = ({
 
   return (
     <div className="glass card-hover rounded-xl p-4 fade-in">
-      <div className="flex items-start justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <p className="text-xs uppercase tracking-widest text-brand-200">{habit.frequency}</p>
-          <h3 className="text-lg font-semibold text-white">{habit.name}</h3>
-          <p className="text-sm text-slate-300">{habit.description}</p>
+          <h3 className="break-words text-lg font-semibold text-white">{habit.name}</h3>
+          <p className="break-words text-sm text-slate-300">{habit.description}</p>
           <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-slate-300">
             <span className="rounded-full border border-white/10 bg-slate-900/60 px-2.5 py-1 font-semibold text-white">
               {friendlyLabel}
@@ -69,7 +69,7 @@ export const HabitCard = ({
             )}
           </div>
         </div>
-        <div className="flex gap-2 shrink-0">
+        <div className="flex shrink-0 gap-2 self-start sm:self-auto">
           <button
             className="rounded-md border border-white/10 px-3 py-1.5 text-xs text-slate-200 hover:border-white/30 whitespace-nowrap"
             onClick={() => onEdit(habit)}

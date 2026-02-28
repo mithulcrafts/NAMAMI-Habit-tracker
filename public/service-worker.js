@@ -1,5 +1,5 @@
 const CACHE_PREFIX = 'namami-cache';
-const CACHE_VERSION = self.crypto?.randomUUID ? self.crypto.randomUUID() : `v${Date.now()}`;
+const CACHE_VERSION = 'v7';
 const RUNTIME_CACHE = `${CACHE_PREFIX}-${CACHE_VERSION}`;
 const NAV_CACHE = `${CACHE_PREFIX}-nav-${CACHE_VERSION}`;
 const OFFLINE_FALLBACK = '/';
@@ -35,9 +35,21 @@ self.addEventListener('activate', (event) => {
   );
 });
 
+self.addEventListener('message', (event) => {
+  if (event.data?.type === 'SKIP_WAITING') {
+    self.skipWaiting();
+  }
+});
+
 const isNavigationRequest = (request) =>
   request.mode === 'navigate' ||
   (request.method === 'GET' && request.headers.get('accept')?.includes('text/html'));
+
+const isAssetRequest = (request) =>
+  request.destination === 'script' ||
+  request.destination === 'style' ||
+  request.destination === 'worker' ||
+  request.destination === 'document';
 
 self.addEventListener('fetch', (event) => {
   const { request } = event;
@@ -53,6 +65,25 @@ self.addEventListener('fetch', (event) => {
           const networkResponse = await fetch(request, { cache: 'no-store' });
           const copy = networkResponse.clone();
           const cache = await caches.open(NAV_CACHE);
+          cache.put(request, copy);
+          return networkResponse;
+        } catch (err) {
+          const cached = await caches.match(request);
+          if (cached) return cached;
+          return caches.match(OFFLINE_FALLBACK);
+        }
+      })()
+    );
+    return;
+  }
+
+  if (isAssetRequest(request)) {
+    event.respondWith(
+      (async () => {
+        try {
+          const networkResponse = await fetch(request, { cache: 'no-store' });
+          const copy = networkResponse.clone();
+          const cache = await caches.open(RUNTIME_CACHE);
           cache.put(request, copy);
           return networkResponse;
         } catch (err) {

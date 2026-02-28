@@ -409,8 +409,9 @@ export const AppProvider = ({ children }) => {
 
   // Apply theme to document
   useEffect(() => {
-    const theme = state.settings?.theme || 'dark'
-    document.documentElement.className = theme
+    const theme = state.settings?.theme === 'light' ? 'light' : 'dark'
+    document.documentElement.classList.remove('light', 'dark')
+    document.documentElement.classList.add(theme)
   }, [state.settings?.theme])
 
   const { habits, points: lifetimePoints, bonusDays, globalStreak } = useMemo(

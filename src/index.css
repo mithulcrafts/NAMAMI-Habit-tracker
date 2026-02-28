@@ -13,6 +13,16 @@
   --color-amber: #FFC857;
   --color-text-primary: #E6F1FF;
   --color-text-secondary: #7F8A9A;
+  --bg-primary: #05070A;
+  --bg-secondary: #0a0e14;
+  --bg-card: rgba(10, 14, 20, 0.4);
+  --text-primary: #E6F1FF;
+  --text-secondary: #7F8A9A;
+  --text-tertiary: #4a5568;
+  --border-color: rgba(0, 245, 255, 0.15);
+  --border-subtle: rgba(0, 245, 255, 0.08);
+  --hover-bg: rgba(0, 245, 255, 0.08);
+  --active-bg: rgba(0, 245, 255, 0.12);
 }
 
 /* Dark theme (default) - Cyberpunk style */
