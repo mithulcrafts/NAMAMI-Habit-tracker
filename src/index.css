@@ -443,6 +443,11 @@ h1, h2, h3, h4, h5, h6 {
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
 }
 
+.date-display-safe {
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary);
+}
+
 /* Progress bar styling */
 progress {
   accent-color: #00F5FF;

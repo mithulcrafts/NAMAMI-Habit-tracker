@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { HabitCard } from '../components/HabitCard'
 import { HabitForm } from '../components/HabitForm'
 import { DashboardStats } from '../components/DashboardStats'
@@ -34,6 +34,7 @@ export const Home = ({
   const [editing, setEditing] = useState(null)
   const [openDetailHabitId, setOpenDetailHabitId] = useState(null)
   const [selectedDate, setSelectedDate] = useState(new Date())
+  const dateInputRef = useRef(null)
   const today = todayKey()
   const selectedDateKey = formatDate(selectedDate)
   const isToday = selectedDateKey === today
@@ -81,6 +82,16 @@ export const Home = ({
     setSelectedDate(parsed)
   }
 
+  const openDatePicker = () => {
+    const input = dateInputRef.current
+    if (!input) return
+    if (typeof input.showPicker === 'function') {
+      input.showPicker()
+      return
+    }
+    input.click()
+  }
+
   const sortedHabits = useMemo(
     () =>
       [...habits].sort((a, b) => {
@@ -115,24 +126,31 @@ export const Home = ({
           <div className="flex min-w-0 items-center justify-center gap-2 text-center sm:gap-3">
             <div className="flex min-w-0 flex-col">
               <span className="text-[11px] uppercase tracking-[0.18em] text-brand-100">Date</span>
-              <span className="truncate text-sm font-semibold leading-tight text-white sm:text-base">{selectedDateDisplay}</span>
+              <span className="date-display-safe truncate text-sm font-semibold leading-tight text-white sm:text-base">{selectedDateDisplay}</span>
             </div>
-            <label className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-900/70 text-white shadow-soft cursor-pointer hover:border-white/30">
+            <button
+              type="button"
+              onClick={openDatePicker}
+              className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-900/70 text-white shadow-soft cursor-pointer hover:border-white/30"
+              aria-label="Select date"
+            >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-4 w-4 pointer-events-none">
                 <rect x="3" y="5" width="18" height="16" rx="2" ry="2" />
                 <line x1="16" y1="3" x2="16" y2="7" />
                 <line x1="8" y1="3" x2="8" y2="7" />
                 <line x1="3" y1="11" x2="21" y2="11" />
               </svg>
-              <input
-                aria-label="Select date"
-                type="date"
-                max={today}
-                value={selectedDateKey}
-                onChange={(e) => handleDateChange(e.target.value)}
-                className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
-              />
-            </label>
+            </button>
+            <input
+              ref={dateInputRef}
+              aria-label="Select date"
+              type="date"
+              max={today}
+              value={selectedDateKey}
+              onChange={(e) => handleDateChange(e.target.value)}
+              className="pointer-events-none absolute h-px w-px opacity-0"
+              tabIndex={-1}
+            />
           </div>
 
           <button
