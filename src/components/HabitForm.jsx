@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState } from 'react'
 
 const defaultData = {
   name: '',
@@ -43,7 +43,7 @@ const getThemeClasses = () => {
 
 export const HabitForm = ({ onSave, onCancel, initial }) => {
   const [form, setForm] = useState(initial || defaultData)
-  const theme = useMemo(() => getThemeClasses(), [])
+  const theme = getThemeClasses()
 
   useEffect(() => {
     if (initial) setForm(initial)

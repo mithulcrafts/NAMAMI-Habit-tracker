@@ -49,7 +49,7 @@ export const HabitDetail = ({
         </div>
         <button
           onClick={onClose}
-          className="rounded-md border border-cyan-400/20 px-3 py-1 text-sm font-medium uppercase text-slate-300 hover:border-cyan-400/40"
+          className="rounded-md border border-white/10 px-3 py-1 text-sm font-medium uppercase text-slate-300 hover:border-white/30"
         >
           Close
         </button>

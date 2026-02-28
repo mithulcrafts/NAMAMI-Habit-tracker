@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-
 const getThemeClasses = () => {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
   return {
@@ -11,7 +9,7 @@ const getThemeClasses = () => {
 export const HabitGamificationPanel = ({ habit, globalSettings, onUpdate }) => {
   const customPoints = habit.customPoints ?? 10
   const customBonuses = habit.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 }
-  const theme = useMemo(() => getThemeClasses(), [])
+  const theme = getThemeClasses()
 
   return (
     <div className="glass rounded-xl p-4">
