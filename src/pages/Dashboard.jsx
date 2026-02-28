@@ -115,18 +115,21 @@ export const Dashboard = ({
       />
 
       <div className="glass rounded-xl p-4">
-        <div className="flex w-full items-center gap-3">
+        <div className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-3">
           <button
             onClick={handlePreviousDay}
-            className="h-10 shrink-0 rounded-lg border border-white/10 px-4 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5"
+            aria-label="Previous day"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5"
           >
-            ←
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
+            </svg>
           </button>
 
-          <div className="flex flex-1 items-center justify-center gap-3 text-center">
-            <div className="flex flex-col">
+          <div className="flex min-w-0 items-center justify-center gap-2 text-center sm:gap-3">
+            <div className="flex min-w-0 flex-col">
               <span className="text-[11px] uppercase tracking-[0.18em] text-brand-100">Date</span>
-              <span className="text-base font-semibold text-white leading-tight">{selectedDateDisplay}</span>
+              <span className="truncate text-sm font-semibold leading-tight text-white sm:text-base">{selectedDateDisplay}</span>
             </div>
             <label className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-900/70 text-white shadow-soft cursor-pointer hover:border-white/30">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-4 w-4 pointer-events-none">
@@ -149,9 +152,12 @@ export const Dashboard = ({
           <button
             onClick={handleNextDay}
             disabled={isToday}
-            className="h-10 shrink-0 rounded-lg border border-white/10 px-4 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5 disabled:opacity-50 disabled:cursor-not-allowed"
+            aria-label="Next day"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            →
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" />
+            </svg>
           </button>
         </div>
       </div>

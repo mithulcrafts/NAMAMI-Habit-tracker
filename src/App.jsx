@@ -140,21 +140,21 @@ const Shell = () => {
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
-      <div className="mx-auto flex max-w-6xl flex-col gap-6 px-4 pb-10 pt-6">
+      <div className="mx-auto flex max-w-6xl flex-col gap-6 overflow-x-hidden px-4 pb-10 pt-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold" style={{ color: 'var(--text-primary)' }}>NAMAMI</h1>
             <p className="text-sm mt-0.5" style={{ color: 'var(--text-secondary)' }}>Your habit journey</p>
           </div>
           
           {/* Simple Tab Navigation */}
-          <div className="flex items-center gap-2">
+          <div className="flex w-full flex-wrap items-center gap-2 sm:w-auto sm:justify-end">
             {installAvailable && (
               <button
                 onClick={handleInstall}
                 disabled={installing}
-                className="px-3 py-2 rounded-md text-xs font-semibold uppercase tracking-wider transition-colors"
+                className="rounded-md px-3 py-2 text-xs font-semibold uppercase tracking-wider transition-colors"
                 style={{
                   backgroundColor: 'var(--active-bg)',
                   color: 'var(--text-primary)',
@@ -164,10 +164,10 @@ const Shell = () => {
                 {installing ? 'Installing...' : 'Install'}
               </button>
             )}
-            <div className="flex gap-1 rounded-lg p-1" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+            <div className="flex w-full gap-1 rounded-lg p-1 sm:w-auto" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <button
               onClick={() => setCurrentPage('home')}
-              className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              className="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors sm:flex-none sm:px-4"
               style={{
                 backgroundColor: currentPage === 'home' ? 'var(--active-bg)' : 'transparent',
                 color: currentPage === 'home' ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -177,7 +177,7 @@ const Shell = () => {
             </button>
             <button
               onClick={() => setCurrentPage('rewards')}
-              className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              className="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors sm:flex-none sm:px-4"
               style={{
                 backgroundColor: currentPage === 'rewards' ? 'var(--active-bg)' : 'transparent',
                 color: currentPage === 'rewards' ? 'var(--text-primary)' : 'var(--text-secondary)',
@@ -187,7 +187,7 @@ const Shell = () => {
             </button>
             <button
               onClick={() => setCurrentPage('settings')}
-              className="px-4 py-2 rounded-md text-sm font-medium transition-colors"
+              className="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors sm:flex-none sm:px-4"
               style={{
                 backgroundColor: currentPage === 'settings' ? 'var(--active-bg)' : 'transparent',
                 color: currentPage === 'settings' ? 'var(--text-primary)' : 'var(--text-secondary)',
