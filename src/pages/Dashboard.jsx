@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useState } from 'react'
 import { HabitCard } from '../components/HabitCard'
 import { HabitForm } from '../components/HabitForm'
 import { DashboardStats } from '../components/DashboardStats'
@@ -6,6 +6,7 @@ import { QuoteCard } from '../components/QuoteCard'
 import { GlobalHeatmap } from '../components/GlobalHeatmap'
 import { Heatmap } from '../components/Heatmap'
 import { Rewards } from '../components/Rewards'
+import { DateNavigator } from '../components/DateNavigator'
 import { todayKey, formatDate } from '../utils/date'
 
 export const Dashboard = ({
@@ -38,7 +39,6 @@ export const Dashboard = ({
 }) => {
   const [editing, setEditing] = useState(null)
   const [selectedDate, setSelectedDate] = useState(new Date())
-  const dateInputRef = useRef(null)
   const today = todayKey()
   const selectedDateKey = formatDate(selectedDate)
   const isToday = selectedDateKey === today
@@ -60,43 +60,33 @@ export const Dashboard = ({
     return 'Upcoming'
   })()
 
-  const handlePreviousDay = () => {
+  const handlePreviousDay = useCallback(() => {
     setSelectedDate(prev => {
       const newDate = new Date(prev)
       newDate.setDate(newDate.getDate() - 1)
       return newDate
     })
-  }
+  }, [])
 
-  const handleNextDay = () => {
+  const handleNextDay = useCallback(() => {
     setSelectedDate(prev => {
       const newDate = new Date(prev)
       newDate.setDate(newDate.getDate() + 1)
       return newDate
     })
-  }
+  }, [])
 
   const handleToday = () => {
     setSelectedDate(new Date())
   }
 
-  const handleDateChange = (value) => {
+  const handleDateChange = useCallback((value) => {
     if (!value) return
     const [year, month, day] = value.split('-').map(Number)
     const parsed = new Date(year, month - 1, day)
     if (Number.isNaN(parsed.getTime())) return
     setSelectedDate(parsed)
-  }
-
-  const openDatePicker = () => {
-    const input = dateInputRef.current
-    if (!input) return
-    if (typeof input.showPicker === 'function') {
-      input.showPicker()
-      return
-    }
-    input.click()
-  }
+  }, [])
 
   const sortedHabits = useMemo(
     () =>
@@ -125,69 +115,15 @@ export const Dashboard = ({
         onAddCustom={onAddCustomQuote}
       />
 
-      <div className="glass rounded-xl p-4">
-        <div className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-3">
-          <button
-            onClick={handlePreviousDay}
-            aria-label="Previous day"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
-            </svg>
-          </button>
-
-          <div className="flex min-w-0 items-center justify-center gap-2 text-center sm:gap-3">
-            <div className="flex min-w-0 flex-col">
-              <span className="text-[11px] uppercase tracking-[0.18em] text-brand-100">Date</span>
-              <span
-                className="date-display-safe truncate text-sm font-semibold leading-tight text-white sm:text-base"
-                style={{
-                  color: 'var(--text-primary)',
-                  WebkitTextFillColor: 'var(--text-primary)',
-                  forcedColorAdjust: 'none',
-                }}
-              >
-                {selectedDateDisplay}
-              </span>
-            </div>
-            <button
-              type="button"
-              onClick={openDatePicker}
-              className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-900/70 text-white shadow-soft cursor-pointer hover:border-white/30"
-              aria-label="Select date"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-4 w-4 pointer-events-none">
-                <rect x="3" y="5" width="18" height="16" rx="2" ry="2" />
-                <line x1="16" y1="3" x2="16" y2="7" />
-                <line x1="8" y1="3" x2="8" y2="7" />
-                <line x1="3" y1="11" x2="21" y2="11" />
-              </svg>
-            </button>
-            <input
-              ref={dateInputRef}
-              aria-label="Select date"
-              type="date"
-              max={today}
-              value={selectedDateKey}
-              onChange={(e) => handleDateChange(e.target.value)}
-              className="pointer-events-none absolute h-px w-px opacity-0"
-              tabIndex={-1}
-            />
-          </div>
-
-          <button
-            onClick={handleNextDay}
-            disabled={isToday}
-            aria-label="Next day"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" />
-            </svg>
-          </button>
-        </div>
-      </div>
+      <DateNavigator
+        selectedDateDisplay={selectedDateDisplay}
+        selectedDateKey={selectedDateKey}
+        today={today}
+        isToday={isToday}
+        onPreviousDay={handlePreviousDay}
+        onNextDay={handleNextDay}
+        onDateChange={handleDateChange}
+      />
 
       <DashboardStats
         habits={habits}
