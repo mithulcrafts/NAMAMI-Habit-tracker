@@ -140,7 +140,16 @@ export const Dashboard = ({
           <div className="flex min-w-0 items-center justify-center gap-2 text-center sm:gap-3">
             <div className="flex min-w-0 flex-col">
               <span className="text-[11px] uppercase tracking-[0.18em] text-brand-100">Date</span>
-              <span className="date-display-safe truncate text-sm font-semibold leading-tight text-white sm:text-base">{selectedDateDisplay}</span>
+              <span
+                className="date-display-safe truncate text-sm font-semibold leading-tight text-white sm:text-base"
+                style={{
+                  color: 'var(--text-primary)',
+                  WebkitTextFillColor: 'var(--text-primary)',
+                  forcedColorAdjust: 'none',
+                }}
+              >
+                {selectedDateDisplay}
+              </span>
             </div>
             <button
               type="button"

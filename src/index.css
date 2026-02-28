@@ -446,6 +446,8 @@ h1, h2, h3, h4, h5, h6 {
 .date-display-safe {
   color: var(--text-primary) !important;
   -webkit-text-fill-color: var(--text-primary);
+  forced-color-adjust: none;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* Progress bar styling */
