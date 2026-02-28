@@ -450,6 +450,43 @@ h1, h2, h3, h4, h5, h6 {
   -webkit-font-smoothing: antialiased;
 }
 
+.date-nav-shell {
+  backdrop-filter: blur(14px) saturate(180%);
+  background-color: rgba(10, 14, 20, 0.35) !important;
+  border: 1px solid rgba(0, 245, 255, 0.15) !important;
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.1), inset 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.light .date-nav-shell {
+  background-color: rgba(255, 255, 255, 0.7) !important;
+  border: 1px solid rgba(51, 65, 85, 0.15) !important;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08) !important;
+}
+
+.date-nav-btn {
+  border: 1px solid var(--border-subtle) !important;
+  background-color: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary);
+  forced-color-adjust: none;
+}
+
+.date-nav-btn:hover {
+  border-color: var(--border-color) !important;
+  background-color: var(--hover-bg) !important;
+}
+
+.date-nav-btn svg {
+  stroke: var(--text-primary) !important;
+}
+
+.date-nav-arrow {
+  color: var(--text-primary) !important;
+  -webkit-text-fill-color: var(--text-primary);
+  font-size: 20px;
+  line-height: 1;
+}
+
 /* Progress bar styling */
 progress {
   accent-color: #00F5FF;

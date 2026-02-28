@@ -22,16 +22,17 @@ export const DateNavigator = memo(function DateNavigator({
   }
 
   return (
-    <div className="glass rounded-xl p-4" style={{ transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}>
+    <div
+      className="date-nav-shell rounded-xl p-4"
+      style={{ transform: 'translateZ(0)', WebkitTransform: 'translateZ(0)' }}
+    >
       <div className="grid w-full grid-cols-[auto_1fr_auto] items-center gap-2 sm:gap-3">
         <button
           onClick={onPreviousDay}
           aria-label="Previous day"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5"
+          className="date-nav-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-semibold"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M15 18l-6-6 6-6" />
-          </svg>
+          <span className="date-nav-arrow" aria-hidden="true">‹</span>
         </button>
 
         <div className="flex min-w-0 items-center justify-center gap-2 text-center sm:gap-3" style={{ transform: 'translateZ(0)' }}>
@@ -51,7 +52,7 @@ export const DateNavigator = memo(function DateNavigator({
           <button
             type="button"
             onClick={openDatePicker}
-            className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-slate-900/70 text-white shadow-soft cursor-pointer hover:border-white/30"
+            className="date-nav-btn relative flex h-10 w-10 shrink-0 items-center justify-center rounded-lg cursor-pointer"
             aria-label="Select date"
           >
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" className="h-4 w-4 pointer-events-none">
@@ -77,11 +78,9 @@ export const DateNavigator = memo(function DateNavigator({
           onClick={onNextDay}
           disabled={isToday}
           aria-label="Next day"
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/10 text-sm font-semibold text-slate-100 hover:border-white/30 hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-50"
+          className="date-nav-btn flex h-10 w-10 shrink-0 items-center justify-center rounded-lg text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4" aria-hidden="true">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 6l6 6-6 6" />
-          </svg>
+          <span className="date-nav-arrow" aria-hidden="true">›</span>
         </button>
       </div>
     </div>
