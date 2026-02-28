@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 import { todayKey } from '../utils/date'
 
 const getThemeClasses = () => {
@@ -29,7 +29,7 @@ export const HabitCard = ({
 }) => {
   const today = todayKey()
   const [valueInput, setValueInput] = useState('')
-  const theme = useMemo(() => getThemeClasses(), [])
+  const theme = getThemeClasses()
   
   // Use selectedDateKey instead of today
   const dateKey = selectedDateKey || today
@@ -71,13 +71,13 @@ export const HabitCard = ({
         </div>
         <div className="flex shrink-0 gap-2 self-start sm:self-auto">
           <button
-            className="rounded-md border border-white/10 px-3 py-1.5 text-xs text-slate-200 hover:border-white/30 whitespace-nowrap"
+            className="rounded-md border border-white/10 bg-slate-900/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-200 transition hover:border-brand-400/60 hover:text-brand-100 hover:bg-slate-900/60 whitespace-nowrap"
             onClick={() => onEdit(habit)}
           >
             Edit
           </button>
           <button
-            className="rounded-md border border-red-500/40 px-3 py-1.5 text-xs text-red-200 hover:border-red-400/60 whitespace-nowrap"
+            className="rounded-md border border-white/10 bg-slate-900/40 px-3 py-1.5 text-xs font-semibold uppercase tracking-wide text-slate-200 transition hover:border-brand-400/60 hover:text-brand-100 hover:bg-slate-900/60 whitespace-nowrap"
             onClick={() => onDelete(habit.id)}
           >
             Delete
@@ -98,9 +98,9 @@ export const HabitCard = ({
         )}
       </div>
 
-      <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-slate-800">
+      <div className="mt-3 h-1.5 w-full overflow-hidden rounded-full border border-white/5 bg-slate-900/70">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-brand-400 to-accent"
+          className="h-full rounded-full bg-brand-500/90 transition-all duration-300"
           style={{ width: `${completion}%` }}
         />
       </div>

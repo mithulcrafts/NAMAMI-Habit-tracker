@@ -146,7 +146,7 @@ const MithuraAdjustment = ({ onAdjust }) => {
         />
         <button
           onClick={handleAdjust}
-          className="rounded-md bg-purple-600 px-4 py-2 text-sm font-bold uppercase tracking-wider text-white hover:bg-purple-700 whitespace-nowrap"
+          className="rounded-md bg-brand-500 px-4 py-2 text-sm font-bold uppercase tracking-wider text-white hover:bg-brand-400 whitespace-nowrap"
         >
           Adjust
         </button>

@@ -1,6 +1,4 @@
-﻿import { useMemo } from 'react'
-
-const getThemeClasses = () => {
+﻿const getThemeClasses = () => {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
   return {
     selectBorder: isDark ? 'border-cyan-400/20' : 'border-blue-400/20',
@@ -9,7 +7,7 @@ const getThemeClasses = () => {
 }
 
 export const QuoteCard = ({ quote, category, onCategoryChange }) => {
-  const theme = useMemo(() => getThemeClasses(), [])
+  const theme = getThemeClasses()
 
   return (
     <div className="glass rounded-xl p-4">

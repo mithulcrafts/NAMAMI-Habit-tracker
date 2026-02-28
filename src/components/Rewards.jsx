@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react'
+import { useState } from 'react'
 
 const getThemeClasses = () => {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
@@ -32,7 +32,7 @@ export const Rewards = ({
   const [form, setForm] = useState({ name: '', requiredPoints: 50 })
   const [editing, setEditing] = useState(null)
   const [confirmingId, setConfirmingId] = useState(null)
-  const theme = useMemo(() => getThemeClasses(), [])
+  const theme = getThemeClasses()
 
   const claimCounts = {}
   ;(claimedRewards || []).forEach((entry) => {
@@ -100,13 +100,13 @@ export const Rewards = ({
                 <div className="flex gap-1">
                   <button
                     onClick={() => handleEdit(reward)}
-                    className={`rounded-md border ${theme.borderPrimary} px-2 py-1 text-xs font-medium uppercase ${theme.textSecondary} hover:${theme.borderPrimaryHover}`}
+                    className="rounded-md border border-white/10 bg-slate-900/40 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-slate-200 transition hover:border-brand-400/60 hover:text-brand-100 hover:bg-slate-900/60"
                   >
                     Edit
                   </button>
                   <button
                     onClick={() => onDelete(reward.id)}
-                    className="rounded-md border border-red-500/30 px-2 py-1 text-xs font-medium uppercase text-red-400 hover:border-red-500/50"
+                    className="rounded-md border border-white/10 bg-slate-900/40 px-2 py-1 text-xs font-semibold uppercase tracking-wide text-slate-200 transition hover:border-brand-400/60 hover:text-brand-100 hover:bg-slate-900/60"
                   >
                     Remove
                   </button>
@@ -130,7 +130,7 @@ export const Rewards = ({
                       </button>
                       <button
                         onClick={() => setConfirmingId(null)}
-                        className={`rounded-md border ${theme.borderPrimary} px-3 py-1 text-xs font-medium uppercase ${theme.textSecondaryLight} hover:${theme.borderPrimaryHover}`}
+                        className={`rounded-md border ${theme.borderPrimary} px-3 py-1 text-xs font-medium uppercase ${theme.textSecondaryLight} ${theme.borderPrimaryHover}`}
                       >
                         Cancel
                       </button>
@@ -176,7 +176,7 @@ export const Rewards = ({
           <div className="mt-2 flex flex-col-reverse gap-2 sm:flex-row">
             <button
               onClick={() => setEditing(null)}
-              className={`rounded-md border ${theme.borderPrimary} px-4 py-2 text-sm font-medium uppercase ${theme.textSecondaryLight} hover:${theme.borderPrimaryHover}`}
+              className={`rounded-md border ${theme.borderPrimary} px-4 py-2 text-sm font-medium uppercase ${theme.textSecondaryLight} ${theme.borderPrimaryHover}`}
             >
               Cancel
             </button>

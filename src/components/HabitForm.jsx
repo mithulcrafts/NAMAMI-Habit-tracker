@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react'
 
 const defaultData = {
@@ -62,8 +63,9 @@ const getThemeClasses = () => {
 }
 
 export const HabitForm = ({ onSave, onCancel, initial }) => {
-  const [form, setForm] = useState(() => getInitialFormData(initial))
-  const theme = useMemo(() => getThemeClasses(), [])
+
+  const [form, setForm] = useState(initial || defaultData)
+  const theme = getThemeClasses()
 
   const toggleDay = (index) => {
     setForm((prev) => {

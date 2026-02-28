@@ -1,5 +1,3 @@
-import { useMemo } from 'react'
-
 const getThemeClasses = () => {
   const isDark = typeof document !== 'undefined' && document.documentElement.classList.contains('dark')
   return {
@@ -12,7 +10,7 @@ const getThemeClasses = () => {
 }
 
 export const EarnedBadges = ({ earnedBadges, badgeDefinitions, habits }) => {
-  const theme = useMemo(() => getThemeClasses(), [])
+  const theme = getThemeClasses()
 
   // Group badges by badge id to count occurrences
   const badgeCounts = {}
