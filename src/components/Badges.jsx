@@ -5,7 +5,9 @@ const badgeList = [
   { id: 'points-100', label: '100+ MITHURA', requirement: 100, color: 'from-amber-400 to-amber-600', type: 'points', icon: '💎' },
 ]
 
-export const Badges = ({ maxStreak, points, earnedBadges = [], habitId = null }) => {
+const EMPTY_BADGES = []
+
+export const Badges = ({ maxStreak, points, earnedBadges = EMPTY_BADGES, habitId = null }) => {
   const hasEarnedBadge = (badgeId, isPointsBadge) => {
     if (isPointsBadge) {
       return earnedBadges.some((badge) => badge.badgeId === badgeId)

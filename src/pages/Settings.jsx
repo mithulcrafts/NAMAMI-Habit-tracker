@@ -1,11 +1,7 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
-  const [local, setLocal] = useState(settings)
-
-  useEffect(() => {
-    setLocal(settings)
-  }, [settings])
+  const [local, setLocal] = useState(() => ({ ...settings }))
 
   const handleSave = () => {
     onUpdate(local)
@@ -21,8 +17,9 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
           <p className="text-sm font-bold uppercase tracking-wide text-white">GLOBAL BONUSES</p>
           <p className="mt-1 text-xs text-slate-400">These bonuses apply when ALL habits are completed</p>
           
-          <label className="mt-3 block text-sm text-slate-300">DAILY BONUS (ALL HABITS DONE)</label>
+          <label htmlFor="daily-bonus" className="mt-3 block text-sm text-slate-300">DAILY BONUS (ALL HABITS DONE)</label>
           <input
+            id="daily-bonus"
             type="number"
             min="0"
             value={local.dailyBonus}
@@ -32,13 +29,14 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
           <p className="mt-1 text-xs text-slate-400">Awarded when you complete all habits in a day</p>
 
           <div className="mt-4">
-            <label className="block text-sm text-slate-300">GLOBAL STREAK BONUSES</label>
+            <p className="block text-sm text-slate-300">GLOBAL STREAK BONUSES</p>
             <p className="mt-1 text-xs text-slate-400">Awarded for consecutive days of completing ALL habits</p>
             <div className="mt-2 grid grid-cols-3 gap-2">
               {[3, 7, 30].map((days) => (
                 <div key={days}>
-                  <label className="text-xs text-slate-400">{days}-day</label>
+                  <label htmlFor={`global-streak-${days}`} className="text-xs text-slate-400">{days}-day</label>
                   <input
+                    id={`global-streak-${days}`}
                     type="number"
                     min="0"
                     value={local.globalStreakBonuses?.[days] ?? 0}
@@ -58,8 +56,9 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
 
         <div className="glass rounded-xl p-4">
           <p className="text-sm font-bold uppercase tracking-wide text-white">APPEARANCE</p>
-          <label className="mt-3 block text-sm text-slate-300">THEME</label>
+          <label htmlFor="theme-select" className="mt-3 block text-sm text-slate-300">THEME</label>
           <select
+            id="theme-select"
             value={local.theme ?? 'dark'}
             onChange={(e) => setLocal((p) => ({ ...p, theme: e.target.value }))}
             className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
@@ -71,9 +70,10 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
 
         <div className="glass rounded-xl p-4">
           <p className="text-sm font-bold uppercase tracking-wide text-white">FEATURES</p>
-          <div className="mt-3 flex items-center justify-between">
-            <span className="text-sm text-slate-300">ENABLE GAMIFICATION</span>
+          <div className="mt-3 flex items-center justify-between gap-3">
+            <label htmlFor="enable-gamification" className="text-sm text-slate-300">ENABLE GAMIFICATION</label>
             <input
+              id="enable-gamification"
               type="checkbox"
               checked={local.gamificationEnabled}
               onChange={(e) => setLocal((p) => ({ ...p, gamificationEnabled: e.target.checked }))}
@@ -83,8 +83,9 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
 
         <div className="glass rounded-xl p-4">
           <p className="text-sm font-bold uppercase tracking-wide text-white">QUOTE SETTINGS</p>
-          <label className="mt-3 block text-sm text-slate-300">PREFERRED QUOTE CATEGORY</label>
+          <label htmlFor="quote-category" className="mt-3 block text-sm text-slate-300">PREFERRED QUOTE CATEGORY</label>
           <select
+            id="quote-category"
             value={local.quoteCategory ?? 'general'}
             onChange={(e) => setLocal((p) => ({ ...p, quoteCategory: e.target.value }))}
             className="mt-1 w-full rounded-md border border-cyan-400/20 bg-slate-900/40 backdrop-blur px-3 py-2 text-sm"
@@ -107,7 +108,7 @@ export const Settings = ({ settings, onUpdate, onAdjustMithura }) => {
   )
 }
 
-export const MithuraAdjustment = ({ onAdjust }) => {
+const MithuraAdjustment = ({ onAdjust }) => {
   const [amount, setAmount] = useState('')
 
   const handleAdjust = () => {
@@ -134,7 +135,9 @@ export const MithuraAdjustment = ({ onAdjust }) => {
       </p>
       
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+        <label htmlFor="mithura-adjustment" className="sr-only">Manual Mithura adjustment amount</label>
         <input
+          id="mithura-adjustment"
           type="number"
           value={amount}
           onChange={(e) => setAmount(e.target.value)}

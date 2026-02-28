@@ -67,7 +67,7 @@ self.addEventListener('fetch', (event) => {
           const cache = await caches.open(NAV_CACHE);
           cache.put(request, copy);
           return networkResponse;
-        } catch (err) {
+        } catch {
           const cached = await caches.match(request);
           if (cached) return cached;
           return caches.match(OFFLINE_FALLBACK);
@@ -86,7 +86,7 @@ self.addEventListener('fetch', (event) => {
           const cache = await caches.open(RUNTIME_CACHE);
           cache.put(request, copy);
           return networkResponse;
-        } catch (err) {
+        } catch {
           const cached = await caches.match(request);
           if (cached) return cached;
           return caches.match(OFFLINE_FALLBACK);
@@ -113,7 +113,7 @@ self.addEventListener('fetch', (event) => {
         const copy = networkResponse.clone();
         caches.open(RUNTIME_CACHE).then((cache) => cache.put(request, copy));
         return networkResponse;
-      } catch (err) {
+      } catch {
         return caches.match(OFFLINE_FALLBACK);
       }
     })()

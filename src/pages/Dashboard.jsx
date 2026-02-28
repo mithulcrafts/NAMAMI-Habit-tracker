@@ -76,10 +76,6 @@ export const Dashboard = ({
     })
   }, [])
 
-  const handleToday = () => {
-    setSelectedDate(new Date())
-  }
-
   const handleDateChange = useCallback((value) => {
     if (!value) return
     const [year, month, day] = value.split('-').map(Number)
@@ -181,6 +177,7 @@ export const Dashboard = ({
         <div className="glass rounded-xl p-4">
           <h3 className="text-lg font-semibold text-white">Add habit</h3>
           <HabitForm
+            key={editing?.id ?? 'new-habit-form'}
             initial={editing}
             onSave={(data) => {
               if (editing) {

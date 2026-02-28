@@ -1,10 +1,31 @@
 import './App.css'
-import { useState, useEffect } from 'react'
+import { useEffect, useReducer } from 'react'
 import { AppProvider, useApp } from './context/AppContext'
 import { Home } from './pages/Home'
 import { RewardsPage } from './pages/RewardsPage'
-import { HabitDetail } from './pages/HabitDetail'
 import { Settings } from './pages/Settings'
+
+const initialShellState = {
+  currentPage: 'home',
+  hydrated: false,
+  installAvailable: false,
+  installing: false,
+}
+
+const shellReducer = (state, action) => {
+  switch (action.type) {
+    case 'setPage':
+      return { ...state, currentPage: action.payload }
+    case 'setHydrated':
+      return { ...state, hydrated: true }
+    case 'setInstallAvailable':
+      return { ...state, installAvailable: action.payload }
+    case 'setInstalling':
+      return { ...state, installing: action.payload }
+    default:
+      return state
+  }
+}
 
 const Shell = () => {
   const {
@@ -40,29 +61,26 @@ const Shell = () => {
     adjustMithura,
   } = useApp()
 
-  const [openHabitId, setOpenHabitId] = useState(null)
-  const [currentPage, setCurrentPage] = useState('home')
-  const [hydrated, setHydrated] = useState(false)
-  const [installAvailable, setInstallAvailable] = useState(false)
-  const [installing, setInstalling] = useState(false)
+  const [shellState, dispatch] = useReducer(shellReducer, initialShellState)
+  const { currentPage, hydrated, installAvailable, installing } = shellState
 
   // Remove splash screen when data is loaded
   useEffect(() => {
     if (!loading && !hydrated) {
-      setHydrated(true)
+      dispatch({ type: 'setHydrated' })
       window._NAMAMI_HYDRATED?.()
     }
   }, [loading, hydrated])
 
   useEffect(() => {
-    const onReady = () => setInstallAvailable(true)
-    const onInstalled = () => setInstallAvailable(false)
+    const onReady = () => dispatch({ type: 'setInstallAvailable', payload: true })
+    const onInstalled = () => dispatch({ type: 'setInstallAvailable', payload: false })
 
     window.addEventListener('installPromptReady', onReady)
     window.addEventListener('appinstalled', onInstalled)
 
     if (window.__NAMAMI_INSTALL_READY) {
-      setInstallAvailable(true)
+      dispatch({ type: 'setInstallAvailable', payload: true })
     }
 
     return () => {
@@ -73,11 +91,11 @@ const Shell = () => {
 
   const handleInstall = async () => {
     if (!installAvailable || typeof window.triggerInstall !== 'function') return
-    setInstalling(true)
+    dispatch({ type: 'setInstalling', payload: true })
     try {
       await window.triggerInstall()
     } finally {
-      setInstalling(false)
+      dispatch({ type: 'setInstalling', payload: false })
     }
   }
 
@@ -85,58 +103,48 @@ const Shell = () => {
     return null
   }
 
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return (
-          <Home
-            habits={habits}
-            points={points}
-            lifetimePoints={lifetimePoints}
-            pointsSpent={pointsSpent}
-            bonusDays={bonusDays}
-            globalStreak={globalStreak}
-            earnedBadges={earnedBadges}
-            quoteOfDay={quoteOfDay}
-            category={settings.quoteCategory}
-            onCategoryChange={(category) => updateSettings({ quoteCategory: category })}
-            onAddCustomQuote={addCustomQuote}
-            onAddHabit={addHabit}
-            onToggle={toggleCompletion}
-            onOpenHabit={setOpenHabitId}
-            onEditHabit={updateHabit}
-            onDeleteHabit={deleteHabit}
-            globalSettings={settings}
-            onUpdateHabitGamification={updateHabitGamification}
-            streakFreezes={streakFreezes}
-            onUseStreakFreeze={useStreakFreeze}
-            onRemoveStreakFreeze={removeStreakFreeze}
-          />
-        )
-      case 'rewards':
-        return (
-          <RewardsPage
-            rewards={rewards}
-            claimedRewards={claimedRewards}
-            points={points}
-            earnedBadges={earnedBadges}
-            badgeDefinitions={badgeDefinitions}
-            habits={habits}
-            streakFreezes={streakFreezes}
-            streakFreezeCost={streakFreezeCost}
-            onBuyStreakFreeze={buyStreakFreeze}
-            onAddReward={addReward}
-            onClaimReward={claimReward}
-            onUpdateReward={updateReward}
-            onDeleteReward={deleteReward}
-          />
-        )
-      case 'settings':
-        return <Settings settings={settings} onUpdate={updateSettings} onAdjustMithura={adjustMithura} />
-      default:
-        return null
-    }
-  }
+  const pageContent =
+    currentPage === 'home' ? (
+      <Home
+        habits={habits}
+        points={points}
+        lifetimePoints={lifetimePoints}
+        pointsSpent={pointsSpent}
+        bonusDays={bonusDays}
+        globalStreak={globalStreak}
+        earnedBadges={earnedBadges}
+        quoteOfDay={quoteOfDay}
+        category={settings.quoteCategory}
+        onCategoryChange={(category) => updateSettings({ quoteCategory: category })}
+        onAddCustomQuote={addCustomQuote}
+        onAddHabit={addHabit}
+        onToggle={toggleCompletion}
+        onEditHabit={updateHabit}
+        onDeleteHabit={deleteHabit}
+        onUpdateHabitGamification={updateHabitGamification}
+        streakFreezes={streakFreezes}
+        onUseStreakFreeze={useStreakFreeze}
+        onRemoveStreakFreeze={removeStreakFreeze}
+      />
+    ) : currentPage === 'rewards' ? (
+      <RewardsPage
+        rewards={rewards}
+        claimedRewards={claimedRewards}
+        points={points}
+        earnedBadges={earnedBadges}
+        badgeDefinitions={badgeDefinitions}
+        habits={habits}
+        streakFreezes={streakFreezes}
+        streakFreezeCost={streakFreezeCost}
+        onBuyStreakFreeze={buyStreakFreeze}
+        onAddReward={addReward}
+        onClaimReward={claimReward}
+        onUpdateReward={updateReward}
+        onDeleteReward={deleteReward}
+      />
+    ) : currentPage === 'settings' ? (
+      <Settings settings={settings} onUpdate={updateSettings} onAdjustMithura={adjustMithura} />
+    ) : null
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: 'var(--bg-primary)' }}>
@@ -173,7 +181,7 @@ const Shell = () => {
             )}
             <div className="flex w-full gap-1 rounded-lg p-1 sm:w-auto" style={{ backgroundColor: 'var(--bg-secondary)' }}>
             <button
-              onClick={() => setCurrentPage('home')}
+              onClick={() => dispatch({ type: 'setPage', payload: 'home' })}
               className="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors sm:flex-none sm:px-4"
               style={{
                 backgroundColor: currentPage === 'home' ? 'var(--active-bg)' : 'transparent',
@@ -183,7 +191,7 @@ const Shell = () => {
               Home
             </button>
             <button
-              onClick={() => setCurrentPage('rewards')}
+              onClick={() => dispatch({ type: 'setPage', payload: 'rewards' })}
               className="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors sm:flex-none sm:px-4"
               style={{
                 backgroundColor: currentPage === 'rewards' ? 'var(--active-bg)' : 'transparent',
@@ -193,7 +201,7 @@ const Shell = () => {
               Rewards
             </button>
             <button
-              onClick={() => setCurrentPage('settings')}
+              onClick={() => dispatch({ type: 'setPage', payload: 'settings' })}
               className="flex-1 rounded-md px-3 py-2 text-sm font-medium transition-colors sm:flex-none sm:px-4"
               style={{
                 backgroundColor: currentPage === 'settings' ? 'var(--active-bg)' : 'transparent',
@@ -207,7 +215,7 @@ const Shell = () => {
         </div>
 
         {/* Page Content */}
-        {renderPage()}
+        {pageContent}
       </div>
     </div>
   )
