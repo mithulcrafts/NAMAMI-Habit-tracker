@@ -1,51 +1,28 @@
-# OVERVIEW – Product Vision
+# Overview
 
-## What is NAMAMI?
+NAMAMI is a local-first habit tracker focused on simple daily execution and long-term consistency.
 
-An offline-first habit tracker with zero servers, zero accounts, zero privacy concerns. All data lives on your device.
+## Core Idea
 
-## Philosophy
+- Keep data on-device (IndexedDB)
+- Work fully offline after first load
+- Track habits with clear completion rules
+- Add motivation through optional gamification
 
-- **Offline First**: Works anywhere, anytime—internet optional
-- **Privacy**: Your data is yours alone; no servers, no tracking
-- **Simple**: Clean UI, no bloat, focused feature set
-- **Motivating**: Gamification that celebr ates progress
-- **Open Source**: Transparent, community-driven
+## Product Scope
 
-## Problem We Solve
+- Home page for check-ins, heatmaps, stats, and quotes
+- Rewards page for badges, reward redemption, and streak freeze
+- Settings page for theme, quote category, and global gamification defaults
 
-Existing habit apps require internet, collect data, add unnecessary complexity, and lock you into paid subscriptions. NAMAMI is different: **it works offline, respects your privacy, and costs nothing.**
+## Principles
 
-## Core Features
+- Privacy-first: no account or backend required
+- Fast feedback: quick logging from one dashboard
+- Transparent scoring: points and streaks are rule-based
 
-- ✅ Three goal types (binary, count, duration)
-- 🔥 Dual heatmap visualization
-- 🏆 MITHURA gamification system
-- 🎨 8 custom colors per habit
-- 🌓 Light & dark themes
-- 💾 100% offline functionality
-- 📱 PWA installable
-- 💬 Daily motivational quotes
+## Next Reading
 
-## Target Users
-
-- Productivity enthusiasts building daily routines
-- Students tracking learning goals
-- Athletes monitoring workout consistency
-- Wellness seekers managing health habits
-- Privacy-conscious developers
-
-## Design Principles
-
-1. **Privacy First** – Zero server communication
-2. **Progressive** – PWA for native-like experience
-3. **Owned** – You control your data completely
-4. **Empowering** – Customizable gamification
-
-## MITHURA Gamification
-
-Points earned for completing habits. Optional badges for milestones (3/7/30-day streaks, points thresholds). Completely optional—turn it off if you prefer simple tracking.
-
----
-
-**Ready to start?** See [FEATURES.md](FEATURES.md) and [INSTALLATION.md](INSTALLATION.md)
+- [FEATURES.md](FEATURES.md)
+- [TECHNICAL.md](TECHNICAL.md)
+- [INSTALLATION.md](INSTALLATION.md)
