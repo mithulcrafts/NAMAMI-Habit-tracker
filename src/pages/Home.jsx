@@ -23,10 +23,8 @@ export const Home = ({
   onAddCustomQuote,
   onAddHabit,
   onToggle,
-  onOpenHabit,
   onEditHabit,
   onDeleteHabit,
-  globalSettings,
   onUpdateHabitGamification,
   streakFreezes,
   onUseStreakFreeze,
@@ -163,7 +161,6 @@ export const Home = ({
                     habit={openDetailHabit}
                     points={lifetimePoints}
                     earnedBadges={earnedBadges}
-                    globalSettings={globalSettings}
                     onUpdateHabitGamification={onUpdateHabitGamification}
                     onClose={() => setOpenDetailHabitId(null)}
                   />
@@ -180,6 +177,7 @@ export const Home = ({
         <div className="glass rounded-xl p-4">
           <h3 className="text-lg font-semibold text-white">Add habit</h3>
           <HabitForm
+            key={editing?.id ?? 'new-habit-form'}
             initial={editing}
             onSave={(data) => {
               if (editing) {

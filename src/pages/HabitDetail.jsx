@@ -9,7 +9,6 @@ export const HabitDetail = ({
   points,
   earnedBadges,
   onClose,
-  globalSettings,
   onUpdateHabitGamification,
 }) => {
   if (!habit) return null
@@ -102,7 +101,6 @@ export const HabitDetail = ({
       <div className="mt-4">
         <HabitGamificationPanel
           habit={habit}
-          globalSettings={globalSettings}
           onUpdate={onUpdateHabitGamification}
         />
       </div>

@@ -2,11 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import localforage from 'localforage'
 import { generalQuotes, gitaQuotes } from '../data/quotes'
 import {
-  computeStreak,
-  countCompletions,
   formatDate,
-  getMonthBuckets,
-  getWeekBuckets,
   todayKey,
 } from '../utils/date'
 
@@ -184,7 +180,6 @@ const deriveStats = (habits, settings) => {
     })
   })
 
-  const allHabits = enriched.length || 1
   const bonusDays = Object.entries(completedDates).filter(([, count]) => count >= enriched.length)
 
   const basePoints = settings.gamificationEnabled
@@ -300,168 +295,69 @@ const pickQuote = (category, customQuotes, daySeed) => {
   return combined[idx]
 }
 
-export const AppProvider = ({ children }) => {
-  localforage.config({ name: 'namami', storeName: 'state' }) // Keep storage location stable across releases
-
-  const [state, setState] = useState({
-    habits: defaultHabits,
-    rewards: defaultRewards,
-    settings: defaultSettings,
-    customQuotes: [],
-    claimedRewards: [],
-    earnedBadges: [], // Track earned badges with habit and timestamp
-    manualAdjustment: 0, // Track manual MITHURA adjustments
-    streakFreezes: 0,
-    schemaVersion: SCHEMA_VERSION,
-  })
-  const [loading, setLoading] = useState(true)
-
-  // Data migration: upgrade old habits to new schema
-  const migrateData = (saved) => {
-    if (!saved) return null
-    const version = saved.schemaVersion || 1
-    if (version < SCHEMA_VERSION) {
-      const migrated = { ...saved, schemaVersion: SCHEMA_VERSION }
-      if (version < 2) {
-        migrated.habits = (migrated.habits || []).map((h) => ({
-          ...h,
-          isDailyHabit: h.targetDays ? false : true,
-          habitColor: h.habitColor || getHabitColor(h.id),
-          useGlobalGamification: true,
-          customPoints: h.customPoints ?? 10,
-          customStreakBonuses: h.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 },
-        }))
-        migrated.rewards = (migrated.rewards || []).map((r) => ({
-          ...r,
-          deleted: r.deleted ?? false,
-        }))
-      }
-      if (version < 3) {
-        migrated.habits = (migrated.habits || []).map((h) => ({
-          ...h,
-          goalType: h.goalType || 'binary',
-          goalTarget: h.goalTarget || null,
-          dailyValueHistory: h.dailyValueHistory || {},
-        }))
-      }
-      if (version < 4) {
-        migrated.rewards = (migrated.rewards || []).map((r) => ({
-          ...r,
-          claimed: false,
-        }))
-        migrated.claimedRewards = (migrated.claimedRewards || []).map((entry) => {
-          const reward = (migrated.rewards || []).find((r) => r.id === entry.rewardId)
-          return {
-            ...entry,
-            cost: entry.cost ?? reward?.requiredPoints ?? 0,
-            name: entry.name ?? reward?.name ?? 'Reward',
-          }
-        })
-      }
-      if (version < 5) {
-        migrated.earnedBadges = migrated.earnedBadges || []
-        migrated.manualAdjustment = migrated.manualAdjustment || 0
-        migrated.habits = (migrated.habits || []).map((h) => ({
-          ...h,
-          previousStreak: h.previousStreak ?? 0,
-          streakMilestones: h.streakMilestones ?? {},
-        }))
-      }
-      if (version < 6) {
-        migrated.streakFreezes = migrated.streakFreezes ?? 0
-        migrated.habits = (migrated.habits || []).map((h) => ({
-          ...h,
-          freezeDates: h.freezeDates ?? {},
-        }))
-      }
-      return migrated
+const migrateData = (saved) => {
+  if (!saved) return null
+  const version = saved.schemaVersion || 1
+  if (version < SCHEMA_VERSION) {
+    const migrated = { ...saved, schemaVersion: SCHEMA_VERSION }
+    if (version < 2) {
+      migrated.habits = (migrated.habits || []).map((h) => ({
+        ...h,
+        isDailyHabit: h.targetDays ? false : true,
+        habitColor: h.habitColor || getHabitColor(h.id),
+        useGlobalGamification: true,
+        customPoints: h.customPoints ?? 10,
+        customStreakBonuses: h.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 },
+      }))
+      migrated.rewards = (migrated.rewards || []).map((r) => ({
+        ...r,
+        deleted: r.deleted ?? false,
+      }))
     }
-    return saved
-  }
-
-  useEffect(() => {
-    const load = async () => {
-      try {
-        for (const key of STORAGE_FALLBACK_KEYS) {
-          const saved = await localforage.getItem(key)
-          if (saved) {
-            const migrated = migrateData(saved)
-            setState(migrated || saved)
-            if (key !== STORAGE_KEY) {
-              await localforage.setItem(STORAGE_KEY, migrated || saved)
-            }
-            break
-          }
+    if (version < 3) {
+      migrated.habits = (migrated.habits || []).map((h) => ({
+        ...h,
+        goalType: h.goalType || 'binary',
+        goalTarget: h.goalTarget || null,
+        dailyValueHistory: h.dailyValueHistory || {},
+      }))
+    }
+    if (version < 4) {
+      migrated.rewards = (migrated.rewards || []).map((r) => ({
+        ...r,
+        claimed: false,
+      }))
+      migrated.claimedRewards = (migrated.claimedRewards || []).map((entry) => {
+        const reward = (migrated.rewards || []).find((r) => r.id === entry.rewardId)
+        return {
+          ...entry,
+          cost: entry.cost ?? reward?.requiredPoints ?? 0,
+          name: entry.name ?? reward?.name ?? 'Reward',
         }
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    load()
-  }, [])
-
-  useEffect(() => {
-    if (!loading) {
-      localforage.setItem(STORAGE_KEY, state)
-    }
-  }, [state, loading])
-
-  // Apply theme to document
-  useEffect(() => {
-    const theme = state.settings?.theme === 'light' ? 'light' : 'dark'
-    document.documentElement.classList.remove('light', 'dark')
-    document.documentElement.classList.add(theme)
-  }, [state.settings?.theme])
-
-  const { habits, points: lifetimePoints, bonusDays, globalStreak } = useMemo(
-    () => deriveStats(state.habits, state.settings),
-    [state.habits, state.settings],
-  )
-
-  const pointsSpent = useMemo(
-    () => calculatePointsSpent(state.claimedRewards, state.rewards) + (state.manualAdjustment || 0),
-    [state.claimedRewards, state.rewards, state.manualAdjustment],
-  )
-
-  const points = Math.max(0, lifetimePoints - pointsSpent)
-
-  // Check for newly earned badges and update streak tracking
-  useEffect(() => {
-    if (loading || !habits.length) return
-
-    setState((prev) => {
-      const newBadges = checkBadgesEarned(habits, points)
-      const existingBadgeIds = new Set((prev.earnedBadges || []).map((b) => b.id))
-      const badgesToAdd = newBadges.filter((b) => !existingBadgeIds.has(b.id))
-
-      const updatedHabits = prev.habits.map((habit) => {
-        const updated = habits.find((h) => h.id === habit.id)
-        if (updated && updated.streak !== habit.previousStreak) {
-          return { ...habit, previousStreak: updated.streak }
-        }
-        return habit
       })
+    }
+    if (version < 5) {
+      migrated.earnedBadges = migrated.earnedBadges || []
+      migrated.manualAdjustment = migrated.manualAdjustment || 0
+      migrated.habits = (migrated.habits || []).map((h) => ({
+        ...h,
+        previousStreak: h.previousStreak ?? 0,
+        streakMilestones: h.streakMilestones ?? {},
+      }))
+    }
+    if (version < 6) {
+      migrated.streakFreezes = migrated.streakFreezes ?? 0
+      migrated.habits = (migrated.habits || []).map((h) => ({
+        ...h,
+        freezeDates: h.freezeDates ?? {},
+      }))
+    }
+    return migrated
+  }
+  return saved
+}
 
-      const hasStreakUpdates = updatedHabits.some((habit, idx) => habit !== prev.habits[idx])
-
-      if (!badgesToAdd.length && !hasStreakUpdates) {
-        return prev
-      }
-
-      return {
-        ...prev,
-        earnedBadges: badgesToAdd.length > 0 ? [...(prev.earnedBadges || []), ...badgesToAdd] : prev.earnedBadges,
-        habits: hasStreakUpdates ? updatedHabits : prev.habits,
-      }
-    })
-  }, [habits, points, loading])
-
-  const quoteOfDay = useMemo(() => {
-    const seed = Number(todayKey().replaceAll('-', ''))
-    return pickQuote(state.settings.quoteCategory, state.customQuotes, seed)
-  }, [state.settings.quoteCategory, state.customQuotes])
-
+const createAppActions = ({ state, setState, points }) => {
   const addHabit = (data) => {
     const newHabit = {
       id: crypto.randomUUID(),
@@ -510,17 +406,14 @@ export const AppProvider = ({ children }) => {
         }
 
         if (habit.goalType === 'binary') {
-          // Binary: explicitly set to true/false
           const history = { ...(habit.history || {}) }
           history[dateKey] = completed
           return { ...habit, history, freezeDates }
         }
 
-        // Count/Duration: store numeric value
         const dailyValueHistory = { ...(habit.dailyValueHistory || {}) }
         if (value !== null) {
           dailyValueHistory[dateKey] = value
-          // Also update binary history based on whether target is met
           const history = { ...(habit.history || {}) }
           history[dateKey] = value >= (habit.goalTarget || 1)
           return { ...habit, dailyValueHistory, history, freezeDates }
@@ -685,6 +578,142 @@ export const AppProvider = ({ children }) => {
     }))
   }
 
+  return {
+    addHabit,
+    updateHabit,
+    deleteHabit,
+    toggleCompletion,
+    addReward,
+    claimReward,
+    updateReward,
+    deleteReward,
+    buyStreakFreeze,
+    useStreakFreeze,
+    removeStreakFreeze,
+    addCustomQuote,
+    updateSettings,
+    updateHabitGamification,
+    adjustMithura,
+  }
+}
+
+export const AppProvider = ({ children }) => {
+  localforage.config({ name: 'namami', storeName: 'state' }) // Keep storage location stable across releases
+
+  const [state, setState] = useState({
+    habits: defaultHabits,
+    rewards: defaultRewards,
+    settings: defaultSettings,
+    customQuotes: [],
+    claimedRewards: [],
+    earnedBadges: [], // Track earned badges with habit and timestamp
+    manualAdjustment: 0, // Track manual MITHURA adjustments
+    streakFreezes: 0,
+    schemaVersion: SCHEMA_VERSION,
+  })
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const load = async () => {
+      try {
+        for (const key of STORAGE_FALLBACK_KEYS) {
+          const saved = await localforage.getItem(key)
+          if (saved) {
+            const migrated = migrateData(saved)
+            setState(migrated || saved)
+            if (key !== STORAGE_KEY) {
+              await localforage.setItem(STORAGE_KEY, migrated || saved)
+            }
+            break
+          }
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    load()
+  }, [])
+
+  useEffect(() => {
+    if (!loading) {
+      localforage.setItem(STORAGE_KEY, state)
+    }
+  }, [state, loading])
+
+  // Apply theme to document
+  useEffect(() => {
+    const theme = state.settings?.theme === 'light' ? 'light' : 'dark'
+    document.documentElement.classList.remove('light', 'dark')
+    document.documentElement.classList.add(theme)
+  }, [state.settings?.theme])
+
+  const { habits, points: lifetimePoints, bonusDays, globalStreak } = useMemo(
+    () => deriveStats(state.habits, state.settings),
+    [state.habits, state.settings],
+  )
+
+  const pointsSpent = useMemo(
+    () => calculatePointsSpent(state.claimedRewards, state.rewards) + (state.manualAdjustment || 0),
+    [state.claimedRewards, state.rewards, state.manualAdjustment],
+  )
+
+  const points = Math.max(0, lifetimePoints - pointsSpent)
+
+  // Check for newly earned badges and update streak tracking
+  useEffect(() => {
+    if (loading || !habits.length) return
+
+    setState((prev) => {
+      const newBadges = checkBadgesEarned(habits, points)
+      const existingBadgeIds = new Set((prev.earnedBadges || []).map((b) => b.id))
+      const badgesToAdd = newBadges.filter((b) => !existingBadgeIds.has(b.id))
+
+      const updatedHabits = prev.habits.map((habit) => {
+        const updated = habits.find((h) => h.id === habit.id)
+        if (updated && updated.streak !== habit.previousStreak) {
+          return { ...habit, previousStreak: updated.streak }
+        }
+        return habit
+      })
+
+      const hasStreakUpdates = updatedHabits.some((habit, idx) => habit !== prev.habits[idx])
+
+      if (!badgesToAdd.length && !hasStreakUpdates) {
+        return prev
+      }
+
+      return {
+        ...prev,
+        earnedBadges: badgesToAdd.length > 0 ? [...(prev.earnedBadges || []), ...badgesToAdd] : prev.earnedBadges,
+        habits: hasStreakUpdates ? updatedHabits : prev.habits,
+      }
+    })
+  }, [habits, points, loading])
+
+  const quoteOfDay = useMemo(() => {
+    const seed = Number(todayKey().replaceAll('-', ''))
+    return pickQuote(state.settings.quoteCategory, state.customQuotes, seed)
+  }, [state.settings.quoteCategory, state.customQuotes])
+
+  const {
+    addHabit,
+    updateHabit,
+    deleteHabit,
+    toggleCompletion,
+    addReward,
+    claimReward,
+    updateReward,
+    deleteReward,
+    buyStreakFreeze,
+    useStreakFreeze,
+    removeStreakFreeze,
+    addCustomQuote,
+    updateSettings,
+    updateHabitGamification,
+    adjustMithura,
+  } = createAppActions({ state, setState, points })
+
   const value = {
     loading,
     habits,
@@ -722,4 +751,5 @@ export const AppProvider = ({ children }) => {
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const useApp = () => useContext(AppContext)

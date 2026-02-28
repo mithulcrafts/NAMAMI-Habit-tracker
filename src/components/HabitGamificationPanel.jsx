@@ -8,7 +8,7 @@ const getThemeClasses = () => {
   }
 }
 
-export const HabitGamificationPanel = ({ habit, globalSettings, onUpdate }) => {
+export const HabitGamificationPanel = ({ habit, onUpdate }) => {
   const customPoints = habit.customPoints ?? 10
   const customBonuses = habit.customStreakBonuses ?? { 3: 2, 7: 5, 30: 10 }
   const theme = useMemo(() => getThemeClasses(), [])
@@ -20,8 +20,9 @@ export const HabitGamificationPanel = ({ habit, globalSettings, onUpdate }) => {
       
       <div className="mt-4 space-y-3">
         <div>
-          <label className="text-sm font-bold uppercase tracking-wider text-slate-200">MITHURA PER COMPLETION</label>
+          <label htmlFor="habit-panel-custom-points" className="text-sm font-bold uppercase tracking-wider text-slate-200">MITHURA PER COMPLETION</label>
           <input
+            id="habit-panel-custom-points"
             type="number"
             min="1"
             value={customPoints}
@@ -38,12 +39,13 @@ export const HabitGamificationPanel = ({ habit, globalSettings, onUpdate }) => {
         </div>
         
         <div>
-          <label className="text-sm font-bold uppercase tracking-wider text-slate-200">STREAK BONUSES</label>
+          <p className="text-sm font-bold uppercase tracking-wider text-slate-200">STREAK BONUSES</p>
           <div className="mt-2 grid grid-cols-3 gap-2">
             {[3, 7, 30].map((days) => (
               <div key={days}>
-                <label className="text-xs text-slate-400">{days}-day</label>
+                <label htmlFor={`habit-panel-streak-${days}`} className="text-xs text-slate-400">{days}-day</label>
                 <input
+                  id={`habit-panel-streak-${days}`}
                   type="number"
                   min="0"
                   value={customBonuses?.[days] ?? 0}
