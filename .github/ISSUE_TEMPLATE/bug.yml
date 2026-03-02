@@ -1,0 +1,60 @@
+name: Bug
+description: Report a bug or unexpected behavior in the project.
+title: "bug: "
+labels: [bug]
+
+body:
+
+  - type: input
+    id: summary
+    attributes:
+      label: Short Summary
+      description: A concise summary of the issue.
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Detailed steps to reproduce the issue.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. Observe the error
+
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: Describe what you expected to happen.
+      placeholder: "Write about the expected behavior"
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: Describe what actually happened.
+      placeholder: "Write about the actual behavior."
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Expected Problem 
+      description: Describe what could be problem/cause of the issue.
+      placeholder: "This is because of ...."
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Suggested Solution
+      description: Describe your suggested solution to the issue.
+      placeholder: "This problem can be fixed by ...."
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add screenshots, logs, or extra notes if relevant.
+      placeholder: "Add any other context about the problem here."

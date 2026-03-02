@@ -1,10 +1,18 @@
 # UI Design
 
+This page describes how the interface is structured and how users interact with core workflows.
+
 ## Layout
 
 - Three main sections: Home, Rewards, Settings
 - Mobile-first spacing with responsive grid expansion on larger screens
 - Card-based surfaces with consistent rounded corners and subtle borders
+
+## Information Architecture
+
+- **Home** prioritizes logging and daily visibility
+- **Rewards** centralizes motivation mechanics (badges, redemption, freeze)
+- **Settings** isolates global preferences from day-to-day actions
 
 ## Visual System
 
@@ -18,6 +26,12 @@
 - Date navigation for backfill and historical tracking
 - Reward redemption and streak freeze purchase from Rewards page
 - Settings apply global defaults; habit detail handles per-habit tuning
+
+## Responsiveness
+
+- Optimized for small screens first, then expanded layouts on larger viewports
+- Component spacing and card stacking prioritize readability over density
+- Controls remain directly accessible without nested navigation
 
 ## Accessibility Baseline
 
